@@ -38,4 +38,4 @@ Sets buffer data, gets the data back from the GPU, and prints the results to the
 
 **Cube**
 
-Renders a cubemap skybox and a spinning cube. Tests depth texture, cube texture, and 32-bit index buffers.
+Renders a cubemap skybox and a spinning cube. Tests depth textures, sampling from depth textures, depth-only render passes, cube textures, and 32-bit index buffers.

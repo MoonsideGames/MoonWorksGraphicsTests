@@ -9,26 +9,48 @@ namespace MoonWorks.Test
     class CubeGame : Game
     {
         private GraphicsPipeline cubePipeline;
+        private GraphicsPipeline cubePipelineDepthOnly;
         private GraphicsPipeline skyboxPipeline;
+        private GraphicsPipeline skyboxPipelineDepthOnly;
+        private GraphicsPipeline blitPipeline;
+
         private Texture depthTexture;
+        private Sampler depthSampler;
+        private DepthUniforms depthUniforms;
+
         private Buffer cubeVertexBuffer;
         private Buffer skyboxVertexBuffer;
+        private Buffer blitVertexBuffer;
         private Buffer indexBuffer;
+
         private Texture skyboxTexture;
         private Sampler skyboxSampler;
-        private bool finishedLoading;
 
+        private bool finishedLoading = false;
         private float cubeTimer = 0f;
         private Quaternion cubeRotation = Quaternion.Identity;
         private Quaternion previousCubeRotation = Quaternion.Identity;
+        private bool depthOnlyEnabled = false;
 
-        struct Uniforms
+        struct ViewProjectionUniforms
         {
             public Matrix4x4 ViewProjection;
 
-            public Uniforms(Matrix4x4 viewProjection)
+            public ViewProjectionUniforms(Matrix4x4 viewProjection)
             {
                 ViewProjection = viewProjection;
+            }
+        }
+
+        struct DepthUniforms
+        {
+            public float ZNear;
+            public float ZFar;
+
+            public DepthUniforms(float zNear, float zFar)
+            {
+                ZNear = zNear;
+                ZFar = zFar;
             }
         }
 
@@ -79,13 +101,24 @@ namespace MoonWorks.Test
                 TestUtils.GetShaderPath("SkyboxFrag.spv")
             );
 
+            ShaderModule blitVertShaderModule = new ShaderModule(
+                GraphicsDevice,
+                TestUtils.GetShaderPath("TexturedQuadVert.spv")
+            );
+            ShaderModule blitFragShaderModule = new ShaderModule(
+                GraphicsDevice,
+                TestUtils.GetShaderPath("TexturedDepthQuadFrag.spv")
+            );
+
             depthTexture = Texture.CreateTexture2D(
                 GraphicsDevice,
                 MainWindow.Width,
                 MainWindow.Height,
                 TextureFormat.D16,
-                TextureUsageFlags.DepthStencilTarget
+                TextureUsageFlags.DepthStencilTarget | TextureUsageFlags.Sampler
             );
+            depthSampler = new Sampler(GraphicsDevice, new SamplerCreateInfo());
+            depthUniforms = new DepthUniforms(0.01f, 100f);
 
             skyboxTexture = Texture.CreateTextureCube(
                 GraphicsDevice,
@@ -111,56 +144,82 @@ namespace MoonWorks.Test
                 36
             ); // Using uint here just to test IndexElementSize=32
 
+            blitVertexBuffer = Buffer.Create<PositionTextureVertex>(
+                GraphicsDevice,
+                BufferUsageFlags.Vertex,
+                6
+            );
+
             Task loadingTask = Task.Run(() => UploadGPUAssets());
 
-            cubePipeline = new GraphicsPipeline(
-                GraphicsDevice,
-                new GraphicsPipelineCreateInfo
-                {
-                    AttachmentInfo = new GraphicsPipelineAttachmentInfo(
+            // Create the cube pipelines
+
+            GraphicsPipelineCreateInfo cubePipelineCreateInfo = new GraphicsPipelineCreateInfo
+            {
+                AttachmentInfo = new GraphicsPipelineAttachmentInfo(
                         TextureFormat.D16,
                         new ColorAttachmentDescription(
                             MainWindow.SwapchainFormat,
                             ColorAttachmentBlendState.Opaque
                         )
                     ),
-                    DepthStencilState = DepthStencilState.DepthReadWrite,
-                    VertexShaderInfo = GraphicsShaderInfo.Create<Uniforms>(cubeVertShaderModule, "main", 0),
-                    VertexInputState = new VertexInputState(
+                DepthStencilState = DepthStencilState.DepthReadWrite,
+                VertexShaderInfo = GraphicsShaderInfo.Create<ViewProjectionUniforms>(cubeVertShaderModule, "main", 0),
+                VertexInputState = new VertexInputState(
                         VertexBinding.Create<PositionColorVertex>(),
                         VertexAttribute.Create<PositionColorVertex>("Position", 0),
                         VertexAttribute.Create<PositionColorVertex>("Color", 1)
                     ),
-                    PrimitiveType = PrimitiveType.TriangleList,
-                    FragmentShaderInfo = GraphicsShaderInfo.Create(cubeFragShaderModule, "main", 0),
-                    RasterizerState = RasterizerState.CW_CullBack,
-                    MultisampleState = MultisampleState.None
-                }
-            );
+                PrimitiveType = PrimitiveType.TriangleList,
+                FragmentShaderInfo = GraphicsShaderInfo.Create(cubeFragShaderModule, "main", 0),
+                RasterizerState = RasterizerState.CW_CullBack,
+                MultisampleState = MultisampleState.None
+            };
+            cubePipeline = new GraphicsPipeline(GraphicsDevice, cubePipelineCreateInfo);
 
-            skyboxPipeline = new GraphicsPipeline(
-                GraphicsDevice,
-                new GraphicsPipelineCreateInfo
-                {
-                    AttachmentInfo = new GraphicsPipelineAttachmentInfo(
-					    TextureFormat.D16,
-					    new ColorAttachmentDescription(
-						    MainWindow.SwapchainFormat,
-						    ColorAttachmentBlendState.Opaque
-					    )
-				    ),
-				    DepthStencilState = DepthStencilState.DepthReadWrite,
-				    VertexShaderInfo = GraphicsShaderInfo.Create<Uniforms>(skyboxVertShaderModule, "main", 0),
-				    VertexInputState = new VertexInputState(
-					    VertexBinding.Create<PositionVertex>(),
-					    VertexAttribute.Create<PositionVertex>("Position", 0)
-				    ),
-				    PrimitiveType = PrimitiveType.TriangleList,
-				    FragmentShaderInfo = GraphicsShaderInfo.Create(skyboxFragShaderModule, "main", 1),
-				    RasterizerState = RasterizerState.CW_CullNone,
-				    MultisampleState = MultisampleState.None,
-                }
+            cubePipelineCreateInfo.AttachmentInfo = new GraphicsPipelineAttachmentInfo(TextureFormat.D16);
+            cubePipelineDepthOnly = new GraphicsPipeline(GraphicsDevice, cubePipelineCreateInfo);
+
+            // Create the skybox pipelines
+
+            GraphicsPipelineCreateInfo skyboxPipelineCreateInfo = new GraphicsPipelineCreateInfo
+            {
+                AttachmentInfo = new GraphicsPipelineAttachmentInfo(
+                        TextureFormat.D16,
+                        new ColorAttachmentDescription(
+                            MainWindow.SwapchainFormat,
+                            ColorAttachmentBlendState.Opaque
+                        )
+                    ),
+                DepthStencilState = DepthStencilState.DepthReadWrite,
+                VertexShaderInfo = GraphicsShaderInfo.Create<ViewProjectionUniforms>(skyboxVertShaderModule, "main", 0),
+                VertexInputState = new VertexInputState(
+                        VertexBinding.Create<PositionVertex>(),
+                        VertexAttribute.Create<PositionVertex>("Position", 0)
+                    ),
+                PrimitiveType = PrimitiveType.TriangleList,
+                FragmentShaderInfo = GraphicsShaderInfo.Create(skyboxFragShaderModule, "main", 1),
+                RasterizerState = RasterizerState.CW_CullNone,
+                MultisampleState = MultisampleState.None,
+            };
+            skyboxPipeline = new GraphicsPipeline(GraphicsDevice, skyboxPipelineCreateInfo);
+
+            skyboxPipelineCreateInfo.AttachmentInfo = new GraphicsPipelineAttachmentInfo(TextureFormat.D16);
+            skyboxPipelineDepthOnly = new GraphicsPipeline(GraphicsDevice, skyboxPipelineCreateInfo);
+
+            // Create the blit pipeline
+
+            GraphicsPipelineCreateInfo blitPipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
+                blitVertShaderModule,
+                blitFragShaderModule
             );
+            blitPipelineCreateInfo.VertexInputState = new VertexInputState(
+				VertexBinding.Create<PositionTextureVertex>(),
+				VertexAttribute.Create<PositionTextureVertex>("Position", 0),
+				VertexAttribute.Create<PositionTextureVertex>("TexCoord", 1)
+			);
+            blitPipelineCreateInfo.FragmentShaderInfo = GraphicsShaderInfo.Create<DepthUniforms>(blitFragShaderModule, "main", 1);
+			blitPipeline = new GraphicsPipeline(GraphicsDevice, blitPipelineCreateInfo);
         }
 
         private void UploadGPUAssets()
@@ -254,6 +313,19 @@ namespace MoonWorks.Test
                 }
             );
 
+            cmdbuf.SetBufferData(
+                blitVertexBuffer,
+                new PositionTextureVertex[]
+                {
+                    new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
+                    new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
+                    new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
+                    new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
+                    new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
+                    new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
+                }
+            );
+
             LoadCubemap(cmdbuf, new string[]
 		    {
 			    TestUtils.GetTexturePath("right.png"),
@@ -268,6 +340,7 @@ namespace MoonWorks.Test
 
             finishedLoading = true;
             Logger.LogInfo("Finished loading!");
+            Logger.LogInfo("Press A to toggle Depth-Only Mode");
         }
 
         protected override void Update(System.TimeSpan delta)
@@ -281,6 +354,12 @@ namespace MoonWorks.Test
                 0,
                 cubeTimer * 2f
             );
+
+            if (Inputs.Keyboard.IsPressed(Input.KeyCode.A))
+            {
+                depthOnlyEnabled = !depthOnlyEnabled;
+                Logger.LogInfo("Depth-Only Mode enabled: " + depthOnlyEnabled);
+            }
         }
 
         protected override void Draw(double alpha)
@@ -288,15 +367,15 @@ namespace MoonWorks.Test
             Matrix4x4 proj = Matrix4x4.CreatePerspectiveFieldOfView(
                 MathHelper.ToRadians(75f),
                 (float) MainWindow.Width / MainWindow.Height,
-                0.01f,
-                100f
+                depthUniforms.ZNear,
+                depthUniforms.ZFar
             );
             Matrix4x4 view = Matrix4x4.CreateLookAt(
                 new Vector3(0, 1.5f, 4f),
                 Vector3.Zero,
                 Vector3.Up
             );
-            Uniforms skyboxUniforms = new Uniforms(view * proj);
+            ViewProjectionUniforms skyboxUniforms = new ViewProjectionUniforms(view * proj);
 
             Matrix4x4 model = Matrix4x4.CreateFromQuaternion(
                 Quaternion.Slerp(
@@ -305,7 +384,7 @@ namespace MoonWorks.Test
                     (float) alpha
                 )
             );
-            Uniforms cubeUniforms = new Uniforms(model * view * proj);
+            ViewProjectionUniforms cubeUniforms = new ViewProjectionUniforms(model * view * proj);
 
             CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
             Texture? swapchainTexture = cmdbuf.AcquireSwapchainTexture(MainWindow);
@@ -322,20 +401,29 @@ namespace MoonWorks.Test
                 }
                 else
                 {
-                    cmdbuf.BeginRenderPass(
-                        new DepthStencilAttachmentInfo(depthTexture, new DepthStencilValue(1f, 0)),
-                        new ColorAttachmentInfo(swapchainTexture, Color.CornflowerBlue)
-                    );
+                    if (!depthOnlyEnabled)
+                    {
+                        cmdbuf.BeginRenderPass(
+                            new DepthStencilAttachmentInfo(depthTexture, new DepthStencilValue(1f, 0)),
+                            new ColorAttachmentInfo(swapchainTexture, LoadOp.DontCare)
+                        );
+                    }
+                    else
+                    {
+                        cmdbuf.BeginRenderPass(
+                            new DepthStencilAttachmentInfo(depthTexture, new DepthStencilValue(1f, 0))
+                        );
+                    }
 
                     // Draw cube
-                    cmdbuf.BindGraphicsPipeline(cubePipeline);
+                    cmdbuf.BindGraphicsPipeline(depthOnlyEnabled ? cubePipelineDepthOnly : cubePipeline);
                     cmdbuf.BindVertexBuffers(cubeVertexBuffer);
                     cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.ThirtyTwo);
                     uint vertexParamOffset = cmdbuf.PushVertexShaderUniforms(cubeUniforms);
                     cmdbuf.DrawIndexedPrimitives(0, 0, 12, vertexParamOffset, 0);
 
                     // Draw skybox
-                    cmdbuf.BindGraphicsPipeline(skyboxPipeline);
+                    cmdbuf.BindGraphicsPipeline(depthOnlyEnabled ? skyboxPipelineDepthOnly : skyboxPipeline);
                     cmdbuf.BindVertexBuffers(skyboxVertexBuffer);
                     cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.ThirtyTwo);
                     cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(skyboxTexture, skyboxSampler));
@@ -343,6 +431,20 @@ namespace MoonWorks.Test
                     cmdbuf.DrawIndexedPrimitives(0, 0, 12, vertexParamOffset, 0);
 
                     cmdbuf.EndRenderPass();
+
+                    if (depthOnlyEnabled)
+                    {
+                        // Draw the depth buffer as a grayscale image
+                        cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchainTexture, LoadOp.DontCare));
+
+                        cmdbuf.BindGraphicsPipeline(blitPipeline);
+                        cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(depthTexture, depthSampler));
+                        cmdbuf.BindVertexBuffers(blitVertexBuffer);
+                        uint fragParamOffset = cmdbuf.PushFragmentShaderUniforms(depthUniforms);
+                        cmdbuf.DrawPrimitives(0, 2, vertexParamOffset, fragParamOffset);
+
+                        cmdbuf.EndRenderPass();
+                    }
                 }
             }
 

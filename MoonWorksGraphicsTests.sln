@@ -21,6 +21,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TexturedQuad", "TexturedQua
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TriangleVertexBuffer", "TriangleVertexBuffer\TriangleVertexBuffer.csproj", "{7EC935B1-DCD1-4ADD-96C8-614B4CA76501}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GetBufferData", "GetBufferData\GetBufferData.csproj", "{37BDB4E6-FCDC-4F04-A9E3-C6B9D6C3AB4E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonWorks", "..\MoonWorks\MoonWorks.csproj", "{1695B1D8-4935-490C-A5EC-E2F2AA94B150}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -63,6 +67,14 @@ Global
 		{7EC935B1-DCD1-4ADD-96C8-614B4CA76501}.Debug|x64.Build.0 = Debug|x64
 		{7EC935B1-DCD1-4ADD-96C8-614B4CA76501}.Release|x64.ActiveCfg = Release|x64
 		{7EC935B1-DCD1-4ADD-96C8-614B4CA76501}.Release|x64.Build.0 = Release|x64
+		{37BDB4E6-FCDC-4F04-A9E3-C6B9D6C3AB4E}.Debug|x64.ActiveCfg = Debug|x64
+		{37BDB4E6-FCDC-4F04-A9E3-C6B9D6C3AB4E}.Debug|x64.Build.0 = Debug|x64
+		{37BDB4E6-FCDC-4F04-A9E3-C6B9D6C3AB4E}.Release|x64.ActiveCfg = Release|x64
+		{37BDB4E6-FCDC-4F04-A9E3-C6B9D6C3AB4E}.Release|x64.Build.0 = Release|x64
+		{1695B1D8-4935-490C-A5EC-E2F2AA94B150}.Debug|x64.ActiveCfg = Debug|x64
+		{1695B1D8-4935-490C-A5EC-E2F2AA94B150}.Debug|x64.Build.0 = Debug|x64
+		{1695B1D8-4935-490C-A5EC-E2F2AA94B150}.Release|x64.ActiveCfg = Release|x64
+		{1695B1D8-4935-490C-A5EC-E2F2AA94B150}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,6 +15,11 @@ namespace MoonWorks.Test
 			Position = position;
 			Color = color;
 		}
+
+		public override string ToString()
+		{
+			return Position + " | " + Color;
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -28,5 +33,10 @@ namespace MoonWorks.Test
 			Position = position;
 			TexCoord = texCoord;
 		}
-	}
+
+        public override string ToString()
+        {
+			return Position + " | " + TexCoord;
+        }
+    }
 }

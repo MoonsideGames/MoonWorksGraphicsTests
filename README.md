@@ -31,3 +31,7 @@ Draws a basic triangle with varying MSAA sample counts.
 **CullMode**
 
 Draws several triangles with various culling modes and winding orders.
+
+**GetBufferData**
+
+Sets buffer data, gets the data back from the GPU, and prints the results to the console.

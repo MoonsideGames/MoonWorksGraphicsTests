@@ -39,3 +39,7 @@ Sets buffer data, gets the data back from the GPU, and prints the results to the
 **Cube**
 
 Renders a cubemap skybox and a spinning cube. Tests depth textures, sampling from depth textures, depth-only render passes, cube textures, and 32-bit index buffers.
+
+**BasicCompute**
+
+Uses a compute pipeline to fill a texture with data, then displays it to the screen. Tests compute pipeline creation and compute dispatching.

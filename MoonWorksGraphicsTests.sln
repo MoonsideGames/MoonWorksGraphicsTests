@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonWorks", "..\MoonWorks\M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cube", "Cube\Cube.csproj", "{C3808AFD-23DD-4622-BFA7-981A344D0C19}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicCompute", "BasicCompute\BasicCompute.csproj", "{68D47057-BBCB-4F86-9C0A-D6D730B18D9E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -81,6 +83,10 @@ Global
 		{C3808AFD-23DD-4622-BFA7-981A344D0C19}.Debug|x64.Build.0 = Debug|x64
 		{C3808AFD-23DD-4622-BFA7-981A344D0C19}.Release|x64.ActiveCfg = Release|Any CPU
 		{C3808AFD-23DD-4622-BFA7-981A344D0C19}.Release|x64.Build.0 = Release|Any CPU
+		{68D47057-BBCB-4F86-9C0A-D6D730B18D9E}.Debug|x64.ActiveCfg = Debug|x64
+		{68D47057-BBCB-4F86-9C0A-D6D730B18D9E}.Debug|x64.Build.0 = Debug|x64
+		{68D47057-BBCB-4F86-9C0A-D6D730B18D9E}.Release|x64.ActiveCfg = Release|Any CPU
+		{68D47057-BBCB-4F86-9C0A-D6D730B18D9E}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

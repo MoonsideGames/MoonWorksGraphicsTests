@@ -12,8 +12,6 @@ namespace MoonWorks.Test
 		private GraphicsPipeline CCW_CullNonePipeline;
 		private GraphicsPipeline CCW_CullFrontPipeline;
 		private GraphicsPipeline CCW_CullBackPipeline;
-		private ShaderModule vertShaderModule;
-		private ShaderModule fragShaderModule;
 		private Buffer cwVertexBuffer;
 		private Buffer ccwVertexBuffer;
 
@@ -24,11 +22,14 @@ namespace MoonWorks.Test
 			Logger.LogInfo("Press A to toggle the winding order of the triangles (default is counter-clockwise)");
 
 			// Load the shaders
-			vertShaderModule = new ShaderModule(GraphicsDevice, "Content/Shaders/Compiled/PositionColorVert.spv");
-			fragShaderModule = new ShaderModule(GraphicsDevice, "Content/Shaders/Compiled/SolidColor.spv");
+			ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("PositionColorVert.spv"));
+			ShaderModule fragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("SolidColor.spv"));
 
 			// Create the graphics pipelines
-			GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(vertShaderModule, fragShaderModule);
+			GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
+				vertShaderModule,
+				fragShaderModule
+			);
 			pipelineCreateInfo.VertexInputState = new VertexInputState(
 				VertexBinding.Create<PositionColorVertex>(),
 				VertexAttribute.Create<PositionColorVertex>("Position", 0),

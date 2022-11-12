@@ -7,13 +7,7 @@ namespace MoonWorks.Test
 	class MSAAGame : Game
 	{
 		private GraphicsPipeline[] msaaPipelines = new GraphicsPipeline[4];
-
-		private ShaderModule triangleVertShaderModule;
-		private ShaderModule triangleFragShaderModule;
-
 		private GraphicsPipeline blitPipeline;
-		private ShaderModule blitVertShaderModule;
-		private ShaderModule blitFragShaderModule;
 
 		private Texture rt;
 		private Sampler rtSampler;
@@ -28,8 +22,8 @@ namespace MoonWorks.Test
 			Logger.LogInfo("Setting sample count to: " + currentSampleCount);
 
 			// Create the MSAA pipelines
-			triangleVertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("RawTriangleVertices.spv"));
-			triangleFragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("SolidColor.spv"));
+			ShaderModule triangleVertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("RawTriangleVertices.spv"));
+			ShaderModule triangleFragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("SolidColor.spv"));
 
 			GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
 				triangleVertShaderModule,
@@ -42,8 +36,8 @@ namespace MoonWorks.Test
 			}
 
 			// Create the blit pipeline
-			blitVertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuadVert.spv"));
-			blitFragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuadFrag.spv"));
+			ShaderModule blitVertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuadVert.spv"));
+			ShaderModule blitFragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuadFrag.spv"));
 
 			pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
 				blitVertShaderModule,

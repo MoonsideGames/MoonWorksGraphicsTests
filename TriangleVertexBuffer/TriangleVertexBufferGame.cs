@@ -7,18 +7,19 @@ namespace MoonWorks.Test
 	class TriangleVertexBufferGame : Game
 	{
 		private GraphicsPipeline pipeline;
-		private ShaderModule vertShaderModule;
-		private ShaderModule fragShaderModule;
 		private Buffer vertexBuffer;
 
 		public TriangleVertexBufferGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
 		{
 			// Load the shaders
-			vertShaderModule = new ShaderModule(GraphicsDevice, "Content/Shaders/Compiled/PositionColorVert.spv");
-			fragShaderModule = new ShaderModule(GraphicsDevice, "Content/Shaders/Compiled/SolidColor.spv");
+			ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("PositionColorVert.spv"));
+			ShaderModule fragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("SolidColor.spv"));
 
 			// Create the graphics pipeline
-			GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(vertShaderModule, fragShaderModule);
+			GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
+				vertShaderModule,
+				fragShaderModule
+			);
 			pipelineCreateInfo.VertexInputState = new VertexInputState(
 				VertexBinding.Create<PositionColorVertex>(),
 				VertexAttribute.Create<PositionColorVertex>("Position", 0),

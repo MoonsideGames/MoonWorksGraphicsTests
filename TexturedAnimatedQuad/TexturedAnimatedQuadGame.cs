@@ -8,8 +8,6 @@ namespace MoonWorks.Test
 	class TexturedAnimatedQuadGame : Game
 	{
 		private GraphicsPipeline pipeline;
-		private ShaderModule vertShaderModule;
-		private ShaderModule fragShaderModule;
 		private Buffer vertexBuffer;
 		private Buffer indexBuffer;
 		private Texture texture;
@@ -42,11 +40,14 @@ namespace MoonWorks.Test
 		public TexturedAnimatedQuadGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
 		{
 			// Load the shaders
-			vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuadAnimatedVert.spv"));
-			fragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuadAnimatedFrag.spv"));
+			ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuadAnimatedVert.spv"));
+			ShaderModule fragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuadAnimatedFrag.spv"));
 
 			// Create the graphics pipeline
-			GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(vertShaderModule, fragShaderModule);
+			GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
+				vertShaderModule,
+				fragShaderModule
+			);
 			pipelineCreateInfo.VertexInputState = new VertexInputState(
 				VertexBinding.Create<PositionTextureVertex>(),
 				VertexAttribute.Create<PositionTextureVertex>("Position", 0),

@@ -7,8 +7,6 @@ namespace MoonWorks.Test
 	{
 		private GraphicsPipeline fillPipeline;
 		private GraphicsPipeline linePipeline;
-		private ShaderModule vertShaderModule;
-		private ShaderModule fragShaderModule;
 
 		private Viewport smallViewport = new Viewport(160, 120, 320, 240);
 		private Rect scissorRect = new Rect(320, 240, 320, 240);
@@ -21,10 +19,13 @@ namespace MoonWorks.Test
 		{
 			Logger.LogInfo("Press A to toggle wireframe mode\nPress S to toggle small viewport\nPress D to toggle scissor rect");
 
-			vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("RawTriangleVertices.spv"));
-			fragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("SolidColor.spv"));
+			ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("RawTriangleVertices.spv"));
+			ShaderModule fragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("SolidColor.spv"));
 
-			GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(vertShaderModule, fragShaderModule);
+			GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
+				vertShaderModule,
+				fragShaderModule
+			);
 			fillPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 			pipelineCreateInfo.RasterizerState.FillMode = FillMode.Line;

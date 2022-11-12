@@ -47,7 +47,7 @@ namespace MoonWorks.Test
             PositionColorVertex[] readbackVertices = new PositionColorVertex[vertices.Length];
             vertexBuffer.GetData(
                 readbackVertices,
-                (uint) (readbackVertices.Length * vertexSize) // FIXME: Seems like this should get auto-calculated somehow
+                (uint) (vertexSize * readbackVertices.Length) // FIXME: Seems like this should get auto-calculated somehow
             );
             for (int i = 0; i < readbackVertices.Length; i += 1)
             {
@@ -86,7 +86,7 @@ namespace MoonWorks.Test
             // Read the updated buffer
             vertexBuffer.GetData(
                 readbackVertices,
-                (uint) (readbackVertices.Length * vertexSize)
+                (uint) (vertexSize * readbackVertices.Length)
             );
             Logger.LogInfo("===");
             for (int i = 0; i < readbackVertices.Length; i += 1)

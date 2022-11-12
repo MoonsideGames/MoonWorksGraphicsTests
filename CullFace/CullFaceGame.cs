@@ -4,7 +4,7 @@ using MoonWorks.Math.Float;
 
 namespace MoonWorks.Test
 {
-	internal class CullFaceGame : Game
+	class CullFaceGame : Game
 	{
 		private GraphicsPipeline CW_CullNonePipeline;
 		private GraphicsPipeline CW_CullFrontPipeline;

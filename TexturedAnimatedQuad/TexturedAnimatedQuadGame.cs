@@ -81,7 +81,7 @@ namespace MoonWorks.Test
 					0, 2, 3,
 				}
 			);
-			texture = Texture.LoadPNG(GraphicsDevice, cmdbuf, "Content/Textures/ravioli.png");
+			texture = Texture.LoadPNG(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.png"));
 			GraphicsDevice.Submit(cmdbuf);
 			GraphicsDevice.Wait();
 		}
@@ -104,10 +104,10 @@ namespace MoonWorks.Test
 				cmdbuf.BindGraphicsPipeline(pipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
-				cmdbuf.PushVertexShaderUniforms(vertUniforms);
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(texture, sampler));
-				cmdbuf.PushFragmentShaderUniforms(fragUniforms);
-				cmdbuf.DrawIndexedPrimitives(0, 0, 2, 0, 0);
+				uint vertParamOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
+				uint fragParamOffset = cmdbuf.PushFragmentShaderUniforms(fragUniforms);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 2, vertParamOffset, fragParamOffset);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GetBufferData", "GetBufferD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonWorks", "..\MoonWorks\MoonWorks.csproj", "{1695B1D8-4935-490C-A5EC-E2F2AA94B150}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cube", "Cube\Cube.csproj", "{C3808AFD-23DD-4622-BFA7-981A344D0C19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -75,6 +77,10 @@ Global
 		{1695B1D8-4935-490C-A5EC-E2F2AA94B150}.Debug|x64.Build.0 = Debug|x64
 		{1695B1D8-4935-490C-A5EC-E2F2AA94B150}.Release|x64.ActiveCfg = Release|x64
 		{1695B1D8-4935-490C-A5EC-E2F2AA94B150}.Release|x64.Build.0 = Release|x64
+		{C3808AFD-23DD-4622-BFA7-981A344D0C19}.Debug|x64.ActiveCfg = Debug|x64
+		{C3808AFD-23DD-4622-BFA7-981A344D0C19}.Debug|x64.Build.0 = Debug|x64
+		{C3808AFD-23DD-4622-BFA7-981A344D0C19}.Release|x64.ActiveCfg = Release|Any CPU
+		{C3808AFD-23DD-4622-BFA7-981A344D0C19}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

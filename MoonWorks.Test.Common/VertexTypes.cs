@@ -5,6 +5,22 @@ using MoonWorks.Math.Float;
 namespace MoonWorks.Test
 {
 	[StructLayout(LayoutKind.Sequential)]
+	public struct PositionVertex
+	{
+		public Vector3 Position;
+
+		public PositionVertex(Vector3 position)
+		{
+			Position = position;
+		}
+
+		public override string ToString()
+        {
+			return Position.ToString();
+		}
+	}
+
+    [StructLayout(LayoutKind.Sequential)]
 	public struct PositionColorVertex
 	{
 		public Vector3 Position;

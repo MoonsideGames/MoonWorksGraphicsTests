@@ -35,3 +35,7 @@ Draws several triangles with various culling modes and winding orders.
 **GetBufferData**
 
 Sets buffer data, gets the data back from the GPU, and prints the results to the console.
+
+**Cube**
+
+Renders a cubemap skybox and a spinning cube. Tests depth texture, cube texture, and 32-bit index buffers.

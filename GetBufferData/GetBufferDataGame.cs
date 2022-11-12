@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace MoonWorks.Test
 {
-    internal class GetBufferDataGame : Game
+    class GetBufferDataGame : Game
     {
         public GetBufferDataGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
         {

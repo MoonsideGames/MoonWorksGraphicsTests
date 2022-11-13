@@ -13,16 +13,29 @@ namespace MoonWorks.Test
 
         public BasicComputeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
         {
-            ShaderModule computeShaderModule = new ShaderModule(
+            // Create the compute pipeline that writes texture data
+            ShaderModule fillTextureComputeShaderModule = new ShaderModule(
                 GraphicsDevice,
                 TestUtils.GetShaderPath("FillTextureCompute.spv")
             );
 
-            ComputePipeline computePipeline = new ComputePipeline(
+            ComputePipeline fillTextureComputePipeline = new ComputePipeline(
                 GraphicsDevice,
-                ComputeShaderInfo.Create(computeShaderModule, "main", 0, 1)
+                ComputeShaderInfo.Create(fillTextureComputeShaderModule, "main", 0, 1)
             );
 
+            // Create the compute pipeline that calculates squares of numbers
+            ShaderModule calculateSquaresComputeShaderModule = new ShaderModule(
+                GraphicsDevice,
+                TestUtils.GetShaderPath("CalculateSquaresCompute.spv")
+            );
+
+            ComputePipeline calculateSquaresComputePipeline = new ComputePipeline(
+                GraphicsDevice,
+                ComputeShaderInfo.Create(calculateSquaresComputeShaderModule, "main", 1, 0)
+            );
+
+            // Create the graphics pipeline
             ShaderModule vertShaderModule = new ShaderModule(
                 GraphicsDevice,
                 TestUtils.GetShaderPath("TexturedQuadVert.spv")
@@ -49,9 +62,20 @@ namespace MoonWorks.Test
                 drawPipelineCreateInfo
             );
 
-            vertexBuffer = Buffer.Create<PositionTextureVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 6);
+            // Create buffers and textures
+            float[] squares = new float[64];
+            Buffer squaresBuffer = Buffer.Create<float>(
+                GraphicsDevice,
+                BufferUsageFlags.Compute,
+                (uint) squares.Length
+            );
 
-            // Create the texture that will be filled in by the compute pipeline
+            vertexBuffer = Buffer.Create<PositionTextureVertex>(
+                GraphicsDevice,
+                BufferUsageFlags.Vertex,
+                6
+            );
+
             texture = Texture.CreateTexture2D(
                 GraphicsDevice,
                 MainWindow.Width,
@@ -59,11 +83,11 @@ namespace MoonWorks.Test
                 TextureFormat.R8G8B8A8,
                 TextureUsageFlags.Compute | TextureUsageFlags.Sampler
             );
+
             sampler = new Sampler(GraphicsDevice, new SamplerCreateInfo());
 
-            // Populate the vertex buffer and run the compute shader to generate the texture data
+            // Upload GPU resources and dispatch compute work
             CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-
             cmdbuf.SetBufferData(vertexBuffer, new PositionTextureVertex[]
             {
                 new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
@@ -74,11 +98,19 @@ namespace MoonWorks.Test
                 new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
             });
 
-            cmdbuf.BindComputePipeline(computePipeline);
+            cmdbuf.BindComputePipeline(fillTextureComputePipeline);
             cmdbuf.BindComputeTextures(texture);
             cmdbuf.DispatchCompute(MainWindow.Width / 8, MainWindow.Height / 8, 1, 0);
 
+            cmdbuf.BindComputePipeline(calculateSquaresComputePipeline);
+            cmdbuf.BindComputeBuffers(squaresBuffer);
+            cmdbuf.DispatchCompute(64, 1, 1, 0);
+
             GraphicsDevice.Submit(cmdbuf);
+            GraphicsDevice.Wait();
+
+            squaresBuffer.GetData(squares, (uint) (sizeof(float) * squares.Length));
+            Logger.LogInfo("Squares of the first " + squares.Length + " integers: " + string.Join(", ", squares));
         }
 
         protected override void Update(System.TimeSpan delta) { }

@@ -42,4 +42,4 @@ Renders a cubemap skybox and a spinning cube. Tests depth textures, sampling fro
 
 **BasicCompute**
 
-Uses a compute pipeline to fill a texture with data, then displays it to the screen. Tests compute pipeline creation and compute dispatching.
+Uses compute pipelines to (1) fill a texture with data then display it to the screen and (2) calculate the squares of the first 64 integers. Tests compute pipeline creation, compute dispatching, compute textures, and compute buffers.

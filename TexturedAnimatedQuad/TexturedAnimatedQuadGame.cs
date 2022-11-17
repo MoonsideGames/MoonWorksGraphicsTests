@@ -45,6 +45,7 @@ namespace MoonWorks.Test
 
 			// Create the graphics pipeline
 			GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
+				MainWindow.SwapchainFormat,
 				vertShaderModule,
 				fragShaderModule
 			);

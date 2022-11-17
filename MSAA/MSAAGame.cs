@@ -26,6 +26,7 @@ namespace MoonWorks.Test
 			ShaderModule triangleFragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("SolidColor.spv"));
 
 			GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
+				TextureFormat.R8G8B8A8,
 				triangleVertShaderModule,
 				triangleFragShaderModule
 			);
@@ -40,6 +41,7 @@ namespace MoonWorks.Test
 			ShaderModule blitFragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuadFrag.spv"));
 
 			pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
+				MainWindow.SwapchainFormat,
 				blitVertShaderModule,
 				blitFragShaderModule
 			);

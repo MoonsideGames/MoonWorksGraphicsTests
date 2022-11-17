@@ -210,6 +210,7 @@ namespace MoonWorks.Test
             // Create the blit pipeline
 
             GraphicsPipelineCreateInfo blitPipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
+				MainWindow.SwapchainFormat,
                 blitVertShaderModule,
                 blitFragShaderModule
             );

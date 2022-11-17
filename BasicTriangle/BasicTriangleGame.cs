@@ -23,6 +23,7 @@ namespace MoonWorks.Test
 			ShaderModule fragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("SolidColor.spv"));
 
 			GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
+				MainWindow.SwapchainFormat,
 				vertShaderModule,
 				fragShaderModule
 			);
@@ -70,7 +71,7 @@ namespace MoonWorks.Test
 				{
 					cmdbuf.SetScissor(scissorRect);
 				}
-				
+
 				cmdbuf.DrawPrimitives(0, 1, 0, 0);
 				cmdbuf.EndRenderPass();
 			}

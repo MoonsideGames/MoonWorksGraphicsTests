@@ -24,6 +24,7 @@ namespace MoonWorks.Test
 		}
 
 		public static GraphicsPipelineCreateInfo GetStandardGraphicsPipelineCreateInfo(
+			TextureFormat swapchainFormat,
 			ShaderModule vertShaderModule,
 			ShaderModule fragShaderModule
 		) {
@@ -31,7 +32,7 @@ namespace MoonWorks.Test
 			{
 				AttachmentInfo = new GraphicsPipelineAttachmentInfo(
 					new ColorAttachmentDescription(
-						TextureFormat.R8G8B8A8,
+						swapchainFormat,
 						ColorAttachmentBlendState.Opaque
 					)
 				),

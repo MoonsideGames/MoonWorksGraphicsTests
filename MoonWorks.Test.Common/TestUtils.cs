@@ -55,5 +55,44 @@ namespace MoonWorks.Test
 		{
 			return SDL2.SDL.SDL_GetBasePath() + "Content/Textures/" + textureName;
 		}
-	}
+
+        public enum ButtonType
+        {
+            Left,	// A/left arrow on keyboard, left face button on gamepad
+            Bottom,	// S/down arrow on keyboard, bottom face button on gamepad
+            Right	// D/right arrow on keyboard, right face button on gamepad
+        }
+
+        public static bool CheckButtonPressed(Input.Inputs inputs, ButtonType buttonType)
+        {
+            bool pressed = false;
+
+            if (buttonType == ButtonType.Left)
+            {
+                pressed = (
+                    (inputs.GamepadExists(0) && inputs.GetGamepad(0).DpadLeft.IsPressed) ||
+                    inputs.Keyboard.IsPressed(Input.KeyCode.A) ||
+                    inputs.Keyboard.IsPressed(Input.KeyCode.Left)
+                );
+            }
+            else if (buttonType == ButtonType.Bottom)
+            {
+                pressed = (
+                    (inputs.GamepadExists(0) && inputs.GetGamepad(0).DpadDown.IsPressed) ||
+                    inputs.Keyboard.IsPressed(Input.KeyCode.S) ||
+                    inputs.Keyboard.IsPressed(Input.KeyCode.Down)
+                );
+            }
+            else if (buttonType == ButtonType.Right)
+            {
+                pressed = (
+                    (inputs.GamepadExists(0) && inputs.GetGamepad(0).DpadRight.IsPressed) ||
+                    inputs.Keyboard.IsPressed(Input.KeyCode.D) ||
+                    inputs.Keyboard.IsPressed(Input.KeyCode.Right)
+                );
+            }
+
+            return pressed;
+        }
+    }
 }

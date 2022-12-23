@@ -18,7 +18,7 @@ namespace MoonWorks.Test
 
 		public MSAAGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
 		{
-			Logger.LogInfo("Press A and D to cycle between sample counts");
+			Logger.LogInfo("Press Left and Right to cycle between sample counts");
 			Logger.LogInfo("Setting sample count to: " + currentSampleCount);
 
 			// Create the MSAA pipelines
@@ -94,7 +94,7 @@ namespace MoonWorks.Test
 		{
 			SampleCount prevSampleCount = currentSampleCount;
 
-			if (Inputs.Keyboard.IsPressed(Input.KeyCode.A))
+			if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Left))
 			{
 				currentSampleCount -= 1;
 				if (currentSampleCount < 0)
@@ -102,7 +102,7 @@ namespace MoonWorks.Test
 					currentSampleCount = SampleCount.Eight;
 				}
 			}
-			if (Inputs.Keyboard.IsPressed(Input.KeyCode.D))
+			if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Right))
 			{
 				currentSampleCount += 1;
 				if (currentSampleCount > SampleCount.Eight)

@@ -341,7 +341,7 @@ namespace MoonWorks.Test
 
             finishedLoading = true;
             Logger.LogInfo("Finished loading!");
-            Logger.LogInfo("Press A to toggle Depth-Only Mode");
+            Logger.LogInfo("Press Down to toggle Depth-Only Mode");
         }
 
         protected override void Update(System.TimeSpan delta)
@@ -356,7 +356,7 @@ namespace MoonWorks.Test
                 cubeTimer * 2f
             );
 
-            if (Inputs.Keyboard.IsPressed(Input.KeyCode.A))
+            if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Bottom))
             {
                 depthOnlyEnabled = !depthOnlyEnabled;
                 Logger.LogInfo("Depth-Only Mode enabled: " + depthOnlyEnabled);

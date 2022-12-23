@@ -9,28 +9,28 @@ namespace MoonWorks.Test
     {
         public GetBufferDataGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
         {
-            PositionColorVertex[] vertices = new PositionColorVertex[]
+            PositionVertex[] vertices = new PositionVertex[]
             {
-                new PositionColorVertex(new Vector3(0, 0, 0), Color.Red),
-                new PositionColorVertex(new Vector3(0, 0, 1), Color.Green),
-                new PositionColorVertex(new Vector3(0, 1, 0), Color.Blue),
-                new PositionColorVertex(new Vector3(0, 1, 1), Color.Yellow),
-                new PositionColorVertex(new Vector3(1, 0, 0), Color.Orange),
-                new PositionColorVertex(new Vector3(1, 0, 1), Color.Brown),
-                new PositionColorVertex(new Vector3(1, 1, 0), Color.Black),
-                new PositionColorVertex(new Vector3(1, 1, 1), Color.White),
+                new PositionVertex(new Vector3(0, 0, 0)),
+                new PositionVertex(new Vector3(0, 0, 1)),
+                new PositionVertex(new Vector3(0, 1, 0)),
+                new PositionVertex(new Vector3(0, 1, 1)),
+                new PositionVertex(new Vector3(1, 0, 0)),
+                new PositionVertex(new Vector3(1, 0, 1)),
+                new PositionVertex(new Vector3(1, 1, 0)),
+                new PositionVertex(new Vector3(1, 1, 1)),
             };
 
-            PositionColorVertex[] otherVerts = new PositionColorVertex[]
+            PositionVertex[] otherVerts = new PositionVertex[]
             {
-                new PositionColorVertex(new Vector3(0.5f, 0.5f, 0.5f), Color.Fuchsia),
-                new PositionColorVertex(new Vector3(0.1f, 0.1f, 0.1f), Color.LightCoral),
-                new PositionColorVertex(new Vector3(0.2f, 0.2f, 0.2f), Color.Lime)
+                new PositionVertex(new Vector3(1, 2, 3)),
+                new PositionVertex(new Vector3(4, 5, 6)),
+                new PositionVertex(new Vector3(7, 8, 9))
             };
 
-            int vertexSize = Marshal.SizeOf<PositionColorVertex>();
+            int vertexSize = Marshal.SizeOf<PositionVertex>();
 
-            Buffer vertexBuffer = Buffer.Create<PositionColorVertex>(
+            Buffer vertexBuffer = Buffer.Create<PositionVertex>(
                 GraphicsDevice,
                 BufferUsageFlags.Vertex,
                 (uint) vertices.Length
@@ -44,7 +44,7 @@ namespace MoonWorks.Test
             GraphicsDevice.Wait();
 
             // Read back and print out the vertex values
-            PositionColorVertex[] readbackVertices = new PositionColorVertex[vertices.Length];
+            PositionVertex[] readbackVertices = new PositionVertex[vertices.Length];
             vertexBuffer.GetData(
                 readbackVertices,
                 (uint) (vertexSize * readbackVertices.Length) // FIXME: Seems like this should get auto-calculated somehow
@@ -65,7 +65,7 @@ namespace MoonWorks.Test
                 readbackVertices,
                 (uint) (vertexSize * readbackVertices.Length)
             );
-            Logger.LogInfo("===");
+            Logger.LogInfo("=== Change first three vertices ===");
             for (int i = 0; i < readbackVertices.Length; i += 1)
             {
                 Logger.LogInfo(readbackVertices[i].ToString());
@@ -88,7 +88,7 @@ namespace MoonWorks.Test
                 readbackVertices,
                 (uint) (vertexSize * readbackVertices.Length)
             );
-            Logger.LogInfo("===");
+            Logger.LogInfo("=== Change last two vertices ===");
             for (int i = 0; i < readbackVertices.Length; i += 1)
             {
                 Logger.LogInfo(readbackVertices[i].ToString());
@@ -98,7 +98,17 @@ namespace MoonWorks.Test
 
         protected override void Update(System.TimeSpan delta) { }
 
-        protected override void Draw(double alpha) { }
+        protected override void Draw(double alpha)
+        {
+            CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
+            Texture? swapchainTexture = cmdbuf.AcquireSwapchainTexture(MainWindow);
+            if (swapchainTexture != null)
+            {
+                cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchainTexture, Color.Black));
+                cmdbuf.EndRenderPass();
+            }
+            GraphicsDevice.Submit(cmdbuf);
+        }
 
         public static void Main(string[] args)
         {

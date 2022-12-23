@@ -25,7 +25,7 @@ namespace MoonWorks.Test
 
 		public TexturedQuadGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
 		{
-			Logger.LogInfo("Press A and D to cycle between sampler states");
+			Logger.LogInfo("Press Left and Right to cycle between sampler states");
 			Logger.LogInfo("Setting sampler state to: " + samplerNames[0]);
 
 			// Load the shaders
@@ -86,7 +86,7 @@ namespace MoonWorks.Test
 		{
 			int prevSamplerIndex = currentSamplerIndex;
 
-			if (Inputs.Keyboard.IsPressed(Input.KeyCode.A))
+			if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Left))
 			{
 				currentSamplerIndex -= 1;
 				if (currentSamplerIndex < 0)
@@ -95,7 +95,7 @@ namespace MoonWorks.Test
 				}
 			}
 
-			if (Inputs.Keyboard.IsPressed(Input.KeyCode.D))
+			if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Right))
 			{
 				currentSamplerIndex += 1;
 				if (currentSamplerIndex >= samplers.Length)

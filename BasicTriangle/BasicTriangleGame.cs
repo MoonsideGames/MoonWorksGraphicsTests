@@ -17,7 +17,7 @@ namespace MoonWorks.Test
 
 		public BasicTriangleGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
 		{
-			Logger.LogInfo("Press A to toggle wireframe mode\nPress S to toggle small viewport\nPress D to toggle scissor rect");
+            Logger.LogInfo("Press Left to toggle wireframe mode\nPress Down to toggle small viewport\nPress Right to toggle scissor rect");
 
 			ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("RawTriangleVertices.spv"));
 			ShaderModule fragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("SolidColor.spv"));
@@ -35,19 +35,19 @@ namespace MoonWorks.Test
 
 		protected override void Update(System.TimeSpan delta)
 		{
-			if (Inputs.Keyboard.IsPressed(Input.KeyCode.A))
+			if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Left))
 			{
 				useWireframeMode = !useWireframeMode;
 				Logger.LogInfo("Using wireframe mode: " + useWireframeMode);
 			}
 
-			if (Inputs.Keyboard.IsPressed(Input.KeyCode.S))
+			if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Bottom))
 			{
 				useSmallViewport = !useSmallViewport;
 				Logger.LogInfo("Using small viewport: " + useSmallViewport);
 			}
 
-			if (Inputs.Keyboard.IsPressed(Input.KeyCode.D))
+			if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Right))
 			{
 				useScissorRect = !useScissorRect;
 				Logger.LogInfo("Using scissor rect: " + useScissorRect);

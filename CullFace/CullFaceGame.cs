@@ -19,7 +19,7 @@ namespace MoonWorks.Test
 
 		public CullFaceGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
 		{
-			Logger.LogInfo("Press A to toggle the winding order of the triangles (default is counter-clockwise)");
+			Logger.LogInfo("Press Down to toggle the winding order of the triangles (default is counter-clockwise)");
 
 			// Load the shaders
 			ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("PositionColorVert.spv"));
@@ -84,7 +84,7 @@ namespace MoonWorks.Test
 
 		protected override void Update(System.TimeSpan delta)
 		{
-			if (Inputs.Keyboard.IsPressed(Input.KeyCode.A))
+			if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Bottom))
 			{
 				useClockwiseWinding = !useClockwiseWinding;
 				Logger.LogInfo("Using clockwise winding: " + useClockwiseWinding);

@@ -4,35 +4,36 @@ using MoonWorks.Math.Float;
 
 namespace MoonWorks.Test
 {
-    class BasicComputeGame : Game
+    class ComputeUniformsGame : Game
     {
         private GraphicsPipeline drawPipeline;
         private Texture texture;
         private Sampler sampler;
         private Buffer vertexBuffer;
 
-        public BasicComputeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+        struct GradientTextureComputeUniforms
+        {
+            public uint groupCountX;
+            public uint groupCountY;
+
+            public GradientTextureComputeUniforms(uint w, uint h)
+            {
+                groupCountX = w;
+                groupCountY = h;
+            }
+        }
+
+        public ComputeUniformsGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
         {
             // Create the compute pipeline that writes texture data
-            ShaderModule fillTextureComputeShaderModule = new ShaderModule(
+            ShaderModule gradientTextureComputeShaderModule = new ShaderModule(
                 GraphicsDevice,
-                TestUtils.GetShaderPath("FillTextureCompute.spv")
+                TestUtils.GetShaderPath("GradientTextureCompute.spv")
             );
 
-            ComputePipeline fillTextureComputePipeline = new ComputePipeline(
+            ComputePipeline gradientTextureComputePipeline = new ComputePipeline(
                 GraphicsDevice,
-                ComputeShaderInfo.Create(fillTextureComputeShaderModule, "main", 0, 1)
-            );
-
-            // Create the compute pipeline that calculates squares of numbers
-            ShaderModule calculateSquaresComputeShaderModule = new ShaderModule(
-                GraphicsDevice,
-                TestUtils.GetShaderPath("CalculateSquaresCompute.spv")
-            );
-
-            ComputePipeline calculateSquaresComputePipeline = new ComputePipeline(
-                GraphicsDevice,
-                ComputeShaderInfo.Create(calculateSquaresComputeShaderModule, "main", 1, 0)
+                ComputeShaderInfo.Create<GradientTextureComputeUniforms>(gradientTextureComputeShaderModule, "main", 0, 1)
             );
 
             // Create the graphics pipeline
@@ -47,7 +48,7 @@ namespace MoonWorks.Test
             );
 
             GraphicsPipelineCreateInfo drawPipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
-				MainWindow.SwapchainFormat,
+                MainWindow.SwapchainFormat,
                 vertShaderModule,
                 fragShaderModule
             );
@@ -64,13 +65,6 @@ namespace MoonWorks.Test
             );
 
             // Create buffers and textures
-            uint[] squares = new uint[64];
-            Buffer squaresBuffer = Buffer.Create<uint>(
-                GraphicsDevice,
-                BufferUsageFlags.Compute,
-                (uint) squares.Length
-            );
-
             vertexBuffer = Buffer.Create<PositionTextureVertex>(
                 GraphicsDevice,
                 BufferUsageFlags.Vertex,
@@ -89,7 +83,6 @@ namespace MoonWorks.Test
 
             // Upload GPU resources and dispatch compute work
             CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-
             cmdbuf.SetBufferData(vertexBuffer, new PositionTextureVertex[]
             {
                 new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
@@ -100,22 +93,18 @@ namespace MoonWorks.Test
                 new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
             });
 
-            // This should result in a bright yellow texture!
-            cmdbuf.BindComputePipeline(fillTextureComputePipeline);
-            cmdbuf.BindComputeTextures(texture);
-            cmdbuf.DispatchCompute(texture.Width / 8, texture.Height / 8, 1, 0);
+            GradientTextureComputeUniforms gradientUniforms = new GradientTextureComputeUniforms(
+                texture.Width / 8,
+                texture.Height / 8
+            );
 
-            // This calculates the squares of the first N integers!
-            cmdbuf.BindComputePipeline(calculateSquaresComputePipeline);
-            cmdbuf.BindComputeBuffers(squaresBuffer);
-            cmdbuf.DispatchCompute((uint) squares.Length / 8, 1, 1, 0);
+            cmdbuf.BindComputePipeline(gradientTextureComputePipeline);
+            cmdbuf.BindComputeTextures(texture);
+            cmdbuf.PushComputeShaderUniforms(gradientUniforms);
+            cmdbuf.DispatchCompute(gradientUniforms.groupCountX, gradientUniforms.groupCountY, 1, 0);
 
             GraphicsDevice.Submit(cmdbuf);
             GraphicsDevice.Wait();
-
-            // Print the squares!
-            squaresBuffer.GetData(squares, (uint) (sizeof(uint) * squares.Length));
-            Logger.LogInfo("Squares of the first " + squares.Length + " integers: " + string.Join(", ", squares));
         }
 
         protected override void Update(System.TimeSpan delta) { }
@@ -138,7 +127,7 @@ namespace MoonWorks.Test
 
         public static void Main(string[] args)
         {
-            BasicComputeGame game = new BasicComputeGame();
+            ComputeUniformsGame game = new ComputeUniformsGame();
             game.Run();
         }
     }

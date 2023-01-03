@@ -29,7 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cube", "Cube\Cube.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicCompute", "BasicCompute\BasicCompute.csproj", "{68D47057-BBCB-4F86-9C0A-D6D730B18D9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComputeUniforms", "ComputeUniforms\ComputeUniforms.csproj", "{5F8BBD49-6C39-4186-A4A3-91D6662D3ABD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComputeUniforms", "ComputeUniforms\ComputeUniforms.csproj", "{5F8BBD49-6C39-4186-A4A3-91D6662D3ABD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrawIndirect", "DrawIndirect\DrawIndirect.csproj", "{CA6E0ACF-3698-452F-B71F-51286EB5E1B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +95,10 @@ Global
 		{5F8BBD49-6C39-4186-A4A3-91D6662D3ABD}.Debug|x64.Build.0 = Debug|x64
 		{5F8BBD49-6C39-4186-A4A3-91D6662D3ABD}.Release|x64.ActiveCfg = Release|Any CPU
 		{5F8BBD49-6C39-4186-A4A3-91D6662D3ABD}.Release|x64.Build.0 = Release|Any CPU
+		{CA6E0ACF-3698-452F-B71F-51286EB5E1B2}.Debug|x64.ActiveCfg = Debug|x64
+		{CA6E0ACF-3698-452F-B71F-51286EB5E1B2}.Debug|x64.Build.0 = Debug|x64
+		{CA6E0ACF-3698-452F-B71F-51286EB5E1B2}.Release|x64.ActiveCfg = Release|Any CPU
+		{CA6E0ACF-3698-452F-B71F-51286EB5E1B2}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

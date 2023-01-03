@@ -47,3 +47,7 @@ Uses compute pipelines to (1) fill a texture with yellow pixels then display it 
 **ComputeUniforms**
 
 Uses a compute pipeline to fill a texture with a color gradient. Tests compute uniforms.
+
+**DrawIndirect**
+
+Draws two triangles via indirect commands. Tests DrawPrimitivesIndirect.

@@ -100,8 +100,8 @@ namespace MoonWorks.Test
 
             cmdbuf.BindComputePipeline(gradientTextureComputePipeline);
             cmdbuf.BindComputeTextures(texture);
-            cmdbuf.PushComputeShaderUniforms(gradientUniforms);
-            cmdbuf.DispatchCompute(gradientUniforms.groupCountX, gradientUniforms.groupCountY, 1, 0);
+            uint offset = cmdbuf.PushComputeShaderUniforms(gradientUniforms);
+            cmdbuf.DispatchCompute(gradientUniforms.groupCountX, gradientUniforms.groupCountY, 1, offset);
 
             GraphicsDevice.Submit(cmdbuf);
             GraphicsDevice.Wait();

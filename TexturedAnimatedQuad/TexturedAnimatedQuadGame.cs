@@ -49,6 +49,7 @@ namespace MoonWorks.Test
 				vertShaderModule,
 				fragShaderModule
 			);
+			pipelineCreateInfo.AttachmentInfo.ColorAttachmentDescriptions[0].BlendState = ColorAttachmentBlendState.AlphaBlend;
 			pipelineCreateInfo.VertexInputState = new VertexInputState(
 				VertexBinding.Create<PositionTextureVertex>(),
 				VertexAttribute.Create<PositionTextureVertex>("Position", 0),
@@ -68,10 +69,10 @@ namespace MoonWorks.Test
 				vertexBuffer,
 				new PositionTextureVertex[]
 				{
-					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
-					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
-					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
+					new PositionTextureVertex(new Vector3(-0.5f, -0.5f, 0), new Vector2(0, 0)),
+					new PositionTextureVertex(new Vector3(0.5f, -0.5f, 0), new Vector2(1, 0)),
+					new PositionTextureVertex(new Vector3(0.5f, 0.5f, 0), new Vector2(1, 1)),
+					new PositionTextureVertex(new Vector3(-0.5f, 0.5f, 0), new Vector2(0, 1)),
 				}
 			);
 			cmdbuf.SetBufferData(
@@ -94,8 +95,9 @@ namespace MoonWorks.Test
 
 		protected override void Draw(double alpha)
 		{
-			VertexUniforms vertUniforms = new VertexUniforms(Matrix4x4.CreateRotationZ(t));
-			FragmentUniforms fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Sin(t) * 0.5f, 1f, 1f));
+			VertexUniforms vertUniforms;
+			FragmentUniforms fragUniforms;
+			uint vertParamOffset, fragParamOffset;
 
 			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
@@ -106,9 +108,35 @@ namespace MoonWorks.Test
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(texture, sampler));
-				uint vertParamOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
-				uint fragParamOffset = cmdbuf.PushFragmentShaderUniforms(fragUniforms);
+
+				// Top-left
+				vertUniforms = new VertexUniforms(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(-0.5f, -0.5f, 0)));
+				fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Sin(t) * 0.5f, 1f, 1f));
+				vertParamOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
+				fragParamOffset = cmdbuf.PushFragmentShaderUniforms(fragUniforms);
 				cmdbuf.DrawIndexedPrimitives(0, 0, 2, vertParamOffset, fragParamOffset);
+
+				// Top-right
+				vertUniforms = new VertexUniforms(Matrix4x4.CreateRotationZ((2 * System.MathF.PI) - t) * Matrix4x4.CreateTranslation(new Vector3(0.5f, -0.5f, 0)));
+				fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Cos(t) * 0.5f, 1f, 1f));
+				vertParamOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
+				fragParamOffset = cmdbuf.PushFragmentShaderUniforms(fragUniforms);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 2, vertParamOffset, fragParamOffset);
+
+				// Bottom-left
+				vertUniforms = new VertexUniforms(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(-0.5f, 0.5f, 0)));
+				fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Sin(t) * 0.2f, 1f, 1f));
+				vertParamOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
+				fragParamOffset = cmdbuf.PushFragmentShaderUniforms(fragUniforms);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 2, vertParamOffset, fragParamOffset);
+
+				// Bottom-right
+				vertUniforms = new VertexUniforms(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(0.5f, 0.5f, 0)));
+				fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Cos(t) * 1f, 1f, 1f));
+				vertParamOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
+				fragParamOffset = cmdbuf.PushFragmentShaderUniforms(fragUniforms);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 2, vertParamOffset, fragParamOffset);
+
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

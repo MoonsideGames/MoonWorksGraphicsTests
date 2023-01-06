@@ -165,11 +165,7 @@ namespace MoonWorks.Test
                     ),
                 DepthStencilState = DepthStencilState.DepthReadWrite,
                 VertexShaderInfo = GraphicsShaderInfo.Create<ViewProjectionUniforms>(cubeVertShaderModule, "main", 0),
-                VertexInputState = new VertexInputState(
-                        VertexBinding.Create<PositionColorVertex>(),
-                        VertexAttribute.Create<PositionColorVertex>("Position", 0),
-                        VertexAttribute.Create<PositionColorVertex>("Color", 1)
-                    ),
+                VertexInputState = VertexInputState.CreateSingleBinding<PositionColorVertex>(),
                 PrimitiveType = PrimitiveType.TriangleList,
                 FragmentShaderInfo = GraphicsShaderInfo.Create(cubeFragShaderModule, "main", 0),
                 RasterizerState = RasterizerState.CW_CullBack,
@@ -193,10 +189,7 @@ namespace MoonWorks.Test
                     ),
                 DepthStencilState = DepthStencilState.DepthReadWrite,
                 VertexShaderInfo = GraphicsShaderInfo.Create<ViewProjectionUniforms>(skyboxVertShaderModule, "main", 0),
-                VertexInputState = new VertexInputState(
-                        VertexBinding.Create<PositionVertex>(),
-                        VertexAttribute.Create<PositionVertex>("Position", 0)
-                    ),
+                VertexInputState = VertexInputState.CreateSingleBinding<PositionVertex>(),
                 PrimitiveType = PrimitiveType.TriangleList,
                 FragmentShaderInfo = GraphicsShaderInfo.Create(skyboxFragShaderModule, "main", 1),
                 RasterizerState = RasterizerState.CW_CullNone,
@@ -214,11 +207,7 @@ namespace MoonWorks.Test
                 blitVertShaderModule,
                 blitFragShaderModule
             );
-            blitPipelineCreateInfo.VertexInputState = new VertexInputState(
-				VertexBinding.Create<PositionTextureVertex>(),
-				VertexAttribute.Create<PositionTextureVertex>("Position", 0),
-				VertexAttribute.Create<PositionTextureVertex>("TexCoord", 1)
-			);
+            blitPipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
             blitPipelineCreateInfo.FragmentShaderInfo = GraphicsShaderInfo.Create<DepthUniforms>(blitFragShaderModule, "main", 1);
 			blitPipeline = new GraphicsPipeline(GraphicsDevice, blitPipelineCreateInfo);
         }

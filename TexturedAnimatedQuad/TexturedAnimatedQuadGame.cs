@@ -50,11 +50,7 @@ namespace MoonWorks.Test
 				fragShaderModule
 			);
 			pipelineCreateInfo.AttachmentInfo.ColorAttachmentDescriptions[0].BlendState = ColorAttachmentBlendState.AlphaBlend;
-			pipelineCreateInfo.VertexInputState = new VertexInputState(
-				VertexBinding.Create<PositionTextureVertex>(),
-				VertexAttribute.Create<PositionTextureVertex>("Position", 0),
-				VertexAttribute.Create<PositionTextureVertex>("TexCoord", 1)
-			);
+			pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
 			pipelineCreateInfo.VertexShaderInfo = GraphicsShaderInfo.Create<VertexUniforms>(vertShaderModule, "main", 0);
 			pipelineCreateInfo.FragmentShaderInfo = GraphicsShaderInfo.Create<FragmentUniforms>(fragShaderModule, "main", 1);
 			pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);

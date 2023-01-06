@@ -31,11 +31,7 @@ namespace MoonWorks.Test
 				vertShaderModule,
 				fragShaderModule
 			);
-			pipelineCreateInfo.VertexInputState = new VertexInputState(
-				VertexBinding.Create<PositionColorVertex>(),
-				VertexAttribute.Create<PositionColorVertex>("Position", 0),
-				VertexAttribute.Create<PositionColorVertex>("Color", 1)
-			);
+			pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionColorVertex>();
 
 			pipelineCreateInfo.RasterizerState = RasterizerState.CW_CullNone;
 			CW_CullNonePipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);

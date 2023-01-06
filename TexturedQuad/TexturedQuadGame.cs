@@ -38,11 +38,7 @@ namespace MoonWorks.Test
 				vertShaderModule,
 				fragShaderModule
 			);
-			pipelineCreateInfo.VertexInputState = new VertexInputState(
-				VertexBinding.Create<PositionTextureVertex>(),
-				VertexAttribute.Create<PositionTextureVertex>("Position", 0),
-				VertexAttribute.Create<PositionTextureVertex>("TexCoord", 1)
-			);
+			pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
 			pipelineCreateInfo.FragmentShaderInfo.SamplerBindingCount = 1;
 			pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 

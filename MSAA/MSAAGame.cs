@@ -124,7 +124,7 @@ namespace MoonWorks.Test
 						rt,
 						Color.Black,
 						currentSampleCount,
-						StoreOp.DontCare
+						StoreOp.Store
 					)
 				);
 				cmdbuf.BindGraphicsPipeline(msaaPipelines[(int) currentSampleCount]);

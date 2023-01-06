@@ -95,6 +95,8 @@ namespace MoonWorks.Test
 			{
 				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.Black));
 
+				// Need to bind a pipeline before binding vertex buffers
+				cmdbuf.BindGraphicsPipeline(CW_CullNonePipeline);
 				if (useClockwiseWinding)
 				{
 					cmdbuf.BindVertexBuffers(cwVertexBuffer);
@@ -105,7 +107,6 @@ namespace MoonWorks.Test
 				}
 
 				cmdbuf.SetViewport(new Viewport(0, 0, 213, 240));
-				cmdbuf.BindGraphicsPipeline(CW_CullNonePipeline);
 				cmdbuf.DrawPrimitives(0, 1, 0, 0);
 
 				cmdbuf.SetViewport(new Viewport(213, 0, 213, 240));

@@ -94,5 +94,37 @@ namespace MoonWorks.Test
 
             return pressed;
         }
+
+        public static bool CheckButtonDown(Input.Inputs inputs, ButtonType buttonType)
+        {
+            bool down = false;
+
+            if (buttonType == ButtonType.Left)
+            {
+                down = (
+                    (inputs.GamepadExists(0) && inputs.GetGamepad(0).DpadLeft.IsDown) ||
+                    inputs.Keyboard.IsDown(Input.KeyCode.A) ||
+                    inputs.Keyboard.IsDown(Input.KeyCode.Left)
+                );
+            }
+            else if (buttonType == ButtonType.Bottom)
+            {
+                down = (
+                    (inputs.GamepadExists(0) && inputs.GetGamepad(0).DpadDown.IsDown) ||
+                    inputs.Keyboard.IsDown(Input.KeyCode.S) ||
+                    inputs.Keyboard.IsDown(Input.KeyCode.Down)
+                );
+            }
+            else if (buttonType == ButtonType.Right)
+            {
+                down = (
+                    (inputs.GamepadExists(0) && inputs.GetGamepad(0).DpadRight.IsDown) ||
+                    inputs.Keyboard.IsDown(Input.KeyCode.D) ||
+                    inputs.Keyboard.IsDown(Input.KeyCode.Right)
+                );
+            }
+
+            return down;
+        }
     }
 }

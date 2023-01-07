@@ -31,6 +31,7 @@ namespace MoonWorks.Test
         private Quaternion cubeRotation = Quaternion.Identity;
         private Quaternion previousCubeRotation = Quaternion.Identity;
         private bool depthOnlyEnabled = false;
+        private Vector3 camPos = new Vector3(0, 1.5f, 4f);
 
         struct ViewProjectionUniforms
         {
@@ -330,7 +331,8 @@ namespace MoonWorks.Test
 
             finishedLoading = true;
             Logger.LogInfo("Finished loading!");
-            Logger.LogInfo("Press Down to toggle Depth-Only Mode");
+            Logger.LogInfo("Press Left to toggle Depth-Only Mode");
+            Logger.LogInfo("Press Down to move the camera upwards");
         }
 
         protected override void Update(System.TimeSpan delta)
@@ -345,7 +347,16 @@ namespace MoonWorks.Test
                 cubeTimer * 2f
             );
 
-            if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Bottom))
+            if (TestUtils.CheckButtonDown(Inputs, TestUtils.ButtonType.Bottom))
+            {
+                camPos.Y = System.MathF.Min(camPos.Y + 0.2f, 15f);
+            }
+            else
+            {
+                camPos.Y = System.MathF.Max(camPos.Y - 0.4f, 1.5f);
+            }
+
+            if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Left))
             {
                 depthOnlyEnabled = !depthOnlyEnabled;
                 Logger.LogInfo("Depth-Only Mode enabled: " + depthOnlyEnabled);
@@ -361,7 +372,7 @@ namespace MoonWorks.Test
                 depthUniforms.ZFar
             );
             Matrix4x4 view = Matrix4x4.CreateLookAt(
-                new Vector3(0, 1.5f, 4f),
+                camPos,
                 Vector3.Zero,
                 Vector3.Up
             );

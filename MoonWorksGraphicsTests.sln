@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawIndirect", "DrawIndirec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompressedTextures", "CompressedTextures\CompressedTextures.csproj", "{E90D236C-BD0F-4420-ADD0-867D21F4DCA5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CopyTexture", "CopyTexture\CopyTexture.csproj", "{CF25A5A2-A0BD-4C9B-BB07-19CCD97C1C4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -105,6 +107,10 @@ Global
 		{E90D236C-BD0F-4420-ADD0-867D21F4DCA5}.Debug|x64.Build.0 = Debug|x64
 		{E90D236C-BD0F-4420-ADD0-867D21F4DCA5}.Release|x64.ActiveCfg = Release|Any CPU
 		{E90D236C-BD0F-4420-ADD0-867D21F4DCA5}.Release|x64.Build.0 = Release|Any CPU
+		{CF25A5A2-A0BD-4C9B-BB07-19CCD97C1C4E}.Debug|x64.ActiveCfg = Debug|x64
+		{CF25A5A2-A0BD-4C9B-BB07-19CCD97C1C4E}.Debug|x64.Build.0 = Debug|x64
+		{CF25A5A2-A0BD-4C9B-BB07-19CCD97C1C4E}.Release|x64.ActiveCfg = Release|Any CPU
+		{CF25A5A2-A0BD-4C9B-BB07-19CCD97C1C4E}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

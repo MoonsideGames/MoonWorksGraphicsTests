@@ -51,3 +51,7 @@ Uses a compute pipeline to fill a texture with a color gradient. Tests compute u
 **DrawIndirect**
 
 Draws two triangles via indirect commands. Tests DrawPrimitivesIndirect.
+
+**CompressedTextures**
+
+Loads a series of compressed textures, then displays them for viewing. Tests compressed texture loading.

@@ -31,7 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicCompute", "BasicComput
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComputeUniforms", "ComputeUniforms\ComputeUniforms.csproj", "{5F8BBD49-6C39-4186-A4A3-91D6662D3ABD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrawIndirect", "DrawIndirect\DrawIndirect.csproj", "{CA6E0ACF-3698-452F-B71F-51286EB5E1B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawIndirect", "DrawIndirect\DrawIndirect.csproj", "{CA6E0ACF-3698-452F-B71F-51286EB5E1B2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompressedTextures", "CompressedTextures\CompressedTextures.csproj", "{E90D236C-BD0F-4420-ADD0-867D21F4DCA5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,6 +101,10 @@ Global
 		{CA6E0ACF-3698-452F-B71F-51286EB5E1B2}.Debug|x64.Build.0 = Debug|x64
 		{CA6E0ACF-3698-452F-B71F-51286EB5E1B2}.Release|x64.ActiveCfg = Release|Any CPU
 		{CA6E0ACF-3698-452F-B71F-51286EB5E1B2}.Release|x64.Build.0 = Release|Any CPU
+		{E90D236C-BD0F-4420-ADD0-867D21F4DCA5}.Debug|x64.ActiveCfg = Debug|x64
+		{E90D236C-BD0F-4420-ADD0-867D21F4DCA5}.Debug|x64.Build.0 = Debug|x64
+		{E90D236C-BD0F-4420-ADD0-867D21F4DCA5}.Release|x64.ActiveCfg = Release|Any CPU
+		{E90D236C-BD0F-4420-ADD0-867D21F4DCA5}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

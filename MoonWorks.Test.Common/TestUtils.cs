@@ -48,7 +48,7 @@ namespace MoonWorks.Test
 
 		public static string GetShaderPath(string shaderName)
 		{
-			return SDL2.SDL.SDL_GetBasePath() + "Content/Shaders/Compiled/" + shaderName;
+			return SDL2.SDL.SDL_GetBasePath() + "Content/Shaders/Compiled/" + shaderName + ".refresh";
 		}
 
 		public static string GetTexturePath(string textureName)

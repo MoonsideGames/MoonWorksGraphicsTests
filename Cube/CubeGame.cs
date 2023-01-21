@@ -86,29 +86,29 @@ namespace MoonWorks.Test
         {
             ShaderModule cubeVertShaderModule = new ShaderModule(
                 GraphicsDevice,
-                TestUtils.GetShaderPath("PositionColorVertWithMatrix.spv")
+                TestUtils.GetShaderPath("PositionColorVertWithMatrix")
             );
             ShaderModule cubeFragShaderModule = new ShaderModule(
                 GraphicsDevice,
-                TestUtils.GetShaderPath("SolidColor.spv")
+                TestUtils.GetShaderPath("SolidColor")
             );
 
             ShaderModule skyboxVertShaderModule = new ShaderModule(
                 GraphicsDevice,
-                TestUtils.GetShaderPath("SkyboxVert.spv")
+                TestUtils.GetShaderPath("SkyboxVert")
             );
             ShaderModule skyboxFragShaderModule = new ShaderModule(
                 GraphicsDevice,
-                TestUtils.GetShaderPath("SkyboxFrag.spv")
+                TestUtils.GetShaderPath("SkyboxFrag")
             );
 
             ShaderModule blitVertShaderModule = new ShaderModule(
                 GraphicsDevice,
-                TestUtils.GetShaderPath("TexturedQuadVert.spv")
+                TestUtils.GetShaderPath("TexturedQuadVert")
             );
             ShaderModule blitFragShaderModule = new ShaderModule(
                 GraphicsDevice,
-                TestUtils.GetShaderPath("TexturedDepthQuadFrag.spv")
+                TestUtils.GetShaderPath("TexturedDepthQuadFrag")
             );
 
             depthTexture = Texture.CreateTexture2D(

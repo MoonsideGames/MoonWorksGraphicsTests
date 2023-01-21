@@ -28,7 +28,7 @@ namespace MoonWorks.Test
             // Create the compute pipeline that writes texture data
             ShaderModule gradientTextureComputeShaderModule = new ShaderModule(
                 GraphicsDevice,
-                TestUtils.GetShaderPath("GradientTextureCompute.spv")
+                TestUtils.GetShaderPath("GradientTextureCompute")
             );
 
             ComputePipeline gradientTextureComputePipeline = new ComputePipeline(
@@ -39,12 +39,12 @@ namespace MoonWorks.Test
             // Create the graphics pipeline
             ShaderModule vertShaderModule = new ShaderModule(
                 GraphicsDevice,
-                TestUtils.GetShaderPath("TexturedQuadVert.spv")
+                TestUtils.GetShaderPath("TexturedQuadVert")
             );
 
             ShaderModule fragShaderModule = new ShaderModule(
                 GraphicsDevice,
-                TestUtils.GetShaderPath("TexturedQuadFrag.spv")
+                TestUtils.GetShaderPath("TexturedQuadFrag")
             );
 
             GraphicsPipelineCreateInfo drawPipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(

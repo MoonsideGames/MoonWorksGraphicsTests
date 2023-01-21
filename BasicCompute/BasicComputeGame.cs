@@ -16,7 +16,7 @@ namespace MoonWorks.Test
             // Create the compute pipeline that writes texture data
             ShaderModule fillTextureComputeShaderModule = new ShaderModule(
                 GraphicsDevice,
-                TestUtils.GetShaderPath("FillTextureCompute.spv")
+                TestUtils.GetShaderPath("FillTextureCompute")
             );
 
             ComputePipeline fillTextureComputePipeline = new ComputePipeline(
@@ -27,7 +27,7 @@ namespace MoonWorks.Test
             // Create the compute pipeline that calculates squares of numbers
             ShaderModule calculateSquaresComputeShaderModule = new ShaderModule(
                 GraphicsDevice,
-                TestUtils.GetShaderPath("CalculateSquaresCompute.spv")
+                TestUtils.GetShaderPath("CalculateSquaresCompute")
             );
 
             ComputePipeline calculateSquaresComputePipeline = new ComputePipeline(
@@ -38,12 +38,12 @@ namespace MoonWorks.Test
             // Create the graphics pipeline
             ShaderModule vertShaderModule = new ShaderModule(
                 GraphicsDevice,
-                TestUtils.GetShaderPath("TexturedQuadVert.spv")
+                TestUtils.GetShaderPath("TexturedQuadVert")
             );
 
             ShaderModule fragShaderModule = new ShaderModule(
                 GraphicsDevice,
-                TestUtils.GetShaderPath("TexturedQuadFrag.spv")
+                TestUtils.GetShaderPath("TexturedQuadFrag")
             );
 
             GraphicsPipelineCreateInfo drawPipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(

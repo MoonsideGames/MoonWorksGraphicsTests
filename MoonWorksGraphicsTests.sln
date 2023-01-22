@@ -43,6 +43,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Texture3D", "Texture3D\Text
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstancingAndOffsets", "InstancingAndOffsets\InstancingAndOffsets.csproj", "{5CDA8D41-F96C-4DE7-AD53-5A76C4C0CC31}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VertexSampler", "VertexSampler\VertexSampler.csproj", "{C525B6DE-3003-45D5-BB83-89679B108C08}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -129,6 +131,10 @@ Global
 		{5CDA8D41-F96C-4DE7-AD53-5A76C4C0CC31}.Debug|x64.Build.0 = Debug|x64
 		{5CDA8D41-F96C-4DE7-AD53-5A76C4C0CC31}.Release|x64.ActiveCfg = Release|x64
 		{5CDA8D41-F96C-4DE7-AD53-5A76C4C0CC31}.Release|x64.Build.0 = Release|x64
+		{C525B6DE-3003-45D5-BB83-89679B108C08}.Debug|x64.ActiveCfg = Debug|x64
+		{C525B6DE-3003-45D5-BB83-89679B108C08}.Debug|x64.Build.0 = Debug|x64
+		{C525B6DE-3003-45D5-BB83-89679B108C08}.Release|x64.ActiveCfg = Release|Any CPU
+		{C525B6DE-3003-45D5-BB83-89679B108C08}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

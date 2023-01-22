@@ -71,3 +71,7 @@ Plays a sample Ogg Theora video file. Tests YUV textures and video rendering.
 **Texture3D**
 
 Displays 2D slices of a 3D texture. Tests creating and drawing 3D textures.
+
+**VertexSampler**
+
+Displays a triangle whose colors are driven by sampling a texture in the vertex shader.

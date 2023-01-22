@@ -52,13 +52,17 @@ Uses a compute pipeline to fill a texture with a color gradient. Tests compute u
 
 Draws two triangles via indirect commands. Tests DrawPrimitivesIndirect.
 
+**InstancingAndOffsets**
+
+Draws 16 instanced triangles. Tests DrawPrimitivesInstanced, vertex offsets, and index offsets.
+
 **CompressedTextures**
 
 Loads a series of compressed textures, then displays them for viewing. Tests compressed texture loading.
 
 **CopyTexture**
 
-Loads an image, then makes three copies of the image. One is a 1:1 scale image, another is a half-sized image (to test linear/nearest blitting), and the final copy is to a buffer. The buffer bytes are then compared with the original texture bytes to verify the copy's correctness. Tests CopyTextureToTexture, CopyTextureToBuffer, vertex offsets, and index offsets.
+Loads an image, then makes three copies of the image. One is a 1:1 scale image, another is a half-sized image (to test linear/nearest blitting), and the final copy is to a buffer. The buffer bytes are then compared with the original texture bytes to verify the copy's correctness. Tests CopyTextureToTexture and CopyTextureToBuffer.
 
 **VideoPlayer**
 

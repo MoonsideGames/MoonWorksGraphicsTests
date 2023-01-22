@@ -66,10 +66,6 @@ namespace MoonWorks.Test
                 {
                     0, 1, 2,
                     0, 2, 3,
-
-                    // For testing index offsets
-                    8, 9, 10,
-                    8, 10, 11,
                 }
             );
 
@@ -165,7 +161,7 @@ namespace MoonWorks.Test
                 cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(textureCopy, sampler));
                 cmdbuf.DrawIndexedPrimitives(4, 0, 2, 0, 0);
                 cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(textureSmallCopy, sampler));
-                cmdbuf.DrawIndexedPrimitives(0, 6, 2, 0, 0);
+                cmdbuf.DrawIndexedPrimitives(8, 0, 2, 0, 0);
                 cmdbuf.EndRenderPass();
             }
             GraphicsDevice.Submit(cmdbuf);

@@ -67,3 +67,7 @@ Loads an image, then makes three copies of the image. One is a 1:1 scale image, 
 **VideoPlayer**
 
 Plays a sample Ogg Theora video file. Tests YUV textures and video rendering.
+
+**Texture3D**
+
+Displays 2D slices of a 3D texture. Tests creating and drawing 3D textures.

@@ -41,6 +41,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoPlayer", "VideoPlayer\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstancingAndOffsets", "Instancing\InstancingAndOffsets.csproj", "{01427BDA-45E2-46C0-B116-024EBE541D45}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Texture3D", "Texture3D\Texture3D.csproj", "{9D0F0573-7FD4-4480-8F9B-CDD52120A170}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -123,6 +125,10 @@ Global
 		{01427BDA-45E2-46C0-B116-024EBE541D45}.Debug|x64.Build.0 = Debug|x64
 		{01427BDA-45E2-46C0-B116-024EBE541D45}.Release|x64.ActiveCfg = Release|x64
 		{01427BDA-45E2-46C0-B116-024EBE541D45}.Release|x64.Build.0 = Release|x64
+		{9D0F0573-7FD4-4480-8F9B-CDD52120A170}.Debug|x64.ActiveCfg = Debug|x64
+		{9D0F0573-7FD4-4480-8F9B-CDD52120A170}.Debug|x64.Build.0 = Debug|x64
+		{9D0F0573-7FD4-4480-8F9B-CDD52120A170}.Release|x64.ActiveCfg = Release|Any CPU
+		{9D0F0573-7FD4-4480-8F9B-CDD52120A170}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

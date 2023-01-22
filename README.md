@@ -59,3 +59,7 @@ Loads a series of compressed textures, then displays them for viewing. Tests com
 **CopyTexture**
 
 Loads an image, then makes three copies of the image. One is a 1:1 scale image, another is a half-sized image (to test linear/nearest blitting), and the final copy is to a buffer. The buffer bytes are then compared with the original texture bytes to verify the copy's correctness. Tests CopyTextureToTexture, CopyTextureToBuffer, vertex offsets, and index offsets.
+
+**VideoPlayer**
+
+Plays a sample Ogg Theora video file. Tests YUV textures and video rendering.

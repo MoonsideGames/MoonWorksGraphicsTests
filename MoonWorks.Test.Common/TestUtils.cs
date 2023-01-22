@@ -56,6 +56,11 @@ namespace MoonWorks.Test
 			return SDL2.SDL.SDL_GetBasePath() + "Content/Textures/" + textureName;
 		}
 
+        public static string GetVideoPath(string videoName)
+        {
+            return SDL2.SDL.SDL_GetBasePath() + "Content/Videos/" + videoName;
+        }
+
         public enum ButtonType
         {
             Left,	// A/left arrow on keyboard, left face button on gamepad

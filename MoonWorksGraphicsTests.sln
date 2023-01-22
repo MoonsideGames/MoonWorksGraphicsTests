@@ -35,7 +35,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawIndirect", "DrawIndirec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompressedTextures", "CompressedTextures\CompressedTextures.csproj", "{E90D236C-BD0F-4420-ADD0-867D21F4DCA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CopyTexture", "CopyTexture\CopyTexture.csproj", "{CF25A5A2-A0BD-4C9B-BB07-19CCD97C1C4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CopyTexture", "CopyTexture\CopyTexture.csproj", "{CF25A5A2-A0BD-4C9B-BB07-19CCD97C1C4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoPlayer", "VideoPlayer\VideoPlayer.csproj", "{FCD63849-9D3C-4D48-A8BD-39671096F03A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +113,10 @@ Global
 		{CF25A5A2-A0BD-4C9B-BB07-19CCD97C1C4E}.Debug|x64.Build.0 = Debug|x64
 		{CF25A5A2-A0BD-4C9B-BB07-19CCD97C1C4E}.Release|x64.ActiveCfg = Release|Any CPU
 		{CF25A5A2-A0BD-4C9B-BB07-19CCD97C1C4E}.Release|x64.Build.0 = Release|Any CPU
+		{FCD63849-9D3C-4D48-A8BD-39671096F03A}.Debug|x64.ActiveCfg = Debug|x64
+		{FCD63849-9D3C-4D48-A8BD-39671096F03A}.Debug|x64.Build.0 = Debug|x64
+		{FCD63849-9D3C-4D48-A8BD-39671096F03A}.Release|x64.ActiveCfg = Release|Any CPU
+		{FCD63849-9D3C-4D48-A8BD-39671096F03A}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

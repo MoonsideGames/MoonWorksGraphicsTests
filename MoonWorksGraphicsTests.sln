@@ -49,7 +49,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderTexture3D", "RenderTe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderTextureCube", "RenderTextureCube\RenderTextureCube.csproj", "{D7A8452F-123F-4965-8716-9E39F677A831}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mipmaps", "Mipmaps\Mipmaps.csproj", "{35DF0819-2373-4A8D-91E5-B143994FB63B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderTextureMipmaps", "RenderTextureMipmaps\RenderTextureMipmaps.csproj", "{2219C628-5593-4C23-86CB-0E1E96EBD6C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -149,10 +149,10 @@ Global
 		{D7A8452F-123F-4965-8716-9E39F677A831}.Debug|x64.Build.0 = Debug|x64
 		{D7A8452F-123F-4965-8716-9E39F677A831}.Release|x64.ActiveCfg = Release|Any CPU
 		{D7A8452F-123F-4965-8716-9E39F677A831}.Release|x64.Build.0 = Release|Any CPU
-		{35DF0819-2373-4A8D-91E5-B143994FB63B}.Debug|x64.ActiveCfg = Debug|x64
-		{35DF0819-2373-4A8D-91E5-B143994FB63B}.Debug|x64.Build.0 = Debug|x64
-		{35DF0819-2373-4A8D-91E5-B143994FB63B}.Release|x64.ActiveCfg = Release|Any CPU
-		{35DF0819-2373-4A8D-91E5-B143994FB63B}.Release|x64.Build.0 = Release|Any CPU
+		{2219C628-5593-4C23-86CB-0E1E96EBD6C5}.Debug|x64.ActiveCfg = Debug|x64
+		{2219C628-5593-4C23-86CB-0E1E96EBD6C5}.Debug|x64.Build.0 = Debug|x64
+		{2219C628-5593-4C23-86CB-0E1E96EBD6C5}.Release|x64.ActiveCfg = Release|x64
+		{2219C628-5593-4C23-86CB-0E1E96EBD6C5}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,11 +1,10 @@
 ﻿using MoonWorks;
 using MoonWorks.Graphics;
 using MoonWorks.Math.Float;
-using System.Runtime.InteropServices;
 
 namespace MoonWorks.Test
 {
-    class RenderTexture3DGame : Game
+    class RenderTextureMipmapsGame : Game
     {
         private GraphicsPipeline pipeline;
         private Buffer vertexBuffer;
@@ -53,7 +52,7 @@ namespace MoonWorks.Test
             }
         }
 
-        public RenderTexture3DGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+        public RenderTextureMipmapsGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
         {
             Logger.LogInfo("Press Left and Right to shrink/expand the scale of the quad");
             Logger.LogInfo("Press Down to cycle through sampler states");
@@ -187,7 +186,7 @@ namespace MoonWorks.Test
 
         public static void Main(string[] args)
         {
-            RenderTexture3DGame game = new RenderTexture3DGame();
+            RenderTextureMipmapsGame game = new RenderTextureMipmapsGame();
             game.Run();
         }
     }

@@ -49,16 +49,7 @@ namespace MoonWorks.Test
             // Create and populate the GPU resources
             vertexBuffer = Buffer.Create<PositionTextureVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 4);
             indexBuffer = Buffer.Create<ushort>(GraphicsDevice, BufferUsageFlags.Index, 6);
-            texture = new Texture(GraphicsDevice, new TextureCreateInfo
-            {
-                Width = 16,
-                Height = 16,
-                Depth = 7,
-                Format = TextureFormat.R8G8B8A8,
-                IsCube = false,
-                LevelCount = 1,
-                UsageFlags = TextureUsageFlags.Sampler
-            });
+            texture = Texture.CreateTexture3D(GraphicsDevice, 16, 16, 7, TextureFormat.R8G8B8A8, TextureUsageFlags.Sampler);
 
             CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
             cmdbuf.SetBufferData(

@@ -57,9 +57,9 @@ namespace MoonWorks.Test
                 new PositionTextureVertex[]
                 {
                     new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
-                    new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(4, 0)),
-                    new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(4, 4)),
-                    new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 4)),
+                    new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
+                    new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
+                    new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
                 }
             );
             cmdbuf.SetBufferData(

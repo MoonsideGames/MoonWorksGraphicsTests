@@ -45,7 +45,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstancingAndOffsets", "Ins
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VertexSampler", "VertexSampler\VertexSampler.csproj", "{C525B6DE-3003-45D5-BB83-89679B108C08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderTexture3D", "RenderTexture3D\RenderTexture3D.csproj", "{6D625A4C-8618-4DFC-A6AD-AA3BE3488D70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderTexture3D", "RenderTexture3D\RenderTexture3D.csproj", "{6D625A4C-8618-4DFC-A6AD-AA3BE3488D70}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderTextureCube", "RenderTextureCube\RenderTextureCube.csproj", "{D7A8452F-123F-4965-8716-9E39F677A831}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -141,6 +143,10 @@ Global
 		{6D625A4C-8618-4DFC-A6AD-AA3BE3488D70}.Debug|x64.Build.0 = Debug|x64
 		{6D625A4C-8618-4DFC-A6AD-AA3BE3488D70}.Release|x64.ActiveCfg = Release|Any CPU
 		{6D625A4C-8618-4DFC-A6AD-AA3BE3488D70}.Release|x64.Build.0 = Release|Any CPU
+		{D7A8452F-123F-4965-8716-9E39F677A831}.Debug|x64.ActiveCfg = Debug|x64
+		{D7A8452F-123F-4965-8716-9E39F677A831}.Debug|x64.Build.0 = Debug|x64
+		{D7A8452F-123F-4965-8716-9E39F677A831}.Release|x64.ActiveCfg = Release|Any CPU
+		{D7A8452F-123F-4965-8716-9E39F677A831}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -32,7 +32,7 @@ namespace MoonWorks.Test
                 FrontStencilState = new StencilOpState
                 {
                     Reference = 1,
-                    WriteMask = 0xFFFFFFFF,
+                    WriteMask = 0xFF,
                     CompareOp = CompareOp.Never,
                     FailOp = StencilOp.Replace,
                 }
@@ -45,7 +45,7 @@ namespace MoonWorks.Test
                 FrontStencilState = new StencilOpState
                 {
                     Reference = 0,
-                    CompareMask = 0xFFFFFFFF,
+                    CompareMask = 0xFF,
                     WriteMask = 0,
                     CompareOp = CompareOp.Equal,
                 }

@@ -39,7 +39,7 @@ namespace MoonWorks.Test
 				DepthStencilState = DepthStencilState.Disable,
 				MultisampleState = MultisampleState.None,
 				PrimitiveType = PrimitiveType.TriangleList,
-				RasterizerState = RasterizerState.CW_CullNone,
+				RasterizerState = RasterizerState.CCW_CullNone,
 				VertexInputState = VertexInputState.Empty,
 				VertexShaderInfo = GraphicsShaderInfo.Create(vertShaderModule, "main", 0),
 				FragmentShaderInfo = GraphicsShaderInfo.Create(fragShaderModule, "main", 0)

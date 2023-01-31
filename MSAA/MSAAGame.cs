@@ -9,7 +9,7 @@ namespace MoonWorks.Test
 		private GraphicsPipeline[] msaaPipelines = new GraphicsPipeline[4];
 		private GraphicsPipeline blitPipeline;
 
-		private Texture rt;
+		private Texture[] renderTargets = new Texture[4];
 		private Sampler rtSampler;
 		private Buffer quadVertexBuffer;
 		private Buffer quadIndexBuffer;
@@ -49,14 +49,21 @@ namespace MoonWorks.Test
 			pipelineCreateInfo.FragmentShaderInfo.SamplerBindingCount = 1;
 			blitPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
-			// Create the MSAA render texture and sampler
-			rt = Texture.CreateTexture2D(
-				GraphicsDevice,
-				MainWindow.Width,
-				MainWindow.Height,
-				TextureFormat.R8G8B8A8,
-				TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler
-			);
+			// Create the MSAA render textures
+			for (int i = 0; i < renderTargets.Length; i += 1)
+			{
+				renderTargets[i] = Texture.CreateTexture2D(
+					GraphicsDevice,
+					MainWindow.Width,
+					MainWindow.Height,
+					TextureFormat.R8G8B8A8,
+					TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler,
+					1,
+					(SampleCount) i
+				);
+			}
+
+			// Create the sampler
 			rtSampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 			// Create and populate the vertex and index buffers
@@ -119,14 +126,9 @@ namespace MoonWorks.Test
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (backbuffer != null)
 			{
-				cmdbuf.BeginRenderPass(
-					new ColorAttachmentInfo(
-						rt,
-						Color.Black,
-						currentSampleCount,
-						StoreOp.Store
-					)
-				);
+				Texture rt = renderTargets[(int) currentSampleCount];
+
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(rt, Color.Black));
 				cmdbuf.BindGraphicsPipeline(msaaPipelines[(int) currentSampleCount]);
 				cmdbuf.DrawPrimitives(0, 1, 0, 0);
 				cmdbuf.EndRenderPass();

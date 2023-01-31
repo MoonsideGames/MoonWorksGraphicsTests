@@ -95,3 +95,7 @@ Displays a quad that can be scaled to reveal various mip levels. The mips are so
 **BasicStencil**
 
 Demonstrates stencil masking using two triangles. Tests stencil buffers and basic stencil operations.
+
+**DepthMSAA**
+
+Displays two cubes floating around each other on a multisampled surface. Tests multisampled depth buffers.

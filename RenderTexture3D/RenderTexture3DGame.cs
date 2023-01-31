@@ -93,8 +93,7 @@ namespace MoonWorks.Test
                     Layer = 0,
                     Level = 0,
                     LoadOp = LoadOp.Clear,
-                    StoreOp = StoreOp.Store,
-                    SampleCount = SampleCount.One,
+                    StoreOp = StoreOp.Store
                 };
                 cmdbuf.BeginRenderPass(attachmentInfo);
                 cmdbuf.EndRenderPass();

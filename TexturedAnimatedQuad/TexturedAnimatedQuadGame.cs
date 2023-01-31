@@ -16,17 +16,6 @@ namespace MoonWorks.Test
 		private float t;
 
 		[StructLayout(LayoutKind.Sequential)]
-		private struct VertexUniforms
-		{
-			public Matrix4x4 TransformMatrix;
-
-			public VertexUniforms(Matrix4x4 transformMatrix)
-			{
-				TransformMatrix = transformMatrix;
-			}
-		}
-
-		[StructLayout(LayoutKind.Sequential)]
 		private struct FragmentUniforms
 		{
 			public Vector4 MultiplyColor;
@@ -51,7 +40,7 @@ namespace MoonWorks.Test
 			);
 			pipelineCreateInfo.AttachmentInfo.ColorAttachmentDescriptions[0].BlendState = ColorAttachmentBlendState.AlphaBlend;
 			pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
-			pipelineCreateInfo.VertexShaderInfo = GraphicsShaderInfo.Create<VertexUniforms>(vertShaderModule, "main", 0);
+			pipelineCreateInfo.VertexShaderInfo = GraphicsShaderInfo.Create<TransformVertexUniform>(vertShaderModule, "main", 0);
 			pipelineCreateInfo.FragmentShaderInfo = GraphicsShaderInfo.Create<FragmentUniforms>(fragShaderModule, "main", 1);
 			pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
@@ -91,7 +80,7 @@ namespace MoonWorks.Test
 
 		protected override void Draw(double alpha)
 		{
-			VertexUniforms vertUniforms;
+			TransformVertexUniform vertUniforms;
 			FragmentUniforms fragUniforms;
 			uint vertParamOffset, fragParamOffset;
 
@@ -106,28 +95,28 @@ namespace MoonWorks.Test
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(texture, sampler));
 
 				// Top-left
-				vertUniforms = new VertexUniforms(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(-0.5f, -0.5f, 0)));
+				vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(-0.5f, -0.5f, 0)));
 				fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Sin(t) * 0.5f, 1f, 1f));
 				vertParamOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
 				fragParamOffset = cmdbuf.PushFragmentShaderUniforms(fragUniforms);
 				cmdbuf.DrawIndexedPrimitives(0, 0, 2, vertParamOffset, fragParamOffset);
 
 				// Top-right
-				vertUniforms = new VertexUniforms(Matrix4x4.CreateRotationZ((2 * System.MathF.PI) - t) * Matrix4x4.CreateTranslation(new Vector3(0.5f, -0.5f, 0)));
+				vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ((2 * System.MathF.PI) - t) * Matrix4x4.CreateTranslation(new Vector3(0.5f, -0.5f, 0)));
 				fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Cos(t) * 0.5f, 1f, 1f));
 				vertParamOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
 				fragParamOffset = cmdbuf.PushFragmentShaderUniforms(fragUniforms);
 				cmdbuf.DrawIndexedPrimitives(0, 0, 2, vertParamOffset, fragParamOffset);
 
 				// Bottom-left
-				vertUniforms = new VertexUniforms(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(-0.5f, 0.5f, 0)));
+				vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(-0.5f, 0.5f, 0)));
 				fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Sin(t) * 0.2f, 1f, 1f));
 				vertParamOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
 				fragParamOffset = cmdbuf.PushFragmentShaderUniforms(fragUniforms);
 				cmdbuf.DrawIndexedPrimitives(0, 0, 2, vertParamOffset, fragParamOffset);
 
 				// Bottom-right
-				vertUniforms = new VertexUniforms(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(0.5f, 0.5f, 0)));
+				vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(0.5f, 0.5f, 0)));
 				fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Cos(t) * 1f, 1f, 1f));
 				vertParamOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
 				fragParamOffset = cmdbuf.PushFragmentShaderUniforms(fragUniforms);

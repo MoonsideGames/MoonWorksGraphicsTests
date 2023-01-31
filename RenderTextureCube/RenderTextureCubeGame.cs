@@ -26,16 +26,6 @@ namespace MoonWorks.Test
             Color.Purple,
         };
 
-        struct ViewProjectionUniforms
-        {
-            public Matrix4x4 ViewProjection;
-
-            public ViewProjectionUniforms(Matrix4x4 viewProjection)
-            {
-                ViewProjection = viewProjection;
-            }
-        }
-
         public RenderTextureCubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
         {
             Logger.LogInfo("Press Down to view the other side of the cubemap");
@@ -51,7 +41,7 @@ namespace MoonWorks.Test
                 fragShaderModule
             );
             pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionVertex>();
-            pipelineCreateInfo.VertexShaderInfo.UniformBufferSize = (uint) Marshal.SizeOf<ViewProjectionUniforms>();
+            pipelineCreateInfo.VertexShaderInfo.UniformBufferSize = (uint) Marshal.SizeOf<TransformVertexUniform>();
             pipelineCreateInfo.FragmentShaderInfo.SamplerBindingCount = 1;
             pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
@@ -129,8 +119,7 @@ namespace MoonWorks.Test
                     Layer = i,
                     Level = 0,
                     LoadOp = LoadOp.Clear,
-                    StoreOp = StoreOp.Store,
-                    SampleCount = SampleCount.One,
+                    StoreOp = StoreOp.Store
                 };
                 cmdbuf.BeginRenderPass(attachmentInfo);
                 cmdbuf.EndRenderPass();
@@ -160,7 +149,7 @@ namespace MoonWorks.Test
                 Vector3.Zero,
                 Vector3.Up
             );
-            ViewProjectionUniforms vertUniforms = new ViewProjectionUniforms(view * proj);
+            TransformVertexUniform vertUniforms = new TransformVertexUniform(view * proj);
 
             CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
             Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);

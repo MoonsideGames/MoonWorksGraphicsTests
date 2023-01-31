@@ -33,16 +33,6 @@ namespace MoonWorks.Test
         private bool depthOnlyEnabled = false;
         private Vector3 camPos = new Vector3(0, 1.5f, 4f);
 
-        struct ViewProjectionUniforms
-        {
-            public Matrix4x4 ViewProjection;
-
-            public ViewProjectionUniforms(Matrix4x4 viewProjection)
-            {
-                ViewProjection = viewProjection;
-            }
-        }
-
         struct DepthUniforms
         {
             public float ZNear;
@@ -165,7 +155,7 @@ namespace MoonWorks.Test
                         )
                     ),
                 DepthStencilState = DepthStencilState.DepthReadWrite,
-                VertexShaderInfo = GraphicsShaderInfo.Create<ViewProjectionUniforms>(cubeVertShaderModule, "main", 0),
+                VertexShaderInfo = GraphicsShaderInfo.Create<TransformVertexUniform>(cubeVertShaderModule, "main", 0),
                 VertexInputState = VertexInputState.CreateSingleBinding<PositionColorVertex>(),
                 PrimitiveType = PrimitiveType.TriangleList,
                 FragmentShaderInfo = GraphicsShaderInfo.Create(cubeFragShaderModule, "main", 0),
@@ -189,7 +179,7 @@ namespace MoonWorks.Test
                         )
                     ),
                 DepthStencilState = DepthStencilState.DepthReadWrite,
-                VertexShaderInfo = GraphicsShaderInfo.Create<ViewProjectionUniforms>(skyboxVertShaderModule, "main", 0),
+                VertexShaderInfo = GraphicsShaderInfo.Create<TransformVertexUniform>(skyboxVertShaderModule, "main", 0),
                 VertexInputState = VertexInputState.CreateSingleBinding<PositionVertex>(),
                 PrimitiveType = PrimitiveType.TriangleList,
                 FragmentShaderInfo = GraphicsShaderInfo.Create(skyboxFragShaderModule, "main", 1),
@@ -376,7 +366,7 @@ namespace MoonWorks.Test
                 Vector3.Zero,
                 Vector3.Up
             );
-            ViewProjectionUniforms skyboxUniforms = new ViewProjectionUniforms(view * proj);
+            TransformVertexUniform skyboxUniforms = new TransformVertexUniform(view * proj);
 
             Matrix4x4 model = Matrix4x4.CreateFromQuaternion(
                 Quaternion.Slerp(
@@ -385,7 +375,7 @@ namespace MoonWorks.Test
                     (float) alpha
                 )
             );
-            ViewProjectionUniforms cubeUniforms = new ViewProjectionUniforms(model * view * proj);
+            TransformVertexUniform cubeUniforms = new TransformVertexUniform(model * view * proj);
 
             CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
             Texture? swapchainTexture = cmdbuf.AcquireSwapchainTexture(MainWindow);

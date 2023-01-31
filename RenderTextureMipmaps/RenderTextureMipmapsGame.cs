@@ -23,16 +23,6 @@ namespace MoonWorks.Test
             Color.Yellow,
         };
 
-        private struct VertexUniforms
-        {
-            public Matrix4x4 TransformMatrix;
-
-            public VertexUniforms(Matrix4x4 transformMatrix)
-            {
-                TransformMatrix = transformMatrix;
-            }
-        }
-
         private string GetSamplerString(int index)
         {
             switch (index)
@@ -69,7 +59,7 @@ namespace MoonWorks.Test
                 fragShaderModule
             );
             pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
-            pipelineCreateInfo.VertexShaderInfo = GraphicsShaderInfo.Create<VertexUniforms>(vertShaderModule, "main", 0);
+            pipelineCreateInfo.VertexShaderInfo = GraphicsShaderInfo.Create<TransformVertexUniform>(vertShaderModule, "main", 0);
             pipelineCreateInfo.FragmentShaderInfo.SamplerBindingCount = 1;
             pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
@@ -135,8 +125,7 @@ namespace MoonWorks.Test
                     Layer = 0,
                     Level = i,
                     LoadOp = LoadOp.Clear,
-                    StoreOp = StoreOp.Store,
-                    SampleCount = SampleCount.One,
+                    StoreOp = StoreOp.Store
                 };
                 cmdbuf.BeginRenderPass(attachmentInfo);
                 cmdbuf.EndRenderPass();
@@ -166,7 +155,7 @@ namespace MoonWorks.Test
 
         protected override void Draw(double alpha)
         {
-            VertexUniforms vertUniforms = new VertexUniforms(Matrix4x4.CreateScale(scale, scale, 1));
+            TransformVertexUniform vertUniforms = new TransformVertexUniform(Matrix4x4.CreateScale(scale, scale, 1));
 
             CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
             Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);

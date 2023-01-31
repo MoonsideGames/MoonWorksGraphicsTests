@@ -80,9 +80,9 @@ namespace MoonWorks.Test
 
             var byteCount = (uint)(width * height * channels);
 
-            TextureCreateInfo textureCreateInfo;
-            textureCreateInfo.Width = (uint)width;
-            textureCreateInfo.Height = (uint)height;
+            TextureCreateInfo textureCreateInfo = new TextureCreateInfo();
+            textureCreateInfo.Width = (uint) width;
+            textureCreateInfo.Height = (uint) height;
             textureCreateInfo.Depth = 1;
             textureCreateInfo.Format = TextureFormat.R8G8B8A8;
             textureCreateInfo.IsCube = false;

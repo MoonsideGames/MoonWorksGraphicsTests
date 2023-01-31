@@ -53,7 +53,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderTextureMipmaps", "Ren
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextureMipmaps", "TextureMipmaps\TextureMipmaps.csproj", "{5A1AC35B-EF18-426D-A633-D4899E84EAA7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicStencil", "Stencil\BasicStencil.csproj", "{E3FCEDC2-BAE3-4E21-AEBA-2AC3504526CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicStencil", "BasicStencil\BasicStencil.csproj", "{1B370BAD-966A-49B2-9EA0-2463F6C8F9AD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DepthMSAA", "DepthMSAA\DepthMSAA.csproj", "{B36C9F65-F3F4-4EB4-8EBF-A1EDCD4261F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -161,10 +163,14 @@ Global
 		{5A1AC35B-EF18-426D-A633-D4899E84EAA7}.Debug|x64.Build.0 = Debug|x64
 		{5A1AC35B-EF18-426D-A633-D4899E84EAA7}.Release|x64.ActiveCfg = Release|x64
 		{5A1AC35B-EF18-426D-A633-D4899E84EAA7}.Release|x64.Build.0 = Release|x64
-		{E3FCEDC2-BAE3-4E21-AEBA-2AC3504526CD}.Debug|x64.ActiveCfg = Debug|x64
-		{E3FCEDC2-BAE3-4E21-AEBA-2AC3504526CD}.Debug|x64.Build.0 = Debug|x64
-		{E3FCEDC2-BAE3-4E21-AEBA-2AC3504526CD}.Release|x64.ActiveCfg = Release|x64
-		{E3FCEDC2-BAE3-4E21-AEBA-2AC3504526CD}.Release|x64.Build.0 = Release|x64
+		{1B370BAD-966A-49B2-9EA0-2463F6C8F9AD}.Debug|x64.ActiveCfg = Debug|x64
+		{1B370BAD-966A-49B2-9EA0-2463F6C8F9AD}.Debug|x64.Build.0 = Debug|x64
+		{1B370BAD-966A-49B2-9EA0-2463F6C8F9AD}.Release|x64.ActiveCfg = Release|x64
+		{1B370BAD-966A-49B2-9EA0-2463F6C8F9AD}.Release|x64.Build.0 = Release|x64
+		{B36C9F65-F3F4-4EB4-8EBF-A1EDCD4261F8}.Debug|x64.ActiveCfg = Debug|x64
+		{B36C9F65-F3F4-4EB4-8EBF-A1EDCD4261F8}.Debug|x64.Build.0 = Debug|x64
+		{B36C9F65-F3F4-4EB4-8EBF-A1EDCD4261F8}.Release|x64.ActiveCfg = Release|x64
+		{B36C9F65-F3F4-4EB4-8EBF-A1EDCD4261F8}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

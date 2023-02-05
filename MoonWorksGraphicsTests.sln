@@ -57,6 +57,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicStencil", "BasicStenci
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DepthMSAA", "DepthMSAA\DepthMSAA.csproj", "{B36C9F65-F3F4-4EB4-8EBF-A1EDCD4261F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowResizing", "WindowResizing\WindowResizing.csproj", "{AF5F2804-663D-4C46-BD02-AB178002180B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -171,6 +173,10 @@ Global
 		{B36C9F65-F3F4-4EB4-8EBF-A1EDCD4261F8}.Debug|x64.Build.0 = Debug|x64
 		{B36C9F65-F3F4-4EB4-8EBF-A1EDCD4261F8}.Release|x64.ActiveCfg = Release|x64
 		{B36C9F65-F3F4-4EB4-8EBF-A1EDCD4261F8}.Release|x64.Build.0 = Release|x64
+		{AF5F2804-663D-4C46-BD02-AB178002180B}.Debug|x64.ActiveCfg = Debug|x64
+		{AF5F2804-663D-4C46-BD02-AB178002180B}.Debug|x64.Build.0 = Debug|x64
+		{AF5F2804-663D-4C46-BD02-AB178002180B}.Release|x64.ActiveCfg = Release|Any CPU
+		{AF5F2804-663D-4C46-BD02-AB178002180B}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

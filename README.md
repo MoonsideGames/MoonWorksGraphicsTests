@@ -99,3 +99,7 @@ Demonstrates stencil masking using two triangles. Tests stencil buffers and basi
 **DepthMSAA**
 
 Displays two cubes floating around each other on a multisampled surface. Tests multisampled depth buffers.
+
+**WindowResizing**
+
+Tests resizing the window to various resolutions.

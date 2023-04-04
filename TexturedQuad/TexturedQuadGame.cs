@@ -9,7 +9,6 @@ namespace MoonWorks.Test
 		private GraphicsPipeline pipeline;
 		private Buffer vertexBuffer;
 		private Buffer indexBuffer;
-		private Texture texture;
 		private Sampler[] samplers = new Sampler[6];
 		private string[] samplerNames = new string[]
 		{
@@ -23,10 +22,32 @@ namespace MoonWorks.Test
 
 		private int currentSamplerIndex;
 
+		private Texture[] textures = new Texture[4];
+		private string[] imageLoadFormatNames = new string[]
+		{
+			"PNGFromFile",
+			"PNGFromMemory",
+			"QOIFromFile",
+			"QOIFromMemory"
+		};
+
+		private int currentTextureIndex;
+
+		private System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+
 		public TexturedQuadGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
 		{
 			Logger.LogInfo("Press Left and Right to cycle between sampler states");
 			Logger.LogInfo("Setting sampler state to: " + samplerNames[0]);
+
+			Logger.LogInfo("Press Down to cycle between image load formats");
+			Logger.LogInfo("Setting image format to: " + imageLoadFormatNames[0]);
+
+			var pngBytes = System.IO.File.ReadAllBytes(TestUtils.GetTexturePath("ravioli.png"));
+			var qoiBytes = System.IO.File.ReadAllBytes(TestUtils.GetTexturePath("ravioli.qoi"));
+
+			Logger.LogInfo(pngBytes.Length.ToString());
+			Logger.LogInfo(qoiBytes.Length.ToString());
 
 			// Load the shaders
 			ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuadVert"));
@@ -73,7 +94,10 @@ namespace MoonWorks.Test
 					0, 2, 3,
 				}
 			);
-			texture = Texture.LoadPNG(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.png"));
+			textures[0] = Texture.LoadPNG(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.png"));
+			textures[1] = Texture.LoadPNG(GraphicsDevice, cmdbuf, pngBytes);
+			textures[2] = Texture.LoadQOI(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.qoi"));
+			textures[3] = Texture.LoadQOI(GraphicsDevice, cmdbuf, qoiBytes);
 			GraphicsDevice.Submit(cmdbuf);
 			GraphicsDevice.Wait();
 		}
@@ -104,6 +128,18 @@ namespace MoonWorks.Test
 			{
 				Logger.LogInfo("Setting sampler state to: " + samplerNames[currentSamplerIndex]);
 			}
+
+			int prevTextureIndex = currentTextureIndex;
+
+			if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Bottom))
+			{
+				currentTextureIndex = (currentTextureIndex + 1) % imageLoadFormatNames.Length;
+			}
+
+			if (prevTextureIndex != currentTextureIndex)
+			{
+				Logger.LogInfo("Setting texture format to: " + imageLoadFormatNames[currentTextureIndex]);
+			}
 		}
 
 		protected override void Draw(double alpha)
@@ -116,7 +152,7 @@ namespace MoonWorks.Test
 				cmdbuf.BindGraphicsPipeline(pipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
-				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(texture, samplers[currentSamplerIndex]));
+				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(textures[currentTextureIndex], samplers[currentSamplerIndex]));
 				cmdbuf.DrawIndexedPrimitives(0, 0, 2, 0, 0);
 				cmdbuf.EndRenderPass();
 			}

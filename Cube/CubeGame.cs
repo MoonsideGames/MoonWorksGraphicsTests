@@ -52,7 +52,7 @@ namespace MoonWorks.Test
 
             for (uint i = 0; i < imagePaths.Length; i++)
             {
-                textureData = RefreshCS.Refresh.Refresh_Image_Load(
+                textureData = RefreshCS.Refresh.Refresh_Image_LoadPNGFromFile(
                     imagePaths[i],
                     out w,
                     out h,
@@ -68,7 +68,7 @@ namespace MoonWorks.Test
                     textureData,
                     (uint) (w * h * 4) // w * h * numChannels does not work
                 );
-                RefreshCS.Refresh.Refresh_Image_Free(textureData);
+                RefreshCS.Refresh.Refresh_Image_FreePNG(textureData);
             }
         }
 

@@ -71,7 +71,7 @@ namespace MoonWorks.Test
 
             // Load the texture. Copy-pasted from Texture.LoadPNG,
             // but with the texture bytes stored.
-            var pixels = RefreshCS.Refresh.Refresh_Image_Load(
+            var pixels = RefreshCS.Refresh.Refresh_Image_LoadPNGFromFile(
                 TestUtils.GetTexturePath("ravioli.png"),
                 out var width,
                 out var height,
@@ -95,7 +95,7 @@ namespace MoonWorks.Test
             byte[] textureBytes = new byte[byteCount];
             System.Runtime.InteropServices.Marshal.Copy(pixels, textureBytes, 0, (int) byteCount);
 
-            RefreshCS.Refresh.Refresh_Image_Free(pixels);
+            RefreshCS.Refresh.Refresh_Image_FreePNG(pixels);
 
             // Create a 1:1 copy of the texture
             textureCopy = new Texture(GraphicsDevice, textureCreateInfo);
@@ -129,19 +129,21 @@ namespace MoonWorks.Test
             GraphicsDevice.Wait();
 
             // Compare the original bytes to the copied bytes.
-            // Doing a manual equality check per byte because I can't find a way to memcmp in C#.
             byte[] copiedBytes = new byte[textureBytes.Length];
             compareBuffer.GetData<byte>(copiedBytes, (uint) copiedBytes.Length);
 
-            for (int i = 0; i < copiedBytes.Length; i += 1)
-            {
-                if (textureBytes[i] != copiedBytes[i])
-                {
-                    Logger.LogError("FAIL! Original texture bytes do not match bytes from CopyTextureToBuffer!");
-                    return;
-                }
-            }
-            Logger.LogError("SUCCESS! Original texture bytes and the bytes from CopyTextureToBuffer match!");
+			var originalSpan = new System.ReadOnlySpan<byte>(textureBytes);
+			var copiedSpan = new System.ReadOnlySpan<byte>(copiedBytes);
+
+			if (System.MemoryExtensions.SequenceEqual(originalSpan, copiedSpan))
+			{
+				Logger.LogError("SUCCESS! Original texture bytes and the bytes from CopyTextureToBuffer match!");
+
+			}
+			else
+			{
+				Logger.LogError("FAIL! Original texture bytes do not match bytes from CopyTextureToBuffer!");
+			}
         }
 
         protected override void Update(System.TimeSpan delta) { }

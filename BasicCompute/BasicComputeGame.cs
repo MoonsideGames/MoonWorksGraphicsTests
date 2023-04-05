@@ -110,7 +110,7 @@ namespace MoonWorks.Test
             GraphicsDevice.Wait();
 
             // Print the squares!
-            squaresBuffer.GetData(squares, (uint) (sizeof(uint) * squares.Length));
+            squaresBuffer.GetData(squares);
             Logger.LogInfo("Squares of the first " + squares.Length + " integers: " + string.Join(", ", squares));
         }
 

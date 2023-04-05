@@ -45,10 +45,7 @@ namespace MoonWorks.Test
 
             // Read back and print out the vertex values
             PositionVertex[] readbackVertices = new PositionVertex[vertices.Length];
-            vertexBuffer.GetData(
-                readbackVertices,
-                (uint) (vertexSize * readbackVertices.Length) // FIXME: Seems like this should get auto-calculated somehow
-            );
+            vertexBuffer.GetData(readbackVertices);
             for (int i = 0; i < readbackVertices.Length; i += 1)
             {
                 Logger.LogInfo(readbackVertices[i].ToString());
@@ -61,10 +58,7 @@ namespace MoonWorks.Test
             GraphicsDevice.Wait();
 
             // Read the updated buffer
-            vertexBuffer.GetData(
-                readbackVertices,
-                (uint) (vertexSize * readbackVertices.Length)
-            );
+            vertexBuffer.GetData(readbackVertices);
             Logger.LogInfo("=== Change first three vertices ===");
             for (int i = 0; i < readbackVertices.Length; i += 1)
             {
@@ -84,10 +78,7 @@ namespace MoonWorks.Test
             GraphicsDevice.Wait();
 
             // Read the updated buffer
-            vertexBuffer.GetData(
-                readbackVertices,
-                (uint) (vertexSize * readbackVertices.Length)
-            );
+            vertexBuffer.GetData(readbackVertices);
             Logger.LogInfo("=== Change last two vertices ===");
             for (int i = 0; i < readbackVertices.Length; i += 1)
             {

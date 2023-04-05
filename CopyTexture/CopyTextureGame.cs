@@ -130,7 +130,7 @@ namespace MoonWorks.Test
 
             // Compare the original bytes to the copied bytes.
             byte[] copiedBytes = new byte[textureBytes.Length];
-            compareBuffer.GetData<byte>(copiedBytes, (uint) copiedBytes.Length);
+            compareBuffer.GetData(copiedBytes);
 
 			var originalSpan = new System.ReadOnlySpan<byte>(textureBytes);
 			var copiedSpan = new System.ReadOnlySpan<byte>(copiedBytes);

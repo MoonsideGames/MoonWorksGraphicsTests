@@ -68,9 +68,8 @@ namespace MoonWorks.Test
 					0, 2, 3,
 				}
 			);
-			texture = Texture.LoadPNG(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.png"));
+			texture = Texture.FromFile(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.png"));
 			GraphicsDevice.Submit(cmdbuf);
-			GraphicsDevice.Wait();
 		}
 
 		protected override void Update(System.TimeSpan delta)

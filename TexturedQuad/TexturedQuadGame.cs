@@ -25,10 +25,10 @@ namespace MoonWorks.Test
 		private Texture[] textures = new Texture[4];
 		private string[] imageLoadFormatNames = new string[]
 		{
-			"PNGFromFile",
-			"PNGFromMemory",
-			"QOIFromFile",
-			"QOIFromMemory"
+			"PNG from file",
+			"PNG from memory",
+			"QOI from file",
+			"QOI from memory"
 		};
 
 		private int currentTextureIndex;
@@ -94,12 +94,11 @@ namespace MoonWorks.Test
 					0, 2, 3,
 				}
 			);
-			textures[0] = Texture.LoadPNG(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.png"));
-			textures[1] = Texture.LoadPNG(GraphicsDevice, cmdbuf, pngBytes);
-			textures[2] = Texture.LoadQOI(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.qoi"));
-			textures[3] = Texture.LoadQOI(GraphicsDevice, cmdbuf, qoiBytes);
+			textures[0] = Texture.FromFile(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.png"));
+			textures[1] = Texture.FromData(GraphicsDevice, cmdbuf, pngBytes);
+			textures[2] = Texture.FromFile(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.qoi"));
+			textures[3] = Texture.FromData(GraphicsDevice, cmdbuf, qoiBytes);
 			GraphicsDevice.Submit(cmdbuf);
-			GraphicsDevice.Wait();
 		}
 
 		protected override void Update(System.TimeSpan delta)

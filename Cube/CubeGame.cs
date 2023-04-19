@@ -47,28 +47,17 @@ namespace MoonWorks.Test
 
         void LoadCubemap(CommandBuffer cmdbuf, string[] imagePaths)
         {
-            System.IntPtr textureData;
-            int w, h, numChannels;
-
             for (uint i = 0; i < imagePaths.Length; i++)
             {
-                textureData = RefreshCS.Refresh.Refresh_Image_LoadPNGFromFile(
-                    imagePaths[i],
-                    out w,
-                    out h,
-                    out numChannels
-                );
-                cmdbuf.SetTextureData(
-                    new TextureSlice(
-                        skyboxTexture,
-                        new Rect(0, 0, w, h),
-                        0,
-                        i
-                    ),
-                    textureData,
-                    (uint) (w * h * 4) // w * h * numChannels does not work
-                );
-                RefreshCS.Refresh.Refresh_Image_FreePNG(textureData);
+				var textureSlice = new TextureSlice(
+					skyboxTexture,
+					new Rect(0, 0, (int) skyboxTexture.Width, (int) skyboxTexture.Height),
+					0,
+					i,
+					0
+				);
+
+				Texture.SetDataFromFile(cmdbuf, textureSlice, imagePaths[i]);
             }
         }
 

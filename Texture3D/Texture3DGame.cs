@@ -80,17 +80,11 @@ namespace MoonWorks.Test
                     i
                 );
 
-                var pixels = Refresh.Refresh_Image_LoadPNGFromFile(
-				    TestUtils.GetTexturePath($"tex3d_{i}.png"),
-				    out var width,
-				    out var height,
-				    out var channels
-			    );
-
-			    var byteCount = (uint) (width * height * channels);
-			    cmdbuf.SetTextureData(slice, pixels, byteCount);
-
-			    Refresh.Refresh_Image_FreePNG(pixels);
+				Texture.SetDataFromFile(
+					cmdbuf,
+					slice,
+					TestUtils.GetTexturePath($"tex3d_{i}.png")
+				);
             }
 
             GraphicsDevice.Submit(cmdbuf);

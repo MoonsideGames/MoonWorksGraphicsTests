@@ -1,4 +1,5 @@
-﻿using MoonWorks;
+﻿using System.Runtime.InteropServices;
+using MoonWorks;
 using MoonWorks.Graphics;
 using MoonWorks.Math.Float;
 
@@ -14,7 +15,7 @@ namespace MoonWorks.Test
         private Texture textureSmallCopy;
         private Sampler sampler;
 
-        public CopyTextureGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+        public unsafe CopyTextureGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
         {
             // Load the shaders
             ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuadVert"));
@@ -69,16 +70,22 @@ namespace MoonWorks.Test
                 }
             );
 
-            // Load the texture. Copy-pasted from Texture.LoadPNG,
-            // but with the texture bytes stored.
-            var pixels = RefreshCS.Refresh.Refresh_Image_LoadPNGFromFile(
-                TestUtils.GetTexturePath("ravioli.png"),
-                out var width,
-                out var height,
-                out var channels
-            );
+            // Load the texture. Storing the texture bytes so we can compare them.
+			var fileStream = new System.IO.FileStream(TestUtils.GetTexturePath("ravioli.png"), System.IO.FileMode.Open, System.IO.FileAccess.Read);
+			var fileLength = fileStream.Length;
+			var fileBuffer = NativeMemory.Alloc((nuint) fileLength);
+			var fileSpan = new System.Span<byte>(fileBuffer, (int) fileLength);
+			fileStream.ReadExactly(fileSpan);
 
-            var byteCount = (uint)(width * height * channels);
+			var pixels = RefreshCS.Refresh.Refresh_Image_Load(
+				(nint) fileBuffer,
+				(int) fileLength,
+				out var width,
+				out var height,
+				out var byteCount
+			);
+
+			NativeMemory.Free(fileBuffer);
 
             TextureCreateInfo textureCreateInfo = new TextureCreateInfo();
             textureCreateInfo.Width = (uint) width;
@@ -90,12 +97,7 @@ namespace MoonWorks.Test
             textureCreateInfo.UsageFlags = TextureUsageFlags.Sampler;
 
             originalTexture = new Texture(GraphicsDevice, textureCreateInfo);
-            cmdbuf.SetTextureData(originalTexture, pixels, byteCount);
-
-            byte[] textureBytes = new byte[byteCount];
-            System.Runtime.InteropServices.Marshal.Copy(pixels, textureBytes, 0, (int) byteCount);
-
-            RefreshCS.Refresh.Refresh_Image_FreePNG(pixels);
+            cmdbuf.SetTextureData(originalTexture, pixels, (uint) byteCount);
 
             // Create a 1:1 copy of the texture
             textureCopy = new Texture(GraphicsDevice, textureCreateInfo);
@@ -122,18 +124,18 @@ namespace MoonWorks.Test
             );
 
             // Copy the texture to a buffer
-            Buffer compareBuffer = Buffer.Create<byte>(GraphicsDevice, 0, (uint) textureBytes.Length);
+            Buffer compareBuffer = Buffer.Create<byte>(GraphicsDevice, 0, (uint) byteCount);
             cmdbuf.CopyTextureToBuffer(new TextureSlice(originalTexture), compareBuffer);
 
             GraphicsDevice.Submit(cmdbuf);
             GraphicsDevice.Wait();
 
             // Compare the original bytes to the copied bytes.
-            byte[] copiedBytes = new byte[textureBytes.Length];
-            compareBuffer.GetData(copiedBytes);
+            var copiedBytes = NativeMemory.Alloc((nuint) byteCount);
+			var copiedSpan = new System.Span<byte>(copiedBytes, byteCount);
+            compareBuffer.GetData(copiedSpan);
 
-			var originalSpan = new System.ReadOnlySpan<byte>(textureBytes);
-			var copiedSpan = new System.ReadOnlySpan<byte>(copiedBytes);
+			var originalSpan = new System.Span<byte>((void*) pixels, byteCount);
 
 			if (System.MemoryExtensions.SequenceEqual(originalSpan, copiedSpan))
 			{
@@ -144,6 +146,8 @@ namespace MoonWorks.Test
 			{
 				Logger.LogError("FAIL! Original texture bytes do not match bytes from CopyTextureToBuffer!");
 			}
+
+			RefreshCS.Refresh.Refresh_Image_Free(pixels);
         }
 
         protected override void Update(System.TimeSpan delta) { }

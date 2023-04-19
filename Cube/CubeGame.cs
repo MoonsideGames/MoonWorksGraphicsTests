@@ -64,7 +64,7 @@ namespace MoonWorks.Test
             }
         }
 
-        public CubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, false)
+        public CubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
         {
             ShaderModule cubeVertShaderModule = new ShaderModule(
                 GraphicsDevice,

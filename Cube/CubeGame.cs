@@ -33,6 +33,9 @@ namespace MoonWorks.Test
         private bool depthOnlyEnabled = false;
         private Vector3 camPos = new Vector3(0, 1.5f, 4f);
 
+		private TaskFactory taskFactory = new TaskFactory();
+		private bool takeScreenshot;
+
         struct DepthUniforms
         {
             public float ZNear;
@@ -61,7 +64,7 @@ namespace MoonWorks.Test
             }
         }
 
-        public CubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+        public CubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, false)
         {
             ShaderModule cubeVertShaderModule = new ShaderModule(
                 GraphicsDevice,
@@ -312,6 +315,7 @@ namespace MoonWorks.Test
             Logger.LogInfo("Finished loading!");
             Logger.LogInfo("Press Left to toggle Depth-Only Mode");
             Logger.LogInfo("Press Down to move the camera upwards");
+			Logger.LogInfo("Press Right to save a screenshot");
         }
 
         protected override void Update(System.TimeSpan delta)
@@ -340,6 +344,11 @@ namespace MoonWorks.Test
                 depthOnlyEnabled = !depthOnlyEnabled;
                 Logger.LogInfo("Depth-Only Mode enabled: " + depthOnlyEnabled);
             }
+
+			if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Right))
+			{
+				takeScreenshot = true;
+			}
         }
 
         protected override void Draw(double alpha)
@@ -367,7 +376,7 @@ namespace MoonWorks.Test
             TransformVertexUniform cubeUniforms = new TransformVertexUniform(model * view * proj);
 
             CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-            Texture? swapchainTexture = cmdbuf.AcquireSwapchainTexture(MainWindow);
+            Texture swapchainTexture = cmdbuf.AcquireSwapchainTexture(MainWindow);
             if (swapchainTexture != null)
             {
                 if (!finishedLoading)
@@ -429,7 +438,25 @@ namespace MoonWorks.Test
             }
 
             GraphicsDevice.Submit(cmdbuf);
+
+			if (takeScreenshot)
+			{
+				if (swapchainTexture != null)
+				{
+					taskFactory.StartNew(TakeScreenshot, swapchainTexture);
+				}
+
+				takeScreenshot = false;
+			}
         }
+
+		private System.Action<object?> TakeScreenshot = texture =>
+		{
+			if (texture != null)
+			{
+				((Texture) texture).SavePNG(System.IO.Path.Combine(System.AppContext.BaseDirectory, "screenshot.png"));
+			}
+		};
 
         public static void Main(string[] args)
         {

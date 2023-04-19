@@ -60,7 +60,7 @@ namespace MoonWorks.Test
 					0
 				);
 
-				Texture.SetDataFromFile(cmdbuf, textureSlice, imagePaths[i]);
+				Texture.SetDataFromImageFile(cmdbuf, textureSlice, imagePaths[i]);
             }
         }
 

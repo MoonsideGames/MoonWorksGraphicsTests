@@ -80,7 +80,7 @@ namespace MoonWorks.Test
                     i
                 );
 
-				Texture.SetDataFromFile(
+				Texture.SetDataFromImageFile(
 					cmdbuf,
 					slice,
 					TestUtils.GetTexturePath($"tex3d_{i}.png")

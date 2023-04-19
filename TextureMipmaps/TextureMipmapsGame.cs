@@ -80,7 +80,7 @@ namespace MoonWorks.Test
                     (uint) i
                 );
 
-				Texture.SetDataFromFile(cmdbuf, slice, TestUtils.GetTexturePath($"mip{i}.png"));
+				Texture.SetDataFromImageFile(cmdbuf, slice, TestUtils.GetTexturePath($"mip{i}.png"));
             }
 
             GraphicsDevice.Submit(cmdbuf);

@@ -94,10 +94,10 @@ namespace MoonWorks.Test
 					0, 2, 3,
 				}
 			);
-			textures[0] = Texture.FromFile(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.png"));
-			textures[1] = Texture.FromData(GraphicsDevice, cmdbuf, pngBytes);
-			textures[2] = Texture.FromFile(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.qoi"));
-			textures[3] = Texture.FromData(GraphicsDevice, cmdbuf, qoiBytes);
+			textures[0] = Texture.FromImageFile(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.png"));
+			textures[1] = Texture.FromImageBytes(GraphicsDevice, cmdbuf, pngBytes);
+			textures[2] = Texture.FromImageFile(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.qoi"));
+			textures[3] = Texture.FromImageBytes(GraphicsDevice, cmdbuf, qoiBytes);
 			GraphicsDevice.Submit(cmdbuf);
 		}
 

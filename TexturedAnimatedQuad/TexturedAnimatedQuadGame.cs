@@ -68,7 +68,7 @@ namespace MoonWorks.Test
 					0, 2, 3,
 				}
 			);
-			texture = Texture.FromFile(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.png"));
+			texture = Texture.FromImageFile(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.png"));
 			GraphicsDevice.Submit(cmdbuf);
 		}
 

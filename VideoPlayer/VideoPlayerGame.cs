@@ -11,7 +11,7 @@ namespace MoonWorks.Test
         private Buffer vertexBuffer;
         private Buffer indexBuffer;
 
-        private Video.Video video;
+        private Video.VideoAV1 video;
         private VideoPlayer videoPlayer;
 
         public VideoPlayerGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
@@ -60,11 +60,12 @@ namespace MoonWorks.Test
             GraphicsDevice.Wait();
 
             // Load the video
-            video = new Video.Video(TestUtils.GetVideoPath("hello.ogv"));
+            video = new Video.VideoAV1(TestUtils.GetVideoPath("hello.obu"), 25);
 
             // Play the video
-            videoPlayer = new VideoPlayer(GraphicsDevice, AudioDevice);
+            videoPlayer = new VideoPlayer(GraphicsDevice);
             videoPlayer.Load(video);
+            videoPlayer.Loop = true;
             videoPlayer.Play();
         }
 

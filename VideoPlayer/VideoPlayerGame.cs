@@ -57,7 +57,6 @@ namespace MoonWorks.Test
                 }
             );
             GraphicsDevice.Submit(cmdbuf);
-            GraphicsDevice.Wait();
 
             // Load the video
             video = new Video.VideoAV1(TestUtils.GetVideoPath("hello.obu"), 25);

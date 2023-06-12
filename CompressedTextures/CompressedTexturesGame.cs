@@ -77,7 +77,6 @@ namespace MoonWorks.Test
                     textures[i] = Texture.LoadDDS(GraphicsDevice, cmdbuf, fs);
             }
             GraphicsDevice.Submit(cmdbuf);
-            GraphicsDevice.Wait();
         }
 
         protected override void Update(System.TimeSpan delta)

@@ -38,7 +38,6 @@ namespace MoonWorks.Test
 				}
 			);
 			GraphicsDevice.Submit(cmdbuf);
-			GraphicsDevice.Wait();
 		}
 
 		protected override void Update(System.TimeSpan delta) { }

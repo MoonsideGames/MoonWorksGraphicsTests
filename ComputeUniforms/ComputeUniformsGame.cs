@@ -100,7 +100,6 @@ namespace MoonWorks.Test
             cmdbuf.DispatchCompute(gradientUniforms.groupCountX, gradientUniforms.groupCountY, 1, offset);
 
             GraphicsDevice.Submit(cmdbuf);
-            GraphicsDevice.Wait();
         }
 
         protected override void Update(System.TimeSpan delta) { }

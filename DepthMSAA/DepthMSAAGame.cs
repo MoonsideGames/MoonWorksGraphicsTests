@@ -33,11 +33,11 @@ namespace MoonWorks.Test
 			// Create the cube pipelines
 			ShaderModule cubeVertShaderModule = new ShaderModule(
 				GraphicsDevice,
-				TestUtils.GetShaderPath("PositionColorVertWithMatrix")
+				TestUtils.GetShaderPath("PositionColorWithMatrix.vert")
 			);
 			ShaderModule cubeFragShaderModule = new ShaderModule(
 				GraphicsDevice,
-				TestUtils.GetShaderPath("SolidColor")
+				TestUtils.GetShaderPath("SolidColor.frag")
 			);
 
 			GraphicsPipelineCreateInfo pipelineCreateInfo = new GraphicsPipelineCreateInfo
@@ -65,8 +65,8 @@ namespace MoonWorks.Test
 			}
 
 			// Create the blit pipeline
-			ShaderModule blitVertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuadVert"));
-			ShaderModule blitFragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuadFrag"));
+			ShaderModule blitVertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuad.vert"));
+			ShaderModule blitFragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuad.frag"));
 
 			pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
 				MainWindow.SwapchainFormat,

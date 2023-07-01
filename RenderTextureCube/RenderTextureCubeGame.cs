@@ -31,8 +31,8 @@ namespace MoonWorks.Test
             Logger.LogInfo("Press Down to view the other side of the cubemap");
 
             // Load the shaders
-            ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("SkyboxVert"));
-            ShaderModule fragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("SkyboxFrag"));
+            ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("Skybox.vert"));
+            ShaderModule fragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("Skybox.frag"));
 
             // Create the graphics pipeline
             GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(

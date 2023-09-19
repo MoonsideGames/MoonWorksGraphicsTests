@@ -106,8 +106,9 @@ namespace MoonWorks.Test
             cmdbuf.BindComputeBuffers(squaresBuffer);
             cmdbuf.DispatchCompute((uint) squares.Length / 8, 1, 1, 0);
 
-            GraphicsDevice.Submit(cmdbuf);
-            GraphicsDevice.Wait();
+            var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
+            GraphicsDevice.WaitForFences(fence);
+			GraphicsDevice.ReleaseFence(fence);
 
             // Print the squares!
             squaresBuffer.GetData(squares);

@@ -38,10 +38,11 @@ namespace MoonWorks.Test
 
             CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
             cmdbuf.SetBufferData(vertexBuffer, vertices);
-            GraphicsDevice.Submit(cmdbuf);
+            var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 
             // Wait for the vertices to finish uploading...
-            GraphicsDevice.Wait();
+            GraphicsDevice.WaitForFences(fence);
+			GraphicsDevice.ReleaseFence(fence);
 
             // Read back and print out the vertex values
             PositionVertex[] readbackVertices = new PositionVertex[vertices.Length];
@@ -54,8 +55,9 @@ namespace MoonWorks.Test
             // Change the first three vertices
             cmdbuf = GraphicsDevice.AcquireCommandBuffer();
             cmdbuf.SetBufferData(vertexBuffer, otherVerts);
-            GraphicsDevice.Submit(cmdbuf);
-            GraphicsDevice.Wait();
+            fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
+            GraphicsDevice.WaitForFences(fence);
+			GraphicsDevice.ReleaseFence(fence);
 
             // Read the updated buffer
             vertexBuffer.GetData(readbackVertices);
@@ -74,8 +76,9 @@ namespace MoonWorks.Test
                 1,
                 2
             );
-            GraphicsDevice.Submit(cmdbuf);
-            GraphicsDevice.Wait();
+            fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
+            GraphicsDevice.WaitForFences(fence);
+			GraphicsDevice.ReleaseFence(fence);
 
             // Read the updated buffer
             vertexBuffer.GetData(readbackVertices);

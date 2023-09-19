@@ -127,8 +127,9 @@ namespace MoonWorks.Test
             Buffer compareBuffer = Buffer.Create<byte>(GraphicsDevice, 0, (uint) byteCount);
             cmdbuf.CopyTextureToBuffer(new TextureSlice(originalTexture), compareBuffer);
 
-            GraphicsDevice.Submit(cmdbuf);
-            GraphicsDevice.Wait();
+            var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
+            GraphicsDevice.WaitForFences(fence);
+			GraphicsDevice.ReleaseFence(fence);
 
             // Compare the original bytes to the copied bytes.
             var copiedBytes = NativeMemory.Alloc((nuint) byteCount);

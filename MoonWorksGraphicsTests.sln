@@ -59,6 +59,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DepthMSAA", "DepthMSAA\Dept
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowResizing", "WindowResizing\WindowResizing.csproj", "{AF5F2804-663D-4C46-BD02-AB178002180B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreLoad", "StoreLoad\StoreLoad.csproj", "{CD31F1B5-C76A-428A-A812-8DFD6CAB20A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -177,6 +179,10 @@ Global
 		{AF5F2804-663D-4C46-BD02-AB178002180B}.Debug|x64.Build.0 = Debug|x64
 		{AF5F2804-663D-4C46-BD02-AB178002180B}.Release|x64.ActiveCfg = Release|Any CPU
 		{AF5F2804-663D-4C46-BD02-AB178002180B}.Release|x64.Build.0 = Release|Any CPU
+		{CD31F1B5-C76A-428A-A812-8DFD6CAB20A9}.Debug|x64.ActiveCfg = Debug|x64
+		{CD31F1B5-C76A-428A-A812-8DFD6CAB20A9}.Debug|x64.Build.0 = Debug|x64
+		{CD31F1B5-C76A-428A-A812-8DFD6CAB20A9}.Release|x64.ActiveCfg = Release|x64
+		{CD31F1B5-C76A-428A-A812-8DFD6CAB20A9}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

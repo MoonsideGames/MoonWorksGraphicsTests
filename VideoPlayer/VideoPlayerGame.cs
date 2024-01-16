@@ -59,7 +59,7 @@ namespace MoonWorks.Test
             GraphicsDevice.Submit(cmdbuf);
 
             // Load the video
-            video = new Video.VideoAV1(TestUtils.GetVideoPath("hello.obu"), 25);
+            video = new VideoAV1(GraphicsDevice, TestUtils.GetVideoPath("hello.obu"), 25);
 
             // Play the video
             videoPlayer = new VideoPlayer(GraphicsDevice);

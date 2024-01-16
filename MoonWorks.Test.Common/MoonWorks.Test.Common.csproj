@@ -6,11 +6,10 @@
 
   <PropertyGroup>
     <OutputType>library</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <Platforms>x64</Platforms>
   </PropertyGroup>
-	
+
   <ItemGroup>
     <Content Include="..\MoonWorks.Test.Common\Content\**\*.*">
       <Link>Content\%(RecursiveDir)%(Filename)%(Extension)</Link>

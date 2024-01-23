@@ -61,6 +61,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowResizing", "WindowRes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreLoad", "StoreLoad\StoreLoad.csproj", "{CD31F1B5-C76A-428A-A812-8DFD6CAB20A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteBatch", "SpriteBatch\SpriteBatch.csproj", "{40E25B99-1196-4695-99A6-C0A8EF385539}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -183,6 +185,10 @@ Global
 		{CD31F1B5-C76A-428A-A812-8DFD6CAB20A9}.Debug|x64.Build.0 = Debug|x64
 		{CD31F1B5-C76A-428A-A812-8DFD6CAB20A9}.Release|x64.ActiveCfg = Release|x64
 		{CD31F1B5-C76A-428A-A812-8DFD6CAB20A9}.Release|x64.Build.0 = Release|x64
+		{40E25B99-1196-4695-99A6-C0A8EF385539}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{40E25B99-1196-4695-99A6-C0A8EF385539}.Debug|x64.Build.0 = Debug|Any CPU
+		{40E25B99-1196-4695-99A6-C0A8EF385539}.Release|x64.ActiveCfg = Release|Any CPU
+		{40E25B99-1196-4695-99A6-C0A8EF385539}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

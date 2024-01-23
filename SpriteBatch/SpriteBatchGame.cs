@@ -77,8 +77,10 @@ namespace MoonWorks.Test
 				cmdbuf.BindGraphicsPipeline(spriteBatchPipeline);
 				cmdbuf.BindVertexBuffers(
 					new BufferBinding(quadVertexBuffer, 0),
-					new BufferBinding(SpriteBatch.)
-				)
+					new BufferBinding(SpriteBatch.BatchBuffer, 0)
+				);
+				cmdbuf.BindIndexBuffer(quadIndexBuffer, IndexElementSize.Sixteen);
+				cmdbuf.DrawInstancedPrimitives(0, 0, SpriteBatch.Index * 2, SpriteBatch.Index, );
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

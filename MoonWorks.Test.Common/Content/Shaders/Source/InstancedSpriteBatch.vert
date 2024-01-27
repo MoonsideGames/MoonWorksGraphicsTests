@@ -27,19 +27,19 @@ void main()
 	float c = cos(Rotation);
 	float s = sin(Rotation);
 	mat4 Rotation = mat4(
-		c, -s, 0, 0,
-		s, c, 0, 0,
+		c, s, 0, 0,
+		-s, c, 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1
 	);
 	mat4 Translation = mat4(
-		1, 0, 0, Position.x,
-		0, 1, 0, Position.y,
-		0, 0, 1, Position.z,
-		0, 0, 0, 1
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		Translation.x, Translation.y, Translation.z, 1
 	);
-	mat4 Model = Scale * Rotation * Translation;
-	gl_Position = Model * View * Projection * vec4(Position, 1);
+	mat4 Model = Translation * Rotation * Scale;
+	gl_Position = Projection * View * Model * vec4(Position, 1);
 	outTexCoord = UV[gl_VertexIndex % 4];
 	outVertexColor = Color;
 }

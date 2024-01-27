@@ -5,32 +5,20 @@
     	<Message Text="Runtime ID: $(RuntimeIdentifier)" Importance="high"/>
 	</Target>
 
-	<ItemGroup>
-		<Content Include="..\..\moonlibs\video_shaders\video_fullscreen.vert.refresh">
-			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-
-		<Content Include="..\..\moonlibs\video_shaders\video_yuv2rgba.frag.refresh">
-			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
-
 	<ItemGroup Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))">
-		<Content Include="..\..\moonlibs\windows\FAudio.dll">
+		<Content Include="..\..\moonlibs\x64\FAudio.dll">
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\..\moonlibs\windows\Refresh.dll">
+		<Content Include="..\..\moonlibs\x64\Refresh.dll">
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\..\moonlibs\windows\SDL2.dll">
+		<Content Include="..\..\moonlibs\x64\SDL2.dll">
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\..\moonlibs\windows\dav1dfile.dll">
+		<Content Include="..\..\moonlibs\x64\dav1dfile.dll">
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
@@ -48,7 +36,7 @@
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\..\moonlibs\windows\libdav1dfile.*">
+		<Content Include="..\..\moonlibs\lib64\libdav1dfile.*">
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>

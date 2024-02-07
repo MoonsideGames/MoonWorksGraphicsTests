@@ -120,7 +120,7 @@ namespace MoonWorks.Test
 
 		protected override void Draw(double alpha)
 		{
-			FragUniform fragUniform = new FragUniform((float) currentDepth / texture.Depth);
+			FragUniform fragUniform = new FragUniform((float)currentDepth / texture.Depth + 0.01f);
 
 			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);

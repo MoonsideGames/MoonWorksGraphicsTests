@@ -20,12 +20,12 @@ namespace MoonWorks.Test
 		};
 
 		public override string ToString()
-        {
+		{
 			return Position.ToString();
 		}
 	}
 
-    [StructLayout(LayoutKind.Sequential)]
+	[StructLayout(LayoutKind.Sequential)]
 	public struct PositionColorVertex : IVertexType
 	{
 		public Vector3 Position;
@@ -67,9 +67,9 @@ namespace MoonWorks.Test
 			VertexElementFormat.Vector2
 		};
 
-        public override string ToString()
-        {
+		public override string ToString()
+		{
 			return Position + " | " + TexCoord;
-        }
-    }
+		}
+	}
 }

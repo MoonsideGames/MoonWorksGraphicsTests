@@ -61,6 +61,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowResizing", "WindowRes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoreLoad", "StoreLoad\StoreLoad.csproj", "{CD31F1B5-C76A-428A-A812-8DFD6CAB20A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderTexture2D", "RenderTexture2D\RenderTexture2D.csproj", "{F9C9E15D-1000-46DA-BA39-1D4C0D43F023}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -183,6 +185,10 @@ Global
 		{CD31F1B5-C76A-428A-A812-8DFD6CAB20A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD31F1B5-C76A-428A-A812-8DFD6CAB20A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD31F1B5-C76A-428A-A812-8DFD6CAB20A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9C9E15D-1000-46DA-BA39-1D4C0D43F023}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9C9E15D-1000-46DA-BA39-1D4C0D43F023}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9C9E15D-1000-46DA-BA39-1D4C0D43F023}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9C9E15D-1000-46DA-BA39-1D4C0D43F023}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

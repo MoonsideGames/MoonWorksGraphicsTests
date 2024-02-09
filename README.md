@@ -16,6 +16,10 @@ Sets up a graphics pipeline and draws a triangle without vertex buffers. (The ve
 
 Similar to above, but using a MoonWorks vertex buffer and custom vertex structs.
 
+**StoreLoad**
+
+Draws a triangle to the screen in one render pass, stores the attachment, and then loads the attachment again. Tests that load/store operations work as expected.
+
 **TexturedQuad**
 
 Draws a textured quad to the screen. Tests texture binding, index buffers, and sampler states.
@@ -79,6 +83,10 @@ Displays a quad that can be scaled to reveal various mip levels. The mips are ge
 **VertexSampler**
 
 Displays a triangle whose colors are driven by sampling a texture in the vertex shader.
+
+**RenderTexture2D**
+
+Clears and draws 4 render textures to the screen. Tests binding and sampling 2D render textures.
 
 **RenderTexture3D**
 

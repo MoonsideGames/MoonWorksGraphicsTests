@@ -6,44 +6,71 @@ using System.Runtime.InteropServices;
 
 namespace MoonWorks.Test
 {
-	class RenderTextureCubeGame : Game
+	class MSAACubeGame : Game
 	{
-		private GraphicsPipeline pipeline;
+		private GraphicsPipeline[] msaaPipelines = new GraphicsPipeline[4];
+		private GraphicsPipeline cubemapPipeline;
+
+		private Texture[] renderTargets = new Texture[4];
 		private Buffer vertexBuffer;
 		private Buffer indexBuffer;
-		private Texture cubemap;
 		private Sampler sampler;
 
 		private Vector3 camPos = new Vector3(0, 0, 4f);
 
-		private Color[] colors = new Color[]
-		{
-			Color.Red,
-			Color.Green,
-			Color.Blue,
-			Color.Orange,
-			Color.Yellow,
-			Color.Purple,
-		};
+		private SampleCount currentSampleCount = SampleCount.Four;
 
-		public RenderTextureCubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+		public MSAACubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
 		{
 			Logger.LogInfo("Press Down to view the other side of the cubemap");
+			Logger.LogInfo("Press Left and Right to cycle between sample counts");
+			Logger.LogInfo("Setting sample count to: " + currentSampleCount);
 
-			// Load the shaders
-			ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("Skybox.vert"));
-			ShaderModule fragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("Skybox.frag"));
+			// Create the MSAA pipelines
+			ShaderModule triangleVertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("RawTriangle.vert"));
+			ShaderModule triangleFragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("SolidColor.frag"));
 
-			// Create the graphics pipeline
 			GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
+				TextureFormat.R8G8B8A8,
+				triangleVertShaderModule,
+				triangleFragShaderModule
+			);
+			for (int i = 0; i < msaaPipelines.Length; i += 1)
+			{
+				pipelineCreateInfo.MultisampleState.MultisampleCount = (SampleCount)i;
+				msaaPipelines[i] = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+			}
+
+			// Create the cubemap pipeline
+			ShaderModule cubemapVertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("Skybox.vert"));
+			ShaderModule cubemapFragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("Skybox.frag"));
+
+			pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
 				MainWindow.SwapchainFormat,
-				vertShaderModule,
-				fragShaderModule
+				cubemapVertShaderModule,
+				cubemapFragShaderModule
 			);
 			pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionVertex>();
-			pipelineCreateInfo.VertexShaderInfo.UniformBufferSize = (uint) Marshal.SizeOf<TransformVertexUniform>();
+			pipelineCreateInfo.VertexShaderInfo.UniformBufferSize = (uint)Marshal.SizeOf<TransformVertexUniform>();
 			pipelineCreateInfo.FragmentShaderInfo.SamplerBindingCount = 1;
-			pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+			cubemapPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+
+			// Create the MSAA render targets
+			for (int i = 0; i < renderTargets.Length; i++)
+			{
+				TextureCreateInfo cubeCreateInfo = new TextureCreateInfo
+				{
+					Width = 16,
+					Height = 16,
+					Format = TextureFormat.R8G8B8A8,
+					Depth = 1,
+					LevelCount = 1,
+					SampleCount = (SampleCount)i,
+					UsageFlags = TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler,
+					IsCube = true
+				};
+				renderTargets[i] = new Texture(GraphicsDevice, cubeCreateInfo);
+			}
 
 			// Create samplers
 			sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
@@ -51,12 +78,6 @@ namespace MoonWorks.Test
 			// Create and populate the GPU resources
 			vertexBuffer = Buffer.Create<PositionVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 24);
 			indexBuffer = Buffer.Create<ushort>(GraphicsDevice, BufferUsageFlags.Index, 36);
-			cubemap = Texture.CreateTextureCube(
-				GraphicsDevice,
-				16,
-				TextureFormat.R8G8B8A8,
-				TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler
-			);
 
 			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 			cmdbuf.SetBufferData(
@@ -108,23 +129,6 @@ namespace MoonWorks.Test
 				}
 			);
 
-			// Clear each slice of the cubemap to a different color
-			for (uint i = 0; i < 6; i += 1)
-			{
-				ColorAttachmentInfo attachmentInfo = new ColorAttachmentInfo
-				{
-					Texture = cubemap,
-					ClearColor = colors[i],
-					Depth = 0,
-					Layer = i,
-					Level = 0,
-					LoadOp = LoadOp.Clear,
-					StoreOp = StoreOp.Store
-				};
-				cmdbuf.BeginRenderPass(attachmentInfo);
-				cmdbuf.EndRenderPass();
-			}
-
 			GraphicsDevice.Submit(cmdbuf);
 		}
 
@@ -134,13 +138,37 @@ namespace MoonWorks.Test
 			{
 				camPos.Z *= -1;
 			}
+
+			SampleCount prevSampleCount = currentSampleCount;
+
+			if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Left))
+			{
+				currentSampleCount -= 1;
+				if (currentSampleCount < 0)
+				{
+					currentSampleCount = SampleCount.Eight;
+				}
+			}
+			if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Right))
+			{
+				currentSampleCount += 1;
+				if (currentSampleCount > SampleCount.Eight)
+				{
+					currentSampleCount = SampleCount.One;
+				}
+			}
+
+			if (prevSampleCount != currentSampleCount)
+			{
+				Logger.LogInfo("Setting sample count to: " + currentSampleCount);
+			}
 		}
 
 		protected override void Draw(double alpha)
 		{
 			Matrix4x4 proj = Matrix4x4.CreatePerspectiveFieldOfView(
 				MathHelper.ToRadians(75f),
-				(float) MainWindow.Width / MainWindow.Height,
+				(float)MainWindow.Width / MainWindow.Height,
 				0.01f,
 				100f
 			);
@@ -155,11 +183,30 @@ namespace MoonWorks.Test
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (backbuffer != null)
 			{
+				// Get a reference to the RT for the given sample count
+				int rtIndex = (int) currentSampleCount;
+				Texture rt = renderTargets[rtIndex];
+				ColorAttachmentInfo rtAttachmentInfo = new ColorAttachmentInfo(
+					rt,
+					Color.Black
+				);
+
+				// Render a triangle to each slice of the cubemap
+				for (uint i = 0; i < 6; i += 1)
+				{
+					rtAttachmentInfo.Layer = i;
+
+					cmdbuf.BeginRenderPass(rtAttachmentInfo);
+					cmdbuf.BindGraphicsPipeline(msaaPipelines[rtIndex]);
+					cmdbuf.DrawPrimitives(0, 1, 0, 0);
+					cmdbuf.EndRenderPass();
+				}
+
 				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.Black));
-				cmdbuf.BindGraphicsPipeline(pipeline);
+				cmdbuf.BindGraphicsPipeline(cubemapPipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
-				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(cubemap, sampler));
+				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(rt, sampler));
 				uint vertexUniformOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
 				cmdbuf.DrawIndexedPrimitives(0, 0, 12, vertexUniformOffset, 0);
 				cmdbuf.EndRenderPass();
@@ -169,7 +216,7 @@ namespace MoonWorks.Test
 
 		public static void Main(string[] args)
 		{
-			RenderTextureCubeGame game = new RenderTextureCubeGame();
+			MSAACubeGame game = new MSAACubeGame();
 			game.Run();
 		}
 	}

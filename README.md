@@ -108,6 +108,10 @@ Demonstrates stencil masking using two triangles. Tests stencil buffers and basi
 
 Displays two cubes floating around each other on a multisampled surface. Tests multisampled depth buffers.
 
+**MSAACube**
+
+Same as RenderTextureCube, but with MSAA cube RTs. Draws triangles to each cubemap face so there's something to see. Tests cube render target MSAA.
+
 **WindowResizing**
 
 Tests resizing the window to various resolutions.

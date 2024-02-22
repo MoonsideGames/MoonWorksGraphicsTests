@@ -9,6 +9,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir)NativeAOT_Console.targets" Condition="Exists('$(SolutionDir)NativeAOT_Console.targets')" />

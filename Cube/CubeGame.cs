@@ -1,7 +1,7 @@
-﻿using MoonWorks;
-using MoonWorks.Graphics;
+﻿using MoonWorks.Graphics;
 using MoonWorks.Math;
 using MoonWorks.Math.Float;
+using System;
 using System.Threading.Tasks;
 
 namespace MoonWorks.Test
@@ -18,10 +18,13 @@ namespace MoonWorks.Test
 		private Sampler depthSampler;
 		private DepthUniforms depthUniforms;
 
-		private Buffer cubeVertexBuffer;
-		private Buffer skyboxVertexBuffer;
-		private Buffer blitVertexBuffer;
-		private Buffer indexBuffer;
+        private GpuBuffer cubeVertexBuffer;
+        private GpuBuffer skyboxVertexBuffer;
+        private GpuBuffer blitVertexBuffer;
+        private GpuBuffer indexBuffer;
+
+        private CpuBuffer transferBuffer;
+        private CpuBuffer cubemapTransferBuffer;
 
 		private Texture skyboxTexture;
 		private Sampler skyboxSampler;
@@ -48,21 +51,40 @@ namespace MoonWorks.Test
 			}
 		}
 
-		void LoadCubemap(CommandBuffer cmdbuf, string[] imagePaths)
-		{
-			for (uint i = 0; i < imagePaths.Length; i++)
-			{
-				var textureSlice = new TextureSlice(
-					skyboxTexture,
-					new Rect(0, 0, (int) skyboxTexture.Width, (int) skyboxTexture.Height),
-					0,
-					i,
-					0
-				);
+        unsafe void LoadCubemap(string[] imagePaths)
+        {
+            /* Upload cubemap layers one at a time to minimize transfer size */
+            for (uint i = 0; i < imagePaths.Length; i++)
+            {
+                var commandBuffer = GraphicsDevice.AcquireCommandBuffer();
 
-				Texture.SetDataFromImageFile(cmdbuf, textureSlice, imagePaths[i]);
-			}
-		}
+                var textureSlice = new TextureSlice
+                {
+                    Texture = skyboxTexture,
+                    MipLevel = 0,
+                    BaseLayer = i,
+                    LayerCount = 1,
+                    X = 0,
+                    Y = 0,
+                    Z = 0,
+                    Width = skyboxTexture.Width,
+                    Height = skyboxTexture.Height,
+                    Depth = 1
+                };
+
+                var pixelData = ImageUtils.GetPixelDataFromFile(imagePaths[i], out var _, out var _, out var sizeInBytes);
+                cubemapTransferBuffer.SetData(new Span<byte>((void*) pixelData, (int) sizeInBytes), SetDataOptions.Overwrite);
+                ImageUtils.FreePixelData(pixelData);
+
+                commandBuffer.BeginCopyPass();
+                commandBuffer.UploadToTexture(cubemapTransferBuffer, textureSlice, new BufferImageCopy(0, 0, 0));
+                commandBuffer.EndCopyPass();
+
+                var fence = GraphicsDevice.SubmitAndAcquireFence(commandBuffer);
+                GraphicsDevice.WaitForFences(fence);
+                GraphicsDevice.ReleaseFence(fence);
+            }
+        }
 
 		public CubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
 		{
@@ -111,27 +133,30 @@ namespace MoonWorks.Test
 			);
 			skyboxSampler = new Sampler(GraphicsDevice, new SamplerCreateInfo());
 
-			cubeVertexBuffer = Buffer.Create<PositionColorVertex>(
-				GraphicsDevice,
-				BufferUsageFlags.Vertex,
-				24
-			);
-			skyboxVertexBuffer = Buffer.Create<PositionVertex>(
-				GraphicsDevice,
-				BufferUsageFlags.Vertex,
-				24
-			);
-			indexBuffer = Buffer.Create<uint>(
-				GraphicsDevice,
-				BufferUsageFlags.Index,
-				36
-			); // Using uint here just to test IndexElementSize=32
+            cubeVertexBuffer = GpuBuffer.Create<PositionColorVertex>(
+                GraphicsDevice,
+                BufferUsageFlags.Vertex,
+                24
+            );
+            skyboxVertexBuffer = GpuBuffer.Create<PositionVertex>(
+                GraphicsDevice,
+                BufferUsageFlags.Vertex,
+                24
+            );
+            indexBuffer = GpuBuffer.Create<uint>(
+                GraphicsDevice,
+                BufferUsageFlags.Index,
+                36
+            ); // Using uint here just to test IndexElementSize=32
 
-			blitVertexBuffer = Buffer.Create<PositionTextureVertex>(
-				GraphicsDevice,
-				BufferUsageFlags.Vertex,
-				6
-			);
+            blitVertexBuffer = GpuBuffer.Create<PositionTextureVertex>(
+                GraphicsDevice,
+                BufferUsageFlags.Vertex,
+                6
+            );
+
+            transferBuffer = new CpuBuffer(GraphicsDevice, 32768);
+            cubemapTransferBuffer = new CpuBuffer(GraphicsDevice, 2048 * 2048 * 4);
 
 			Task loadingTask = Task.Run(() => UploadGPUAssets());
 
@@ -199,117 +224,155 @@ namespace MoonWorks.Test
 		{
 			Logger.LogInfo("Loading...");
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
+            var cubeVertexData = new Span<PositionColorVertex>([
+                new PositionColorVertex(new Vector3(-1, -1, -1), new Color(1f, 0f, 0f)),
+                new PositionColorVertex(new Vector3(1, -1, -1), new Color(1f, 0f, 0f)),
+                new PositionColorVertex(new Vector3(1, 1, -1), new Color(1f, 0f, 0f)),
+                new PositionColorVertex(new Vector3(-1, 1, -1), new Color(1f, 0f, 0f)),
 
-			cmdbuf.SetBufferData(
-				cubeVertexBuffer,
-				new PositionColorVertex[]
-				{
-					new PositionColorVertex(new Vector3(-1, -1, -1), new Color(1f, 0f, 0f)),
-					new PositionColorVertex(new Vector3(1, -1, -1), new Color(1f, 0f, 0f)),
-					new PositionColorVertex(new Vector3(1, 1, -1), new Color(1f, 0f, 0f)),
-					new PositionColorVertex(new Vector3(-1, 1, -1), new Color(1f, 0f, 0f)),
+                new PositionColorVertex(new Vector3(-1, -1, 1), new Color(0f, 1f, 0f)),
+                new PositionColorVertex(new Vector3(1, -1, 1), new Color(0f, 1f, 0f)),
+                new PositionColorVertex(new Vector3(1, 1, 1), new Color(0f, 1f, 0f)),
+                new PositionColorVertex(new Vector3(-1, 1, 1), new Color(0f, 1f, 0f)),
 
-					new PositionColorVertex(new Vector3(-1, -1, 1), new Color(0f, 1f, 0f)),
-					new PositionColorVertex(new Vector3(1, -1, 1), new Color(0f, 1f, 0f)),
-					new PositionColorVertex(new Vector3(1, 1, 1), new Color(0f, 1f, 0f)),
-					new PositionColorVertex(new Vector3(-1, 1, 1), new Color(0f, 1f, 0f)),
+                new PositionColorVertex(new Vector3(-1, -1, -1), new Color(0f, 0f, 1f)),
+                new PositionColorVertex(new Vector3(-1, 1, -1), new Color(0f, 0f, 1f)),
+                new PositionColorVertex(new Vector3(-1, 1, 1), new Color(0f, 0f, 1f)),
+                new PositionColorVertex(new Vector3(-1, -1, 1), new Color(0f, 0f, 1f)),
 
-					new PositionColorVertex(new Vector3(-1, -1, -1), new Color(0f, 0f, 1f)),
-					new PositionColorVertex(new Vector3(-1, 1, -1), new Color(0f, 0f, 1f)),
-					new PositionColorVertex(new Vector3(-1, 1, 1), new Color(0f, 0f, 1f)),
-					new PositionColorVertex(new Vector3(-1, -1, 1), new Color(0f, 0f, 1f)),
+                new PositionColorVertex(new Vector3(1, -1, -1), new Color(1f, 0.5f, 0f)),
+                new PositionColorVertex(new Vector3(1, 1, -1), new Color(1f, 0.5f, 0f)),
+                new PositionColorVertex(new Vector3(1, 1, 1), new Color(1f, 0.5f, 0f)),
+                new PositionColorVertex(new Vector3(1, -1, 1), new Color(1f, 0.5f, 0f)),
 
-					new PositionColorVertex(new Vector3(1, -1, -1), new Color(1f, 0.5f, 0f)),
-					new PositionColorVertex(new Vector3(1, 1, -1), new Color(1f, 0.5f, 0f)),
-					new PositionColorVertex(new Vector3(1, 1, 1), new Color(1f, 0.5f, 0f)),
-					new PositionColorVertex(new Vector3(1, -1, 1), new Color(1f, 0.5f, 0f)),
+                new PositionColorVertex(new Vector3(-1, -1, -1), new Color(1f, 0f, 0.5f)),
+                new PositionColorVertex(new Vector3(-1, -1, 1), new Color(1f, 0f, 0.5f)),
+                new PositionColorVertex(new Vector3(1, -1, 1), new Color(1f, 0f, 0.5f)),
+                new PositionColorVertex(new Vector3(1, -1, -1), new Color(1f, 0f, 0.5f)),
 
-					new PositionColorVertex(new Vector3(-1, -1, -1), new Color(1f, 0f, 0.5f)),
-					new PositionColorVertex(new Vector3(-1, -1, 1), new Color(1f, 0f, 0.5f)),
-					new PositionColorVertex(new Vector3(1, -1, 1), new Color(1f, 0f, 0.5f)),
-					new PositionColorVertex(new Vector3(1, -1, -1), new Color(1f, 0f, 0.5f)),
+                new PositionColorVertex(new Vector3(-1, 1, -1), new Color(0f, 0.5f, 0f)),
+                new PositionColorVertex(new Vector3(-1, 1, 1), new Color(0f, 0.5f, 0f)),
+                new PositionColorVertex(new Vector3(1, 1, 1), new Color(0f, 0.5f, 0f)),
+                new PositionColorVertex(new Vector3(1, 1, -1), new Color(0f, 0.5f, 0f))
+            ]);
 
-					new PositionColorVertex(new Vector3(-1, 1, -1), new Color(0f, 0.5f, 0f)),
-					new PositionColorVertex(new Vector3(-1, 1, 1), new Color(0f, 0.5f, 0f)),
-					new PositionColorVertex(new Vector3(1, 1, 1), new Color(0f, 0.5f, 0f)),
-					new PositionColorVertex(new Vector3(1, 1, -1), new Color(0f, 0.5f, 0f))
-				}
-			);
+            var skyboxVertexData = new Span<PositionVertex>([
+                new PositionVertex(new Vector3(-10, -10, -10)),
+                new PositionVertex(new Vector3(10, -10, -10)),
+                new PositionVertex(new Vector3(10, 10, -10)),
+                new PositionVertex(new Vector3(-10, 10, -10)),
 
-			cmdbuf.SetBufferData(
-				skyboxVertexBuffer,
-				new PositionVertex[]
-				{
-					new PositionVertex(new Vector3(-10, -10, -10)),
-					new PositionVertex(new Vector3(10, -10, -10)),
-					new PositionVertex(new Vector3(10, 10, -10)),
-					new PositionVertex(new Vector3(-10, 10, -10)),
+                new PositionVertex(new Vector3(-10, -10, 10)),
+                new PositionVertex(new Vector3(10, -10, 10)),
+                new PositionVertex(new Vector3(10, 10, 10)),
+                new PositionVertex(new Vector3(-10, 10, 10)),
 
-					new PositionVertex(new Vector3(-10, -10, 10)),
-					new PositionVertex(new Vector3(10, -10, 10)),
-					new PositionVertex(new Vector3(10, 10, 10)),
-					new PositionVertex(new Vector3(-10, 10, 10)),
+                new PositionVertex(new Vector3(-10, -10, -10)),
+                new PositionVertex(new Vector3(-10, 10, -10)),
+                new PositionVertex(new Vector3(-10, 10, 10)),
+                new PositionVertex(new Vector3(-10, -10, 10)),
 
-					new PositionVertex(new Vector3(-10, -10, -10)),
-					new PositionVertex(new Vector3(-10, 10, -10)),
-					new PositionVertex(new Vector3(-10, 10, 10)),
-					new PositionVertex(new Vector3(-10, -10, 10)),
+                new PositionVertex(new Vector3(10, -10, -10)),
+                new PositionVertex(new Vector3(10, 10, -10)),
+                new PositionVertex(new Vector3(10, 10, 10)),
+                new PositionVertex(new Vector3(10, -10, 10)),
 
-					new PositionVertex(new Vector3(10, -10, -10)),
-					new PositionVertex(new Vector3(10, 10, -10)),
-					new PositionVertex(new Vector3(10, 10, 10)),
-					new PositionVertex(new Vector3(10, -10, 10)),
+                new PositionVertex(new Vector3(-10, -10, -10)),
+                new PositionVertex(new Vector3(-10, -10, 10)),
+                new PositionVertex(new Vector3(10, -10, 10)),
+                new PositionVertex(new Vector3(10, -10, -10)),
 
-					new PositionVertex(new Vector3(-10, -10, -10)),
-					new PositionVertex(new Vector3(-10, -10, 10)),
-					new PositionVertex(new Vector3(10, -10, 10)),
-					new PositionVertex(new Vector3(10, -10, -10)),
+                new PositionVertex(new Vector3(-10, 10, -10)),
+                new PositionVertex(new Vector3(-10, 10, 10)),
+                new PositionVertex(new Vector3(10, 10, 10)),
+                new PositionVertex(new Vector3(10, 10, -10))
+            ]);
 
-					new PositionVertex(new Vector3(-10, 10, -10)),
-					new PositionVertex(new Vector3(-10, 10, 10)),
-					new PositionVertex(new Vector3(10, 10, 10)),
-					new PositionVertex(new Vector3(10, 10, -10))
-				}
-			);
+            var indexData = new Span<uint>([
+                0, 1, 2,    0, 2, 3,
+                6, 5, 4,    7, 6, 4,
+                8, 9, 10,   8, 10, 11,
+                14, 13, 12, 15, 14, 12,
+                16, 17, 18, 16, 18, 19,
+                22, 21, 20, 23, 22, 20
+            ]);
 
-			cmdbuf.SetBufferData(
-				indexBuffer,
-				new uint[]
-				{
-					 0,  1,  2,  0,  2,  3,
-					 6,  5,  4,  7,  6,  4,
-					 8,  9, 10,  8, 10, 11,
-					14, 13, 12, 15, 14, 12,
-					16, 17, 18, 16, 18, 19,
-					22, 21, 20, 23, 22, 20
-				}
-			);
+            var blitVertexData = new Span<PositionTextureVertex>([
+                new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
+                new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
+                new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
+                new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
+                new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
+                new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
+            ]);
 
-			cmdbuf.SetBufferData(
-				blitVertexBuffer,
-				new PositionTextureVertex[]
-				{
-					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
-					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
-					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
-					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
-				}
-			);
+            CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 
-			LoadCubemap(cmdbuf, new string[]
-			{
-				TestUtils.GetTexturePath("right.png"),
-				TestUtils.GetTexturePath("left.png"),
-				TestUtils.GetTexturePath("top.png"),
-				TestUtils.GetTexturePath("bottom.png"),
-				TestUtils.GetTexturePath("front.png"),
-				TestUtils.GetTexturePath("back.png")
-			});
+            cmdbuf.BeginCopyPass();
 
-			GraphicsDevice.Submit(cmdbuf);
+            uint offset = 0;
+            uint length = transferBuffer.SetData(cubeVertexData, SetDataOptions.Overwrite);
+            cmdbuf.UploadToBuffer(
+                transferBuffer,
+                cubeVertexBuffer,
+                new BufferCopy(
+                    offset,
+                    0,
+                    length
+                )
+            );
+
+            offset += length;
+            length = transferBuffer.SetData(skyboxVertexData, offset, SetDataOptions.Overwrite);
+            cmdbuf.UploadToBuffer(
+                transferBuffer,
+                skyboxVertexBuffer,
+                new BufferCopy(
+                    offset,
+                    0,
+                    length
+                )
+            );
+
+            offset += length;
+            length = transferBuffer.SetData(indexData, offset, SetDataOptions.Overwrite);
+            cmdbuf.UploadToBuffer(
+                transferBuffer,
+                indexBuffer,
+                new BufferCopy(
+                    offset,
+                    0,
+                    length
+                )
+            );
+
+            offset += length;
+            length = transferBuffer.SetData(blitVertexData, offset, SetDataOptions.Overwrite);
+            cmdbuf.UploadToBuffer(
+                transferBuffer,
+                blitVertexBuffer,
+                new BufferCopy(
+                    offset,
+                    0,
+                    length
+                )
+            );
+
+            cmdbuf.EndCopyPass();
+            GraphicsDevice.Submit(cmdbuf);
+
+            LoadCubemap(new string[]
+		    {
+			    TestUtils.GetTexturePath("right.png"),
+			    TestUtils.GetTexturePath("left.png"),
+			    TestUtils.GetTexturePath("top.png"),
+			    TestUtils.GetTexturePath("bottom.png"),
+			    TestUtils.GetTexturePath("front.png"),
+			    TestUtils.GetTexturePath("back.png")
+		    });
+
+            cubemapTransferBuffer.Dispose();
+            transferBuffer.Dispose();
 
 			finishedLoading = true;
 			Logger.LogInfo("Finished loading!");
@@ -404,20 +467,20 @@ namespace MoonWorks.Test
 						);
 					}
 
-					// Draw cube
-					cmdbuf.BindGraphicsPipeline(depthOnlyEnabled ? cubePipelineDepthOnly : cubePipeline);
-					cmdbuf.BindVertexBuffers(cubeVertexBuffer);
-					cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.ThirtyTwo);
-					uint vertexParamOffset = cmdbuf.PushVertexShaderUniforms(cubeUniforms);
-					cmdbuf.DrawIndexedPrimitives(0, 0, 12, vertexParamOffset, 0);
+                    // Draw cube
+                    cmdbuf.BindGraphicsPipeline(depthOnlyEnabled ? cubePipelineDepthOnly : cubePipeline);
+                    cmdbuf.BindVertexBuffers(cubeVertexBuffer);
+                    cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.ThirtyTwo);
+                    cmdbuf.PushVertexShaderUniforms(cubeUniforms);
+                    cmdbuf.DrawIndexedPrimitives(0, 0, 12);
 
-					// Draw skybox
-					cmdbuf.BindGraphicsPipeline(depthOnlyEnabled ? skyboxPipelineDepthOnly : skyboxPipeline);
-					cmdbuf.BindVertexBuffers(skyboxVertexBuffer);
-					cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.ThirtyTwo);
-					cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(skyboxTexture, skyboxSampler));
-					vertexParamOffset = cmdbuf.PushVertexShaderUniforms(skyboxUniforms);
-					cmdbuf.DrawIndexedPrimitives(0, 0, 12, vertexParamOffset, 0);
+                    // Draw skybox
+                    cmdbuf.BindGraphicsPipeline(depthOnlyEnabled ? skyboxPipelineDepthOnly : skyboxPipeline);
+                    cmdbuf.BindVertexBuffers(skyboxVertexBuffer);
+                    cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.ThirtyTwo);
+                    cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(skyboxTexture, skyboxSampler));
+                    cmdbuf.PushVertexShaderUniforms(skyboxUniforms);
+                    cmdbuf.DrawIndexedPrimitives(0, 0, 12);
 
 					cmdbuf.EndRenderPass();
 
@@ -426,11 +489,11 @@ namespace MoonWorks.Test
 						// Draw the depth buffer as a grayscale image
 						cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchainTexture, LoadOp.DontCare));
 
-						cmdbuf.BindGraphicsPipeline(blitPipeline);
-						cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(depthTexture, depthSampler));
-						cmdbuf.BindVertexBuffers(blitVertexBuffer);
-						uint fragParamOffset = cmdbuf.PushFragmentShaderUniforms(depthUniforms);
-						cmdbuf.DrawPrimitives(0, 2, vertexParamOffset, fragParamOffset);
+                        cmdbuf.BindGraphicsPipeline(blitPipeline);
+                        cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(depthTexture, depthSampler));
+                        cmdbuf.BindVertexBuffers(blitVertexBuffer);
+                        cmdbuf.PushFragmentShaderUniforms(depthUniforms);
+                        cmdbuf.DrawPrimitives(0, 2);
 
 						cmdbuf.EndRenderPass();
 					}
@@ -452,10 +515,12 @@ namespace MoonWorks.Test
 
 		private System.Action<object?> TakeScreenshot = texture =>
 		{
+            /*
 			if (texture != null)
 			{
 				((Texture) texture).SavePNG(System.IO.Path.Combine(System.AppContext.BaseDirectory, "screenshot.png"));
 			}
+            */
 		};
 
 		public static void Main(string[] args)

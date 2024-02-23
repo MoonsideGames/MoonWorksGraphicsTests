@@ -1,15 +1,13 @@
-﻿using MoonWorks;
-using MoonWorks.Graphics;
+﻿using MoonWorks.Graphics;
 using MoonWorks.Math.Float;
-using RefreshCS;
 
 namespace MoonWorks.Test
 {
 	class RenderTexture3DGame : Game
 	{
 		private GraphicsPipeline pipeline;
-		private Buffer vertexBuffer;
-		private Buffer indexBuffer;
+		private GpuBuffer vertexBuffer;
+		private GpuBuffer indexBuffer;
 		private Texture rt;
 		private Sampler sampler;
 
@@ -51,8 +49,29 @@ namespace MoonWorks.Test
 			sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.LinearWrap);
 
 			// Create and populate the GPU resources
-			vertexBuffer = Buffer.Create<PositionTextureVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 4);
-			indexBuffer = Buffer.Create<ushort>(GraphicsDevice, BufferUsageFlags.Index, 6);
+			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+
+			vertexBuffer = resourceInitializer.CreateBuffer(
+				[
+					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
+					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
+					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
+					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
+				],
+				BufferUsageFlags.Vertex
+			);
+
+			indexBuffer = resourceInitializer.CreateBuffer<ushort>(
+				[
+					0, 1, 2,
+					0, 2, 3,
+				],
+				BufferUsageFlags.Index
+			);
+
+			resourceInitializer.Upload();
+			resourceInitializer.Dispose();
+
 			rt = Texture.CreateTexture3D(
 				GraphicsDevice,
 				16,
@@ -63,24 +82,6 @@ namespace MoonWorks.Test
 			);
 
 			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
-				vertexBuffer,
-				new PositionTextureVertex[]
-				{
-					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
-					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
-					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
-				}
-			);
-			cmdbuf.SetBufferData(
-				indexBuffer,
-				new ushort[]
-				{
-					0, 1, 2,
-					0, 2, 3,
-				}
-			);
 
 			// Clear each depth slice of the RT to a different color
 			for (uint i = 0; i < colors.Length; i += 1)
@@ -118,8 +119,8 @@ namespace MoonWorks.Test
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(rt, sampler));
-				uint fragParamOffset = cmdbuf.PushFragmentShaderUniforms(fragUniform);
-				cmdbuf.DrawIndexedPrimitives(0, 0, 2, 0, fragParamOffset);
+				cmdbuf.PushFragmentShaderUniforms(fragUniform);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 2);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

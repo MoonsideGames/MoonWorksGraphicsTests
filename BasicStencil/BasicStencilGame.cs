@@ -8,7 +8,7 @@ namespace MoonWorks.Test
 	{
 		private GraphicsPipeline maskerPipeline;
 		private GraphicsPipeline maskeePipeline;
-		private Buffer vertexBuffer;
+		private GpuBuffer vertexBuffer;
 		private Texture depthStencilTexture;
 
 		public BasicStencilGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
@@ -29,7 +29,7 @@ namespace MoonWorks.Test
 			pipelineCreateInfo.DepthStencilState = new DepthStencilState
 			{
 				StencilTestEnable = true,
-				FrontStencilState = new StencilOpState
+				StencilState = new StencilOpState
 				{
 					Reference = 1,
 					WriteMask = 0xFF,
@@ -42,7 +42,7 @@ namespace MoonWorks.Test
 			pipelineCreateInfo.DepthStencilState = new DepthStencilState
 			{
 				StencilTestEnable = true,
-				FrontStencilState = new StencilOpState
+				StencilState = new StencilOpState
 				{
 					Reference = 0,
 					CompareMask = 0xFF,
@@ -60,13 +60,11 @@ namespace MoonWorks.Test
 				TextureFormat.D16S8,
 				TextureUsageFlags.DepthStencilTarget
 			);
-			vertexBuffer = Buffer.Create<PositionColorVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 6);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
-				vertexBuffer,
-				new PositionColorVertex[]
-				{
+			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+
+			vertexBuffer = resourceInitializer.CreateBuffer(
+				[
 					new PositionColorVertex(new Vector3(-0.5f, 0.5f, 0), Color.Yellow),
 					new PositionColorVertex(new Vector3(0.5f, 0.5f, 0), Color.Yellow),
 					new PositionColorVertex(new Vector3(0, -0.5f, 0), Color.Yellow),
@@ -74,9 +72,12 @@ namespace MoonWorks.Test
 					new PositionColorVertex(new Vector3(-1, 1, 0), Color.Red),
 					new PositionColorVertex(new Vector3(1, 1, 0), Color.Lime),
 					new PositionColorVertex(new Vector3(0, -1, 0), Color.Blue),
-				}
+				],
+				BufferUsageFlags.Vertex
 			);
-			GraphicsDevice.Submit(cmdbuf);
+
+			resourceInitializer.Upload();
+			resourceInitializer.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta) { }
@@ -93,9 +94,9 @@ namespace MoonWorks.Test
 				);
 				cmdbuf.BindGraphicsPipeline(maskerPipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
-				cmdbuf.DrawPrimitives(0, 1, 0, 0);
+				cmdbuf.DrawPrimitives(0, 1);
 				cmdbuf.BindGraphicsPipeline(maskeePipeline);
-				cmdbuf.DrawPrimitives(3, 1, 0, 0);
+				cmdbuf.DrawPrimitives(3, 1);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

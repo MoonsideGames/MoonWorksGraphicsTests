@@ -1,5 +1,4 @@
-﻿using MoonWorks;
-using MoonWorks.Graphics;
+﻿using MoonWorks.Graphics;
 using MoonWorks.Math.Float;
 using System.IO;
 
@@ -8,8 +7,8 @@ namespace MoonWorks.Test
 	class CompressedTexturesGame : Game
 	{
 		private GraphicsPipeline pipeline;
-		private Buffer vertexBuffer;
-		private Buffer indexBuffer;
+		private GpuBuffer vertexBuffer;
+		private GpuBuffer indexBuffer;
 		private Sampler sampler;
 		private Texture[] textures;
 		private string[] textureNames = new string[]
@@ -48,35 +47,34 @@ namespace MoonWorks.Test
 			textures = new Texture[textureNames.Length];
 
 			// Create and populate the GPU resources
-			vertexBuffer = Buffer.Create<PositionTextureVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 4);
-			indexBuffer = Buffer.Create<ushort>(GraphicsDevice, BufferUsageFlags.Index, 6);
+			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
-				vertexBuffer,
-				new PositionTextureVertex[]
-				{
+			vertexBuffer = resourceInitializer.CreateBuffer(
+				[
 					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
 					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
 					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
-				}
+					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1))
+				],
+				BufferUsageFlags.Vertex
 			);
-			cmdbuf.SetBufferData(
-				indexBuffer,
-				new ushort[]
-				{
+
+			indexBuffer = resourceInitializer.CreateBuffer<ushort>(
+				[
 					0, 1, 2,
 					0, 2, 3,
-				}
+				],
+				BufferUsageFlags.Index
 			);
+
 			for (int i = 0; i < textureNames.Length; i += 1)
 			{
 				Logger.LogInfo(textureNames[i]);
-				using (FileStream fs = new FileStream(TestUtils.GetTexturePath(textureNames[i] + ".dds"), FileMode.Open, FileAccess.Read))
-					textures[i] = Texture.LoadDDS(GraphicsDevice, cmdbuf, fs);
+				textures[i] = resourceInitializer.CreateTextureFromDDS(TestUtils.GetTexturePath(textureNames[i] + ".dds"));
 			}
-			GraphicsDevice.Submit(cmdbuf);
+
+			resourceInitializer.Upload();
+			resourceInitializer.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta)
@@ -118,7 +116,7 @@ namespace MoonWorks.Test
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(textures[currentTextureIndex], sampler));
-				cmdbuf.DrawIndexedPrimitives(0, 0, 2, 0, 0);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 2);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

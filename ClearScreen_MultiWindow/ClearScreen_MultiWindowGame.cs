@@ -23,23 +23,29 @@ namespace MoonWorks.Test
 			CommandBuffer cmdbuf;
 			Texture? backbuffer;
 
-			cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
-			if (backbuffer != null)
+			if (MainWindow.Claimed)
 			{
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.CornflowerBlue));
-				cmdbuf.EndRenderPass();
+				cmdbuf = GraphicsDevice.AcquireCommandBuffer();
+				backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
+				if (backbuffer != null)
+				{
+					cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.CornflowerBlue));
+					cmdbuf.EndRenderPass();
+				}
+				GraphicsDevice.Submit(cmdbuf);
 			}
-			GraphicsDevice.Submit(cmdbuf);
 
-			cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			backbuffer = cmdbuf.AcquireSwapchainTexture(secondaryWindow);
-			if (backbuffer != null)
+			if (secondaryWindow.Claimed)
 			{
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.Aquamarine));
-				cmdbuf.EndRenderPass();
+				cmdbuf = GraphicsDevice.AcquireCommandBuffer();
+				backbuffer = cmdbuf.AcquireSwapchainTexture(secondaryWindow);
+				if (backbuffer != null)
+				{
+					cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.Aquamarine));
+					cmdbuf.EndRenderPass();
+				}
+				GraphicsDevice.Submit(cmdbuf);
 			}
-			GraphicsDevice.Submit(cmdbuf);
 		}
 
 		public static void Main(string[] args)

@@ -11,8 +11,8 @@ namespace MoonWorks.Test
 
 		private Texture[] renderTargets = new Texture[4];
 		private Sampler rtSampler;
-		private Buffer quadVertexBuffer;
-		private Buffer quadIndexBuffer;
+		private GpuBuffer quadVertexBuffer;
+		private GpuBuffer quadIndexBuffer;
 
 		private SampleCount currentSampleCount = SampleCount.Four;
 
@@ -67,29 +67,28 @@ namespace MoonWorks.Test
 			rtSampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 			// Create and populate the vertex and index buffers
-			quadVertexBuffer = Buffer.Create<PositionTextureVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 4);
-			quadIndexBuffer = Buffer.Create<ushort>(GraphicsDevice, BufferUsageFlags.Index, 6);
+			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
-				quadVertexBuffer,
-				new PositionTextureVertex[]
-				{
+			quadVertexBuffer = resourceInitializer.CreateBuffer(
+				[
 					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
 					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
 					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
-				}
+					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1))
+				],
+				BufferUsageFlags.Vertex
 			);
-			cmdbuf.SetBufferData(
-				quadIndexBuffer,
-				new ushort[]
-				{
+
+			quadIndexBuffer = resourceInitializer.CreateBuffer<ushort>(
+				[
 					0, 1, 2,
-					0, 2, 3,
-				}
+					0, 2, 3
+				],
+				BufferUsageFlags.Index
 			);
-			GraphicsDevice.Submit(cmdbuf);
+
+			resourceInitializer.Upload();
+			resourceInitializer.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta)
@@ -129,7 +128,7 @@ namespace MoonWorks.Test
 
 				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(rt, Color.Black));
 				cmdbuf.BindGraphicsPipeline(msaaPipelines[(int) currentSampleCount]);
-				cmdbuf.DrawPrimitives(0, 1, 0, 0);
+				cmdbuf.DrawPrimitives(0, 1);
 				cmdbuf.EndRenderPass();
 
 				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, LoadOp.DontCare));
@@ -137,7 +136,7 @@ namespace MoonWorks.Test
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(rt, rtSampler));
 				cmdbuf.BindVertexBuffers(quadVertexBuffer);
 				cmdbuf.BindIndexBuffer(quadIndexBuffer, IndexElementSize.Sixteen);
-				cmdbuf.DrawIndexedPrimitives(0, 0, 2, 0, 0);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 2);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

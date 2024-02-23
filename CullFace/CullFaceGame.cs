@@ -12,8 +12,8 @@ namespace MoonWorks.Test
 		private GraphicsPipeline CCW_CullNonePipeline;
 		private GraphicsPipeline CCW_CullFrontPipeline;
 		private GraphicsPipeline CCW_CullBackPipeline;
-		private Buffer cwVertexBuffer;
-		private Buffer ccwVertexBuffer;
+		private GpuBuffer cwVertexBuffer;
+		private GpuBuffer ccwVertexBuffer;
 
 		private bool useClockwiseWinding;
 
@@ -52,29 +52,28 @@ namespace MoonWorks.Test
 			CCW_CullBackPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 			// Create and populate the vertex buffers
-			cwVertexBuffer = Buffer.Create<PositionColorVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 3);
-			ccwVertexBuffer = Buffer.Create<PositionColorVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 3);
+			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
-				cwVertexBuffer,
-				new PositionColorVertex[]
-				{
+			cwVertexBuffer = resourceInitializer.CreateBuffer(
+				[
 					new PositionColorVertex(new Vector3(0, -1, 0), Color.Blue),
 					new PositionColorVertex(new Vector3(1, 1, 0), Color.Green),
 					new PositionColorVertex(new Vector3(-1, 1, 0), Color.Red),
-				}
+				],
+				BufferUsageFlags.Vertex
 			);
-			cmdbuf.SetBufferData(
-				ccwVertexBuffer,
-				new PositionColorVertex[]
-				{
+
+			ccwVertexBuffer = resourceInitializer.CreateBuffer(
+				[
 					new PositionColorVertex(new Vector3(-1, 1, 0), Color.Red),
 					new PositionColorVertex(new Vector3(1, 1, 0), Color.Green),
-					new PositionColorVertex(new Vector3(0, -1, 0), Color.Blue),
-				}
+					new PositionColorVertex(new Vector3(0, -1, 0), Color.Blue)
+				],
+				BufferUsageFlags.Vertex
 			);
-			GraphicsDevice.Submit(cmdbuf);
+
+			resourceInitializer.Upload();
+			resourceInitializer.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta)
@@ -106,27 +105,27 @@ namespace MoonWorks.Test
 				}
 
 				cmdbuf.SetViewport(new Viewport(0, 0, 213, 240));
-				cmdbuf.DrawPrimitives(0, 1, 0, 0);
+				cmdbuf.DrawPrimitives(0, 1);
 
 				cmdbuf.SetViewport(new Viewport(213, 0, 213, 240));
 				cmdbuf.BindGraphicsPipeline(CW_CullFrontPipeline);
-				cmdbuf.DrawPrimitives(0, 1, 0, 0);
+				cmdbuf.DrawPrimitives(0, 1);
 
 				cmdbuf.SetViewport(new Viewport(426, 0, 213, 240));
 				cmdbuf.BindGraphicsPipeline(CW_CullBackPipeline);
-				cmdbuf.DrawPrimitives(0, 1, 0, 0);
+				cmdbuf.DrawPrimitives(0, 1);
 
 				cmdbuf.SetViewport(new Viewport(0, 240, 213, 240));
 				cmdbuf.BindGraphicsPipeline(CCW_CullNonePipeline);
-				cmdbuf.DrawPrimitives(0, 1, 0, 0);
+				cmdbuf.DrawPrimitives(0, 1);
 
 				cmdbuf.SetViewport(new Viewport(213, 240, 213, 240));
 				cmdbuf.BindGraphicsPipeline(CCW_CullFrontPipeline);
-				cmdbuf.DrawPrimitives(0, 1, 0, 0);
+				cmdbuf.DrawPrimitives(0, 1);
 
 				cmdbuf.SetViewport(new Viewport(426, 240, 213, 240));
 				cmdbuf.BindGraphicsPipeline(CCW_CullBackPipeline);
-				cmdbuf.DrawPrimitives(0, 1, 0, 0);
+				cmdbuf.DrawPrimitives(0, 1);
 
 				cmdbuf.EndRenderPass();
 			}

@@ -90,10 +90,13 @@ namespace MoonWorks.Test
 			var lastTwoSpan = otherVerts.Slice(1, 2);
 			transferBuffer.SetData(lastTwoSpan, SetDataOptions.Overwrite);
 			cmdbuf.BeginCopyPass();
-			cmdbuf.UploadToBuffer(
+			cmdbuf.UploadToBuffer<PositionVertex>(
 				transferBuffer,
 				vertexBuffer,
-				new BufferCopy(0, (uint) (vertexSize * (vertices.Length - 2)), (uint) (vertexSize * 2)));
+				0,
+                (uint)(vertices.Length - 2),
+				2
+			);
 			cmdbuf.EndCopyPass();
 			fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 			GraphicsDevice.WaitForFences(fence);

@@ -70,7 +70,7 @@ namespace MoonWorks.Test
 			{
 				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.Black));
 				cmdbuf.BindGraphicsPipeline(pipeline);
-				cmdbuf.DrawPrimitives(0, 1, 0, 0);
+				cmdbuf.DrawPrimitives(0, 1);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

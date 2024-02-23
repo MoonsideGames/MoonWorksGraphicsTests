@@ -2,6 +2,7 @@
 using MoonWorks.Math;
 using MoonWorks.Math.Float;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace MoonWorks.Test
@@ -25,6 +26,8 @@ namespace MoonWorks.Test
 
         private CpuBuffer transferBuffer;
         private CpuBuffer cubemapTransferBuffer;
+		private CpuBuffer screenshotTransferBuffer;
+		private Texture screenshotTexture;
 
 		private Texture skyboxTexture;
 		private Sampler skyboxSampler;
@@ -36,8 +39,8 @@ namespace MoonWorks.Test
 		private bool depthOnlyEnabled = false;
 		private Vector3 camPos = new Vector3(0, 1.5f, 4f);
 
-		private TaskFactory taskFactory = new TaskFactory();
 		private bool takeScreenshot;
+		private bool swapchainCopied; // don't want to take screenshot if the swapchain was invalid
 
 		struct DepthUniforms
 		{
@@ -72,9 +75,7 @@ namespace MoonWorks.Test
                     Depth = 1
                 };
 
-                var pixelData = ImageUtils.GetPixelDataFromFile(imagePaths[i], out var _, out var _, out var sizeInBytes);
-                cubemapTransferBuffer.SetData(new Span<byte>((void*) pixelData, (int) sizeInBytes), SetDataOptions.Overwrite);
-                ImageUtils.FreePixelData(pixelData);
+				ImageUtils.DecodeIntoCpuBuffer(imagePaths[i], cubemapTransferBuffer, 0, SetDataOptions.Overwrite);
 
                 commandBuffer.BeginCopyPass();
                 commandBuffer.UploadToTexture(cubemapTransferBuffer, textureSlice, new BufferImageCopy(0, 0, 0));
@@ -157,6 +158,8 @@ namespace MoonWorks.Test
 
             transferBuffer = new CpuBuffer(GraphicsDevice, 32768);
             cubemapTransferBuffer = new CpuBuffer(GraphicsDevice, 2048 * 2048 * 4);
+			screenshotTransferBuffer = new CpuBuffer(GraphicsDevice, MainWindow.Width * MainWindow.Height * 4);
+			screenshotTexture = Texture.CreateTexture2D(GraphicsDevice, MainWindow.Width, MainWindow.Height, MainWindow.SwapchainFormat, 0);
 
 			Task loadingTask = Task.Run(() => UploadGPUAssets());
 
@@ -497,31 +500,53 @@ namespace MoonWorks.Test
 
 						cmdbuf.EndRenderPass();
 					}
+
+					if (takeScreenshot)
+					{
+						cmdbuf.BeginCopyPass();
+						cmdbuf.CopyTextureToTexture(swapchainTexture, screenshotTexture);
+						cmdbuf.EndCopyPass();
+
+						swapchainCopied = true;
+					}
 				}
 			}
 
 			GraphicsDevice.Submit(cmdbuf);
 
-			if (takeScreenshot)
+			if (takeScreenshot && swapchainCopied)
 			{
-				if (swapchainTexture != null)
-				{
-					taskFactory.StartNew(TakeScreenshot, swapchainTexture);
-				}
+				Task.Run(TakeScreenshot);
 
 				takeScreenshot = false;
+				swapchainCopied = false;
 			}
 		}
 
-		private System.Action<object?> TakeScreenshot = texture =>
+		private unsafe void TakeScreenshot()
 		{
-            /*
-			if (texture != null)
-			{
-				((Texture) texture).SavePNG(System.IO.Path.Combine(System.AppContext.BaseDirectory, "screenshot.png"));
-			}
-            */
-		};
+			var commandBuffer = GraphicsDevice.AcquireCommandBuffer();
+
+			commandBuffer.BeginCopyPass();
+			commandBuffer.DownloadFromTexture(
+				screenshotTexture,
+				screenshotTransferBuffer
+			);
+			commandBuffer.EndCopyPass();
+
+			var fence = GraphicsDevice.SubmitAndAcquireFence(commandBuffer);
+			GraphicsDevice.WaitForFences(fence);
+			GraphicsDevice.ReleaseFence(fence);
+
+			ImageUtils.SavePNG(
+				Path.Combine(System.AppContext.BaseDirectory, "screenshot.png"),
+				screenshotTransferBuffer,
+				0,
+				(int) screenshotTexture.Width,
+				(int) screenshotTexture.Height,
+				screenshotTexture.Format == TextureFormat.B8G8R8A8
+			);
+		}
 
 		public static void Main(string[] args)
 		{

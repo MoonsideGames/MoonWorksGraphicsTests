@@ -7,7 +7,7 @@ namespace MoonWorks.Test
 	class VertexSamplerGame : Game
 	{
 		private GraphicsPipeline pipeline;
-		private Buffer vertexBuffer;
+		private GpuBuffer vertexBuffer;
 		private Texture texture;
 		private Sampler sampler;
 
@@ -28,22 +28,27 @@ namespace MoonWorks.Test
 			pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 			// Create and populate the GPU resources
-			vertexBuffer = Buffer.Create<PositionTextureVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 3);
 			texture = Texture.CreateTexture2D(GraphicsDevice, 3, 1, TextureFormat.R8G8B8A8, TextureUsageFlags.Sampler);
 			sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
-				vertexBuffer,
-				new PositionTextureVertex[]
-				{
+			var resourceUploader = new ResourceUploader(GraphicsDevice);
+
+			vertexBuffer = resourceUploader.CreateBuffer(
+				[
 					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 0)),
 					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(0.334f, 0)),
 					new PositionTextureVertex(new Vector3(0, -1, 0), new Vector2(0.667f, 0)),
-				}
+				],
+				BufferUsageFlags.Vertex
 			);
-			cmdbuf.SetTextureData(texture, new Color[] { Color.Yellow, Color.Indigo, Color.HotPink });
-			GraphicsDevice.Submit(cmdbuf);
+
+			resourceUploader.SetTextureData(
+				texture,
+				[Color.Yellow, Color.Indigo, Color.HotPink]
+			);
+
+			resourceUploader.Upload();
+			resourceUploader.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta) { }
@@ -58,7 +63,7 @@ namespace MoonWorks.Test
 				cmdbuf.BindGraphicsPipeline(pipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindVertexSamplers(new TextureSamplerBinding(texture, sampler));
-				cmdbuf.DrawPrimitives(0, 1, 0, 0);
+				cmdbuf.DrawPrimitives(0, 1);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

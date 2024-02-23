@@ -66,7 +66,7 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Index
 			);
 
-			texture = resourceUploader.CreateTexture2D(TestUtils.GetTexturePath("ravioli.png"));
+			texture = resourceUploader.CreateTexture2DFromCompressed(TestUtils.GetTexturePath("ravioli.png"));
 
 			resourceUploader.Upload();
 			resourceUploader.Dispose();

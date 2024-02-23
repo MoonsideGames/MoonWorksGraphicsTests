@@ -7,7 +7,7 @@ namespace MoonWorks.Test
 	class TriangleVertexBufferGame : Game
 	{
 		private GraphicsPipeline pipeline;
-		private Buffer vertexBuffer;
+		private GpuBuffer vertexBuffer;
 
 		public TriangleVertexBufferGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
 		{
@@ -25,19 +25,19 @@ namespace MoonWorks.Test
 			pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 			// Create and populate the vertex buffer
-			vertexBuffer = Buffer.Create<PositionColorVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 3);
+			var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
-				vertexBuffer,
-				new PositionColorVertex[]
-				{
+			vertexBuffer = resourceUploader.CreateBuffer(
+				[
 					new PositionColorVertex(new Vector3(-1, 1, 0), Color.Red),
 					new PositionColorVertex(new Vector3(1, 1, 0), Color.Lime),
 					new PositionColorVertex(new Vector3(0, -1, 0), Color.Blue),
-				}
+				],
+				BufferUsageFlags.Vertex
 			);
-			GraphicsDevice.Submit(cmdbuf);
+
+			resourceUploader.Upload();
+			resourceUploader.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta) { }
@@ -51,7 +51,7 @@ namespace MoonWorks.Test
 				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.Black));
 				cmdbuf.BindGraphicsPipeline(pipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
-				cmdbuf.DrawPrimitives(0, 1, 0, 0);
+				cmdbuf.DrawPrimitives(0, 1);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

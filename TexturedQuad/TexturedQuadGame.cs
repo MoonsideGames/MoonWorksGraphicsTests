@@ -90,10 +90,10 @@ namespace MoonWorks.Test
 			vertexBuffer = resourceUploader.CreateBuffer(vertexData, BufferUsageFlags.Vertex);
 			indexBuffer = resourceUploader.CreateBuffer(indexData, BufferUsageFlags.Index);
 
-			textures[0] = resourceUploader.CreateTexture2D(TestUtils.GetTexturePath("ravioli.png"));
-			textures[1] = resourceUploader.CreateTexture2D(pngBytes);
-			textures[2] = resourceUploader.CreateTexture2D(TestUtils.GetTexturePath("ravioli.qoi"));
-			textures[3] = resourceUploader.CreateTexture2D(qoiBytes);
+			textures[0] = resourceUploader.CreateTexture2DFromCompressed(TestUtils.GetTexturePath("ravioli.png"));
+			textures[1] = resourceUploader.CreateTexture2DFromCompressed(pngBytes);
+			textures[2] = resourceUploader.CreateTexture2DFromCompressed(TestUtils.GetTexturePath("ravioli.qoi"));
+			textures[3] = resourceUploader.CreateTexture2DFromCompressed(qoiBytes);
 
 			resourceUploader.Upload();
 			resourceUploader.Dispose();

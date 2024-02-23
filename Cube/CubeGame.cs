@@ -52,15 +52,13 @@ namespace MoonWorks.Test
 			}
 		}
 
+        // Upload cubemap layers one at a time to minimize transfer size
         unsafe void LoadCubemap(string[] imagePaths)
         {
-			var cubemapTransferBuffer = new TransferBuffer(GraphicsDevice, skyboxTexture.Width * skyboxTexture.Height * 4);
+			var cubemapUploader = new ResourceInitializer(GraphicsDevice);
 
-            /* Upload cubemap layers one at a time to minimize transfer size */
             for (uint i = 0; i < imagePaths.Length; i++)
             {
-                var commandBuffer = GraphicsDevice.AcquireCommandBuffer();
-
                 var textureSlice = new TextureSlice
                 {
                     Texture = skyboxTexture,
@@ -75,18 +73,15 @@ namespace MoonWorks.Test
                     Depth = 1
                 };
 
-				ImageUtils.DecodeIntoTransferBuffer(imagePaths[i], cubemapTransferBuffer, 0, SetDataOptions.Overwrite);
+				cubemapUploader.SetTextureDataFromCompressed(
+					textureSlice,
+					imagePaths[i]
+				);
 
-                commandBuffer.BeginCopyPass();
-                commandBuffer.UploadToTexture(cubemapTransferBuffer, textureSlice, new BufferImageCopy(0, 0, 0));
-                commandBuffer.EndCopyPass();
-
-                var fence = GraphicsDevice.SubmitAndAcquireFence(commandBuffer);
-                GraphicsDevice.WaitForFences(fence);
-                GraphicsDevice.ReleaseFence(fence);
+				cubemapUploader.UploadAndWait();
             }
 
-			cubemapTransferBuffer.Dispose();
+			cubemapUploader.Dispose();
         }
 
 		public CubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)

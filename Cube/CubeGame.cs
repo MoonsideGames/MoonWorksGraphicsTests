@@ -24,9 +24,7 @@ namespace MoonWorks.Test
         private GpuBuffer blitVertexBuffer;
         private GpuBuffer indexBuffer;
 
-        private CpuBuffer transferBuffer;
-        private CpuBuffer cubemapTransferBuffer;
-		private CpuBuffer screenshotTransferBuffer;
+		private TransferBuffer screenshotTransferBuffer;
 		private Texture screenshotTexture;
 
 		private Texture skyboxTexture;
@@ -56,6 +54,8 @@ namespace MoonWorks.Test
 
         unsafe void LoadCubemap(string[] imagePaths)
         {
+			var cubemapTransferBuffer = new TransferBuffer(GraphicsDevice, skyboxTexture.Width * skyboxTexture.Height * 4);
+
             /* Upload cubemap layers one at a time to minimize transfer size */
             for (uint i = 0; i < imagePaths.Length; i++)
             {
@@ -75,7 +75,7 @@ namespace MoonWorks.Test
                     Depth = 1
                 };
 
-				ImageUtils.DecodeIntoCpuBuffer(imagePaths[i], cubemapTransferBuffer, 0, SetDataOptions.Overwrite);
+				ImageUtils.DecodeIntoTransferBuffer(imagePaths[i], cubemapTransferBuffer, 0, SetDataOptions.Overwrite);
 
                 commandBuffer.BeginCopyPass();
                 commandBuffer.UploadToTexture(cubemapTransferBuffer, textureSlice, new BufferImageCopy(0, 0, 0));
@@ -85,6 +85,8 @@ namespace MoonWorks.Test
                 GraphicsDevice.WaitForFences(fence);
                 GraphicsDevice.ReleaseFence(fence);
             }
+
+			cubemapTransferBuffer.Dispose();
         }
 
 		public CubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
@@ -156,10 +158,8 @@ namespace MoonWorks.Test
                 6
             );
 
-            transferBuffer = new CpuBuffer(GraphicsDevice, 32768);
-            cubemapTransferBuffer = new CpuBuffer(GraphicsDevice, 2048 * 2048 * 4);
-			screenshotTransferBuffer = new CpuBuffer(GraphicsDevice, MainWindow.Width * MainWindow.Height * 4);
-			screenshotTexture = Texture.CreateTexture2D(GraphicsDevice, MainWindow.Width, MainWindow.Height, MainWindow.SwapchainFormat, 0);
+			screenshotTransferBuffer = new TransferBuffer(GraphicsDevice, MainWindow.Width * MainWindow.Height * 4);
+			screenshotTexture = Texture.CreateTexture2D(GraphicsDevice, MainWindow.Width, MainWindow.Height, MainWindow.SwapchainFormat, TextureUsageFlags.Sampler);
 
 			Task loadingTask = Task.Run(() => UploadGPUAssets());
 
@@ -309,60 +309,15 @@ namespace MoonWorks.Test
                 new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
             ]);
 
-            CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
+			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
 
-            cmdbuf.BeginCopyPass();
+			cubeVertexBuffer = resourceInitializer.CreateBuffer(cubeVertexData, BufferUsageFlags.Vertex);
+			skyboxVertexBuffer = resourceInitializer.CreateBuffer(skyboxVertexData, BufferUsageFlags.Vertex);
+			indexBuffer = resourceInitializer.CreateBuffer(indexData, BufferUsageFlags.Index);
+			blitVertexBuffer = resourceInitializer.CreateBuffer(blitVertexData, BufferUsageFlags.Vertex);
 
-            uint offset = 0;
-            uint length = transferBuffer.SetData(cubeVertexData, SetDataOptions.Overwrite);
-            cmdbuf.UploadToBuffer(
-                transferBuffer,
-                cubeVertexBuffer,
-                new BufferCopy(
-                    offset,
-                    0,
-                    length
-                )
-            );
-
-            offset += length;
-            length = transferBuffer.SetData(skyboxVertexData, offset, SetDataOptions.Overwrite);
-            cmdbuf.UploadToBuffer(
-                transferBuffer,
-                skyboxVertexBuffer,
-                new BufferCopy(
-                    offset,
-                    0,
-                    length
-                )
-            );
-
-            offset += length;
-            length = transferBuffer.SetData(indexData, offset, SetDataOptions.Overwrite);
-            cmdbuf.UploadToBuffer(
-                transferBuffer,
-                indexBuffer,
-                new BufferCopy(
-                    offset,
-                    0,
-                    length
-                )
-            );
-
-            offset += length;
-            length = transferBuffer.SetData(blitVertexData, offset, SetDataOptions.Overwrite);
-            cmdbuf.UploadToBuffer(
-                transferBuffer,
-                blitVertexBuffer,
-                new BufferCopy(
-                    offset,
-                    0,
-                    length
-                )
-            );
-
-            cmdbuf.EndCopyPass();
-            GraphicsDevice.Submit(cmdbuf);
+			resourceInitializer.Upload();
+			resourceInitializer.Dispose();
 
             LoadCubemap(new string[]
 		    {
@@ -373,9 +328,6 @@ namespace MoonWorks.Test
 			    TestUtils.GetTexturePath("front.png"),
 			    TestUtils.GetTexturePath("back.png")
 		    });
-
-            cubemapTransferBuffer.Dispose();
-            transferBuffer.Dispose();
 
 			finishedLoading = true;
 			Logger.LogInfo("Finished loading!");

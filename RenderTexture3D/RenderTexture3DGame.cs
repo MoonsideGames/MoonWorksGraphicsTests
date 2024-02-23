@@ -49,9 +49,9 @@ namespace MoonWorks.Test
 			sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.LinearWrap);
 
 			// Create and populate the GPU resources
-			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+			var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-			vertexBuffer = resourceInitializer.CreateBuffer(
+			vertexBuffer = resourceUploader.CreateBuffer(
 				[
 					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
 					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
@@ -61,7 +61,7 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Vertex
 			);
 
-			indexBuffer = resourceInitializer.CreateBuffer<ushort>(
+			indexBuffer = resourceUploader.CreateBuffer<ushort>(
 				[
 					0, 1, 2,
 					0, 2, 3,
@@ -69,8 +69,8 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Index
 			);
 
-			resourceInitializer.Upload();
-			resourceInitializer.Dispose();
+			resourceUploader.Upload();
+			resourceUploader.Dispose();
 
 			rt = Texture.CreateTexture3D(
 				GraphicsDevice,

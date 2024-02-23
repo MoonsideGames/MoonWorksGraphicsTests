@@ -52,9 +52,9 @@ namespace MoonWorks.Test
 			CCW_CullBackPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 			// Create and populate the vertex buffers
-			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+			var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-			cwVertexBuffer = resourceInitializer.CreateBuffer(
+			cwVertexBuffer = resourceUploader.CreateBuffer(
 				[
 					new PositionColorVertex(new Vector3(0, -1, 0), Color.Blue),
 					new PositionColorVertex(new Vector3(1, 1, 0), Color.Green),
@@ -63,7 +63,7 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Vertex
 			);
 
-			ccwVertexBuffer = resourceInitializer.CreateBuffer(
+			ccwVertexBuffer = resourceUploader.CreateBuffer(
 				[
 					new PositionColorVertex(new Vector3(-1, 1, 0), Color.Red),
 					new PositionColorVertex(new Vector3(1, 1, 0), Color.Green),
@@ -72,8 +72,8 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Vertex
 			);
 
-			resourceInitializer.Upload();
-			resourceInitializer.Dispose();
+			resourceUploader.Upload();
+			resourceUploader.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta)

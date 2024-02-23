@@ -72,9 +72,9 @@ namespace MoonWorks.Test
 
 			// Upload GPU resources and dispatch compute work
 
-			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+			var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-			vertexBuffer = resourceInitializer.CreateBuffer(
+			vertexBuffer = resourceUploader.CreateBuffer(
 				[
 					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
 					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
@@ -86,8 +86,8 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Vertex
 			);
 
-			resourceInitializer.Upload();
-			resourceInitializer.Dispose();
+			resourceUploader.Upload();
+			resourceUploader.Dispose();
 			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 
 			GradientTextureComputeUniforms gradientUniforms = new GradientTextureComputeUniforms(

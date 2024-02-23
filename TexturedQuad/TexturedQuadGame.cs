@@ -85,18 +85,18 @@ namespace MoonWorks.Test
 
 			// Create and populate the GPU resources
 
-			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+			var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-			vertexBuffer = resourceInitializer.CreateBuffer(vertexData, BufferUsageFlags.Vertex);
-			indexBuffer = resourceInitializer.CreateBuffer(indexData, BufferUsageFlags.Index);
+			vertexBuffer = resourceUploader.CreateBuffer(vertexData, BufferUsageFlags.Vertex);
+			indexBuffer = resourceUploader.CreateBuffer(indexData, BufferUsageFlags.Index);
 
-			textures[0] = resourceInitializer.CreateTexture2D(TestUtils.GetTexturePath("ravioli.png"));
-			textures[1] = resourceInitializer.CreateTexture2D(pngBytes);
-			textures[2] = resourceInitializer.CreateTexture2D(TestUtils.GetTexturePath("ravioli.qoi"));
-			textures[3] = resourceInitializer.CreateTexture2D(qoiBytes);
+			textures[0] = resourceUploader.CreateTexture2D(TestUtils.GetTexturePath("ravioli.png"));
+			textures[1] = resourceUploader.CreateTexture2D(pngBytes);
+			textures[2] = resourceUploader.CreateTexture2D(TestUtils.GetTexturePath("ravioli.qoi"));
+			textures[3] = resourceUploader.CreateTexture2D(qoiBytes);
 
-			resourceInitializer.Upload();
-			resourceInitializer.Dispose();
+			resourceUploader.Upload();
+			resourceUploader.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta)

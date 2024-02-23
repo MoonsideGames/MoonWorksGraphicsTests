@@ -29,12 +29,12 @@ namespace MoonWorks.Test
 
 			int vertexSize = Marshal.SizeOf<PositionVertex>();
 
-			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+			var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-			var vertexBuffer = resourceInitializer.CreateBuffer(vertices, BufferUsageFlags.Vertex);
+			var vertexBuffer = resourceUploader.CreateBuffer(vertices, BufferUsageFlags.Vertex);
 
-			resourceInitializer.Upload();
-			resourceInitializer.Dispose();
+			resourceUploader.Upload();
+			resourceUploader.Dispose();
 
 			var transferBuffer = new TransferBuffer(GraphicsDevice, vertexBuffer.Size);
 

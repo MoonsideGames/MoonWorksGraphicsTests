@@ -61,9 +61,9 @@ namespace MoonWorks.Test
 				TextureUsageFlags.DepthStencilTarget
 			);
 
-			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+			var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-			vertexBuffer = resourceInitializer.CreateBuffer(
+			vertexBuffer = resourceUploader.CreateBuffer(
 				[
 					new PositionColorVertex(new Vector3(-0.5f, 0.5f, 0), Color.Yellow),
 					new PositionColorVertex(new Vector3(0.5f, 0.5f, 0), Color.Yellow),
@@ -76,8 +76,8 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Vertex
 			);
 
-			resourceInitializer.Upload();
-			resourceInitializer.Dispose();
+			resourceUploader.Upload();
+			resourceUploader.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta) { }

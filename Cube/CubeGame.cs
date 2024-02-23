@@ -55,7 +55,7 @@ namespace MoonWorks.Test
         // Upload cubemap layers one at a time to minimize transfer size
         unsafe void LoadCubemap(string[] imagePaths)
         {
-			var cubemapUploader = new ResourceInitializer(GraphicsDevice);
+			var cubemapUploader = new ResourceUploader(GraphicsDevice);
 
             for (uint i = 0; i < imagePaths.Length; i++)
             {
@@ -304,15 +304,15 @@ namespace MoonWorks.Test
                 new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
             ]);
 
-			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+			var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-			cubeVertexBuffer = resourceInitializer.CreateBuffer(cubeVertexData, BufferUsageFlags.Vertex);
-			skyboxVertexBuffer = resourceInitializer.CreateBuffer(skyboxVertexData, BufferUsageFlags.Vertex);
-			indexBuffer = resourceInitializer.CreateBuffer(indexData, BufferUsageFlags.Index);
-			blitVertexBuffer = resourceInitializer.CreateBuffer(blitVertexData, BufferUsageFlags.Vertex);
+			cubeVertexBuffer = resourceUploader.CreateBuffer(cubeVertexData, BufferUsageFlags.Vertex);
+			skyboxVertexBuffer = resourceUploader.CreateBuffer(skyboxVertexData, BufferUsageFlags.Vertex);
+			indexBuffer = resourceUploader.CreateBuffer(indexData, BufferUsageFlags.Index);
+			blitVertexBuffer = resourceUploader.CreateBuffer(blitVertexData, BufferUsageFlags.Vertex);
 
-			resourceInitializer.Upload();
-			resourceInitializer.Dispose();
+			resourceUploader.Upload();
+			resourceUploader.Dispose();
 
             LoadCubemap(new string[]
 		    {

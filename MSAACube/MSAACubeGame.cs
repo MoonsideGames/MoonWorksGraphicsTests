@@ -12,8 +12,8 @@ namespace MoonWorks.Test
 		private GraphicsPipeline cubemapPipeline;
 
 		private Texture[] renderTargets = new Texture[4];
-		private Buffer vertexBuffer;
-		private Buffer indexBuffer;
+		private GpuBuffer vertexBuffer;
+		private GpuBuffer indexBuffer;
 		private Sampler sampler;
 
 		private Vector3 camPos = new Vector3(0, 0, 4f);
@@ -76,14 +76,10 @@ namespace MoonWorks.Test
 			sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 			// Create and populate the GPU resources
-			vertexBuffer = Buffer.Create<PositionVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 24);
-			indexBuffer = Buffer.Create<ushort>(GraphicsDevice, BufferUsageFlags.Index, 36);
+			var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
-				vertexBuffer,
-				new PositionVertex[]
-				{
+			vertexBuffer = resourceUploader.CreateBuffer(
+				[
 					new PositionVertex(new Vector3(-10, -10, -10)),
 					new PositionVertex(new Vector3(10, -10, -10)),
 					new PositionVertex(new Vector3(10, 10, -10)),
@@ -113,23 +109,24 @@ namespace MoonWorks.Test
 					new PositionVertex(new Vector3(-10, 10, 10)),
 					new PositionVertex(new Vector3(10, 10, 10)),
 					new PositionVertex(new Vector3(10, 10, -10))
-				}
+				],
+				BufferUsageFlags.Vertex
 			);
 
-			cmdbuf.SetBufferData(
-				indexBuffer,
-				new ushort[]
-				{
-					 0,  1,  2,  0,  2,  3,
-					 6,  5,  4,  7,  6,  4,
-					 8,  9, 10,  8, 10, 11,
+			indexBuffer = resourceUploader.CreateBuffer<ushort>(
+				[
+					0,  1,  2,  0,  2,  3,
+					6,  5,  4,  7,  6,  4,
+					8,  9, 10,  8, 10, 11,
 					14, 13, 12, 15, 14, 12,
 					16, 17, 18, 16, 18, 19,
 					22, 21, 20, 23, 22, 20
-				}
+				],
+				BufferUsageFlags.Index
 			);
 
-			GraphicsDevice.Submit(cmdbuf);
+			resourceUploader.Upload();
+			resourceUploader.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta)
@@ -198,7 +195,7 @@ namespace MoonWorks.Test
 
 					cmdbuf.BeginRenderPass(rtAttachmentInfo);
 					cmdbuf.BindGraphicsPipeline(msaaPipelines[rtIndex]);
-					cmdbuf.DrawPrimitives(0, 1, 0, 0);
+					cmdbuf.DrawPrimitives(0, 1);
 					cmdbuf.EndRenderPass();
 				}
 
@@ -207,8 +204,8 @@ namespace MoonWorks.Test
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(rt, sampler));
-				uint vertexUniformOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
-				cmdbuf.DrawIndexedPrimitives(0, 0, 12, vertexUniformOffset, 0);
+				cmdbuf.PushVertexShaderUniforms(vertUniforms);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 12);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

@@ -26,9 +26,9 @@ namespace MoonWorks.Test
 			graphicsPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 			// Create and populate the vertex buffer
-			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+			var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-			vertexBuffer = resourceInitializer.CreateBuffer(
+			vertexBuffer = resourceUploader.CreateBuffer(
 				[
 					new PositionColorVertex(new Vector3(-0.5f, -1, 0), Color.Blue),
 					new PositionColorVertex(new Vector3(-1f, 1, 0), Color.Green),
@@ -41,7 +41,7 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Vertex
 			);
 
-			drawBuffer = resourceInitializer.CreateBuffer(
+			drawBuffer = resourceUploader.CreateBuffer(
 				[
 					new IndirectDrawCommand(3, 1, 3, 0),
 					new IndirectDrawCommand(3, 1, 0, 0),
@@ -49,8 +49,8 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Indirect
 			);
 
-			resourceInitializer.Upload();
-			resourceInitializer.Dispose();
+			resourceUploader.Upload();
+			resourceUploader.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta) { }

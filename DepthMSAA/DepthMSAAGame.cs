@@ -105,9 +105,9 @@ namespace MoonWorks.Test
 			rtSampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 			// Create the buffers
-			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+			var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-			quadVertexBuffer = resourceInitializer.CreateBuffer(
+			quadVertexBuffer = resourceUploader.CreateBuffer(
 				[
 					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
 					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
@@ -117,7 +117,7 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Vertex
 			);
 
-			quadIndexBuffer = resourceInitializer.CreateBuffer<ushort>(
+			quadIndexBuffer = resourceUploader.CreateBuffer<ushort>(
 				[
 					0, 1, 2,
 					0, 2, 3,
@@ -158,7 +158,7 @@ namespace MoonWorks.Test
 				new PositionColorVertex(new Vector3(1, 1, -1), new Color(0f, 0.5f, 0f))
 			]);
 
-			cubeVertexBuffer1 = resourceInitializer.CreateBuffer(
+			cubeVertexBuffer1 = resourceUploader.CreateBuffer(
 				cubeVertexData,
 				BufferUsageFlags.Vertex
 			);
@@ -169,12 +169,12 @@ namespace MoonWorks.Test
 				cubeVertexData[i].Position.Z += 3;
 			}
 
-			cubeVertexBuffer2 = resourceInitializer.CreateBuffer(
+			cubeVertexBuffer2 = resourceUploader.CreateBuffer(
 				cubeVertexData,
 				BufferUsageFlags.Vertex
 			);
 
-			cubeIndexBuffer = resourceInitializer.CreateBuffer<uint>(
+			cubeIndexBuffer = resourceUploader.CreateBuffer<uint>(
 				[
 					0,  1,  2,  0,  2,  3,
 					6,  5,  4,  7,  6,  4,
@@ -186,8 +186,8 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Index
 			);
 
-			resourceInitializer.Upload();
-			resourceInitializer.Dispose();
+			resourceUploader.Upload();
+			resourceUploader.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta)

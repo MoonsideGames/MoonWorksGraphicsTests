@@ -35,9 +35,9 @@ namespace MoonWorks.Test
 			sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 			// Create and populate the GPU resources
-			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+			var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-			vertexBuffer = resourceInitializer.CreateBuffer(
+			vertexBuffer = resourceUploader.CreateBuffer(
 				[
 					new PositionTextureVertex(new Vector3(-1f, 0f, 0), new Vector2(0, 0)),
 					new PositionTextureVertex(new Vector3( 0f, 0f, 0), new Vector2(1, 0)),
@@ -57,7 +57,7 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Vertex
 			);
 
-			indexBuffer = resourceInitializer.CreateBuffer<ushort>(
+			indexBuffer = resourceUploader.CreateBuffer<ushort>(
 				[
 					0, 1, 2,
 					0, 2, 3,
@@ -65,12 +65,12 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Index
 			);
 
-			originalTexture = resourceInitializer.CreateTexture2D(
+			originalTexture = resourceUploader.CreateTexture2D(
 				TestUtils.GetTexturePath("ravioli.png")
 			);
 
-			resourceInitializer.Upload();
-			resourceInitializer.Dispose();
+			resourceUploader.Upload();
+			resourceUploader.Dispose();
 
 			// Load the texture bytes so we can compare them.
 			var pixels = ImageUtils.GetPixelDataFromFile(

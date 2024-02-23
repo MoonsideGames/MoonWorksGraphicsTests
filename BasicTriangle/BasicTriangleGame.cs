@@ -1,5 +1,4 @@
-﻿using MoonWorks;
-using MoonWorks.Graphics;
+﻿using MoonWorks.Graphics;
 
 namespace MoonWorks.Test
 {
@@ -72,7 +71,7 @@ namespace MoonWorks.Test
 					cmdbuf.SetScissor(scissorRect);
 				}
 
-				cmdbuf.DrawPrimitives(0, 1, 0, 0);
+				cmdbuf.DrawPrimitives(0, 1);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

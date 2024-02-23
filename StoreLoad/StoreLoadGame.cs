@@ -33,7 +33,7 @@ namespace MoonWorks.Test
 			{
 				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchain, Color.Blue));
 				cmdbuf.BindGraphicsPipeline(fillPipeline);
-				cmdbuf.DrawPrimitives(0, 1, 0, 0);
+				cmdbuf.DrawPrimitives(0, 1);
 				cmdbuf.EndRenderPass();
 				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchain, LoadOp.Load, StoreOp.Store));
 				cmdbuf.EndRenderPass();

@@ -1,5 +1,4 @@
-﻿using MoonWorks;
-using MoonWorks.Graphics;
+﻿using MoonWorks.Graphics;
 using MoonWorks.Math.Float;
 using System.Runtime.InteropServices;
 
@@ -8,8 +7,8 @@ namespace MoonWorks.Test
 	class DrawIndirectGame : Game
 	{
 		private GraphicsPipeline graphicsPipeline;
-		private Buffer vertexBuffer;
-		private Buffer drawBuffer;
+		private GpuBuffer vertexBuffer;
+		private GpuBuffer drawBuffer;
 
 		public DrawIndirectGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
 		{
@@ -27,14 +26,10 @@ namespace MoonWorks.Test
 			graphicsPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 			// Create and populate the vertex buffer
-			vertexBuffer = Buffer.Create<PositionColorVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 6);
-			drawBuffer = Buffer.Create<IndirectDrawCommand>(GraphicsDevice, BufferUsageFlags.Indirect, 2);
+			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
-				vertexBuffer,
-				new PositionColorVertex[]
-				{
+			vertexBuffer = resourceInitializer.CreateBuffer(
+				[
 					new PositionColorVertex(new Vector3(-0.5f, -1, 0), Color.Blue),
 					new PositionColorVertex(new Vector3(-1f, 1, 0), Color.Green),
 					new PositionColorVertex(new Vector3(0f, 1, 0), Color.Red),
@@ -42,17 +37,20 @@ namespace MoonWorks.Test
 					new PositionColorVertex(new Vector3(.5f, -1, 0), Color.Blue),
 					new PositionColorVertex(new Vector3(1f, 1, 0), Color.Green),
 					new PositionColorVertex(new Vector3(0f, 1, 0), Color.Red),
-				}
+				],
+				BufferUsageFlags.Vertex
 			);
-			cmdbuf.SetBufferData(
-				drawBuffer,
-				new IndirectDrawCommand[]
-				{
+
+			drawBuffer = resourceInitializer.CreateBuffer(
+				[
 					new IndirectDrawCommand(3, 1, 3, 0),
 					new IndirectDrawCommand(3, 1, 0, 0),
-				}
+				],
+				BufferUsageFlags.Indirect
 			);
-			GraphicsDevice.Submit(cmdbuf);
+
+			resourceInitializer.Upload();
+			resourceInitializer.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta) { }
@@ -66,7 +64,7 @@ namespace MoonWorks.Test
 				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.CornflowerBlue));
 				cmdbuf.BindGraphicsPipeline(graphicsPipeline);
 				cmdbuf.BindVertexBuffers(new BufferBinding(vertexBuffer, 0));
-				cmdbuf.DrawPrimitivesIndirect(drawBuffer, 0, 2, (uint) Marshal.SizeOf<IndirectDrawCommand>(), 0, 0);
+				cmdbuf.DrawPrimitivesIndirect(drawBuffer, 0, 2, (uint) Marshal.SizeOf<IndirectDrawCommand>());
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

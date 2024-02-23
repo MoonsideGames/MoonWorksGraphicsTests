@@ -8,8 +8,8 @@ namespace MoonWorks.Test
 	{
 		private GraphicsPipeline pipeline;
 		private Sampler sampler;
-		private Buffer vertexBuffer;
-		private Buffer indexBuffer;
+		private GpuBuffer vertexBuffer;
+		private GpuBuffer indexBuffer;
 
 		private Video.VideoAV1 video;
 		private VideoPlayer videoPlayer;
@@ -34,29 +34,28 @@ namespace MoonWorks.Test
 			sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.LinearClamp);
 
 			// Create and populate the GPU resources
-			vertexBuffer = Buffer.Create<PositionTextureVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 4);
-			indexBuffer = Buffer.Create<ushort>(GraphicsDevice, BufferUsageFlags.Index, 6);
+			var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
-				vertexBuffer,
-				new PositionTextureVertex[]
-				{
+			vertexBuffer = resourceUploader.CreateBuffer(
+				[
 					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
 					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
 					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
 					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
-				}
+				],
+				BufferUsageFlags.Vertex
 			);
-			cmdbuf.SetBufferData(
-				indexBuffer,
-				new ushort[]
-				{
+
+			indexBuffer = resourceUploader.CreateBuffer<ushort>(
+				[
 					0, 1, 2,
 					0, 2, 3,
-				}
+				],
+				BufferUsageFlags.Index
 			);
-			GraphicsDevice.Submit(cmdbuf);
+
+			resourceUploader.Upload();
+			resourceUploader.Dispose();
 
 			// Load the video
 			video = new VideoAV1(GraphicsDevice, TestUtils.GetVideoPath("hello.obu"), 25);
@@ -84,7 +83,7 @@ namespace MoonWorks.Test
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(videoPlayer.RenderTexture, sampler));
-				cmdbuf.DrawIndexedPrimitives(0, 0, 2, 0, 0);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 2);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

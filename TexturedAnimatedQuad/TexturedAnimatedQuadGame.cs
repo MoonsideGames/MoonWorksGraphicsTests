@@ -1,5 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using MoonWorks;
 using MoonWorks.Graphics;
 using MoonWorks.Math.Float;
 
@@ -8,8 +7,8 @@ namespace MoonWorks.Test
 	class TexturedAnimatedQuadGame : Game
 	{
 		private GraphicsPipeline pipeline;
-		private Buffer vertexBuffer;
-		private Buffer indexBuffer;
+		private GpuBuffer vertexBuffer;
+		private GpuBuffer indexBuffer;
 		private Texture texture;
 		private Sampler sampler;
 
@@ -44,32 +43,33 @@ namespace MoonWorks.Test
 			pipelineCreateInfo.FragmentShaderInfo = GraphicsShaderInfo.Create<FragmentUniforms>(fragShaderModule, "main", 1);
 			pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
-			// Create and populate the GPU resources
-			vertexBuffer = Buffer.Create<PositionTextureVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 4);
-			indexBuffer = Buffer.Create<ushort>(GraphicsDevice, BufferUsageFlags.Index, 6);
 			sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
-				vertexBuffer,
-				new PositionTextureVertex[]
-				{
+			// Create and populate the GPU resources
+			var resourceUploader = new ResourceUploader(GraphicsDevice);
+
+			vertexBuffer = resourceUploader.CreateBuffer(
+				[
 					new PositionTextureVertex(new Vector3(-0.5f, -0.5f, 0), new Vector2(0, 0)),
 					new PositionTextureVertex(new Vector3(0.5f, -0.5f, 0), new Vector2(1, 0)),
 					new PositionTextureVertex(new Vector3(0.5f, 0.5f, 0), new Vector2(1, 1)),
 					new PositionTextureVertex(new Vector3(-0.5f, 0.5f, 0), new Vector2(0, 1)),
-				}
+				],
+				BufferUsageFlags.Vertex
 			);
-			cmdbuf.SetBufferData(
-				indexBuffer,
-				new ushort[]
-				{
+
+			indexBuffer = resourceUploader.CreateBuffer<ushort>(
+				[
 					0, 1, 2,
 					0, 2, 3,
-				}
+				],
+				BufferUsageFlags.Index
 			);
-			texture = Texture.FromImageFile(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.png"));
-			GraphicsDevice.Submit(cmdbuf);
+
+			texture = resourceUploader.CreateTexture2D(TestUtils.GetTexturePath("ravioli.png"));
+
+			resourceUploader.Upload();
+			resourceUploader.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta)
@@ -81,7 +81,6 @@ namespace MoonWorks.Test
 		{
 			TransformVertexUniform vertUniforms;
 			FragmentUniforms fragUniforms;
-			uint vertParamOffset, fragParamOffset;
 
 			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
@@ -96,30 +95,30 @@ namespace MoonWorks.Test
 				// Top-left
 				vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(-0.5f, -0.5f, 0)));
 				fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Sin(t) * 0.5f, 1f, 1f));
-				vertParamOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
-				fragParamOffset = cmdbuf.PushFragmentShaderUniforms(fragUniforms);
-				cmdbuf.DrawIndexedPrimitives(0, 0, 2, vertParamOffset, fragParamOffset);
+				cmdbuf.PushVertexShaderUniforms(vertUniforms);
+				cmdbuf.PushFragmentShaderUniforms(fragUniforms);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 2);
 
 				// Top-right
 				vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ((2 * System.MathF.PI) - t) * Matrix4x4.CreateTranslation(new Vector3(0.5f, -0.5f, 0)));
 				fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Cos(t) * 0.5f, 1f, 1f));
-				vertParamOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
-				fragParamOffset = cmdbuf.PushFragmentShaderUniforms(fragUniforms);
-				cmdbuf.DrawIndexedPrimitives(0, 0, 2, vertParamOffset, fragParamOffset);
+				cmdbuf.PushVertexShaderUniforms(vertUniforms);
+				cmdbuf.PushFragmentShaderUniforms(fragUniforms);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 2);
 
 				// Bottom-left
 				vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(-0.5f, 0.5f, 0)));
 				fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Sin(t) * 0.2f, 1f, 1f));
-				vertParamOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
-				fragParamOffset = cmdbuf.PushFragmentShaderUniforms(fragUniforms);
-				cmdbuf.DrawIndexedPrimitives(0, 0, 2, vertParamOffset, fragParamOffset);
+				cmdbuf.PushVertexShaderUniforms(vertUniforms);
+				cmdbuf.PushFragmentShaderUniforms(fragUniforms);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 2);
 
 				// Bottom-right
 				vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(0.5f, 0.5f, 0)));
 				fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Cos(t) * 1f, 1f, 1f));
-				vertParamOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
-				fragParamOffset = cmdbuf.PushFragmentShaderUniforms(fragUniforms);
-				cmdbuf.DrawIndexedPrimitives(0, 0, 2, vertParamOffset, fragParamOffset);
+				cmdbuf.PushVertexShaderUniforms(vertUniforms);
+				cmdbuf.PushFragmentShaderUniforms(fragUniforms);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 2);
 
 				cmdbuf.EndRenderPass();
 			}

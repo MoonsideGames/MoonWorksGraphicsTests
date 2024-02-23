@@ -12,11 +12,11 @@ namespace MoonWorks.Test
 		private Texture[] renderTargets = new Texture[4];
 		private Texture[] depthRTs = new Texture[4];
 		private Sampler rtSampler;
-		private Buffer cubeVertexBuffer1;
-		private Buffer cubeVertexBuffer2;
-		private Buffer cubeIndexBuffer;
-		private Buffer quadVertexBuffer;
-		private Buffer quadIndexBuffer;
+		private GpuBuffer cubeVertexBuffer1;
+		private GpuBuffer cubeVertexBuffer2;
+		private GpuBuffer cubeIndexBuffer;
+		private GpuBuffer quadVertexBuffer;
+		private GpuBuffer quadIndexBuffer;
 
 		private float cubeTimer = 0f;
 		private Quaternion cubeRotation = Quaternion.Identity;
@@ -105,37 +105,28 @@ namespace MoonWorks.Test
 			rtSampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 			// Create the buffers
-			quadVertexBuffer = Buffer.Create<PositionTextureVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 4);
-			quadIndexBuffer = Buffer.Create<ushort>(GraphicsDevice, BufferUsageFlags.Index, 6);
+			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
 
-			cubeVertexBuffer1 = Buffer.Create<PositionColorVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 24);
-			cubeVertexBuffer2 = Buffer.Create<PositionColorVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 24);
-			cubeIndexBuffer = Buffer.Create<uint>(GraphicsDevice, BufferUsageFlags.Index, 36);
-
-			// Populate the GPU resources
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-
-			cmdbuf.SetBufferData(
-				quadVertexBuffer,
-				new PositionTextureVertex[]
-				{
+			quadVertexBuffer = resourceInitializer.CreateBuffer(
+				[
 					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
 					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
 					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
-				}
-			);
-			cmdbuf.SetBufferData(
-				quadIndexBuffer,
-				new ushort[]
-				{
-					0, 1, 2,
-					0, 2, 3,
-				}
+					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1))
+				],
+				BufferUsageFlags.Vertex
 			);
 
-			PositionColorVertex[] vertices = new PositionColorVertex[]
-			{
+			quadIndexBuffer = resourceInitializer.CreateBuffer<ushort>(
+				[
+					0, 1, 2,
+					0, 2, 3,
+				],
+				BufferUsageFlags.Index
+			);
+
+			var cubeVertexData = new System.Span<PositionColorVertex>(
+			[
 				new PositionColorVertex(new Vector3(-1, -1, -1), new Color(1f, 0f, 0f)),
 				new PositionColorVertex(new Vector3(1, -1, -1), new Color(1f, 0f, 0f)),
 				new PositionColorVertex(new Vector3(1, 1, -1), new Color(1f, 0f, 0f)),
@@ -165,36 +156,38 @@ namespace MoonWorks.Test
 				new PositionColorVertex(new Vector3(-1, 1, 1), new Color(0f, 0.5f, 0f)),
 				new PositionColorVertex(new Vector3(1, 1, 1), new Color(0f, 0.5f, 0f)),
 				new PositionColorVertex(new Vector3(1, 1, -1), new Color(0f, 0.5f, 0f))
-			};
-			cmdbuf.SetBufferData(
-				cubeVertexBuffer1,
-				vertices
+			]);
+
+			cubeVertexBuffer1 = resourceInitializer.CreateBuffer(
+				cubeVertexData,
+				BufferUsageFlags.Vertex
 			);
 
 			// Scoot all the verts slightly for the second cube...
-			for (int i = 0; i < vertices.Length; i += 1)
+			for (int i = 0; i < cubeVertexData.Length; i += 1)
 			{
-				vertices[i].Position.Z += 3;
+				cubeVertexData[i].Position.Z += 3;
 			}
-			cmdbuf.SetBufferData(
-				cubeVertexBuffer2,
-				vertices
+
+			cubeVertexBuffer2 = resourceInitializer.CreateBuffer(
+				cubeVertexData,
+				BufferUsageFlags.Vertex
 			);
 
-			cmdbuf.SetBufferData(
-				cubeIndexBuffer,
-				new uint[]
-				{
-					 0,  1,  2,  0,  2,  3,
-					 6,  5,  4,  7,  6,  4,
-					 8,  9, 10,  8, 10, 11,
+			cubeIndexBuffer = resourceInitializer.CreateBuffer<uint>(
+				[
+					0,  1,  2,  0,  2,  3,
+					6,  5,  4,  7,  6,  4,
+					8,  9, 10,  8, 10, 11,
 					14, 13, 12, 15, 14, 12,
 					16, 17, 18, 16, 18, 19,
 					22, 21, 20, 23, 22, 20
-				}
+				],
+				BufferUsageFlags.Index
 			);
 
-			GraphicsDevice.Submit(cmdbuf);
+			resourceInitializer.Upload();
+			resourceInitializer.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta)
@@ -263,14 +256,14 @@ namespace MoonWorks.Test
 				// Draw the first cube
 				cmdbuf.BindVertexBuffers(cubeVertexBuffer1);
 				cmdbuf.BindIndexBuffer(cubeIndexBuffer, IndexElementSize.ThirtyTwo);
-				uint vertexParamOffset = cmdbuf.PushVertexShaderUniforms(cubeUniforms);
-				cmdbuf.DrawIndexedPrimitives(0, 0, 12, vertexParamOffset, 0);
+				cmdbuf.PushVertexShaderUniforms(cubeUniforms);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 12);
 
 				// Draw the second cube
 				cmdbuf.BindVertexBuffers(cubeVertexBuffer2);
 				cmdbuf.BindIndexBuffer(cubeIndexBuffer, IndexElementSize.ThirtyTwo);
-				vertexParamOffset = cmdbuf.PushVertexShaderUniforms(cubeUniforms);
-				cmdbuf.DrawIndexedPrimitives(0, 0, 12, vertexParamOffset, 0);
+				cmdbuf.PushVertexShaderUniforms(cubeUniforms);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 12);
 
 				cmdbuf.EndRenderPass();
 
@@ -280,7 +273,7 @@ namespace MoonWorks.Test
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(renderTargets[index], rtSampler));
 				cmdbuf.BindVertexBuffers(quadVertexBuffer);
 				cmdbuf.BindIndexBuffer(quadIndexBuffer, IndexElementSize.Sixteen);
-				cmdbuf.DrawIndexedPrimitives(0, 0, 2, 0, 0);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 2);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

@@ -9,7 +9,7 @@ namespace MoonWorks.Test
 		private GraphicsPipeline drawPipeline;
 		private Texture texture;
 		private Sampler sampler;
-		private Buffer vertexBuffer;
+		private GpuBuffer vertexBuffer;
 
 		public BasicComputeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
 		{
@@ -61,16 +61,15 @@ namespace MoonWorks.Test
 
 			// Create buffers and textures
 			uint[] squares = new uint[64];
-			Buffer squaresBuffer = Buffer.Create<uint>(
+			GpuBuffer squaresBuffer = GpuBuffer.Create<uint>(
 				GraphicsDevice,
 				BufferUsageFlags.Compute,
 				(uint) squares.Length
 			);
 
-			vertexBuffer = Buffer.Create<PositionTextureVertex>(
+			TransferBuffer transferBuffer = new TransferBuffer(
 				GraphicsDevice,
-				BufferUsageFlags.Vertex,
-				6
+				squaresBuffer.Size
 			);
 
 			texture = Texture.CreateTexture2D(
@@ -84,34 +83,48 @@ namespace MoonWorks.Test
 			sampler = new Sampler(GraphicsDevice, new SamplerCreateInfo());
 
 			// Upload GPU resources and dispatch compute work
+			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+			vertexBuffer = resourceInitializer.CreateBuffer(
+				[
+					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
+					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
+					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
+					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
+					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
+					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
+				],
+				BufferUsageFlags.Vertex
+			);
+
+			resourceInitializer.Upload();
+			resourceInitializer.Dispose();
+
 			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 
-			cmdbuf.SetBufferData(vertexBuffer, new PositionTextureVertex[]
-			{
-				new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
-				new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
-				new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-				new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
-				new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-				new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
-			});
+			cmdbuf.BeginComputePass();
 
 			// This should result in a bright yellow texture!
 			cmdbuf.BindComputePipeline(fillTextureComputePipeline);
-			cmdbuf.BindComputeTextures(texture);
-			cmdbuf.DispatchCompute(texture.Width / 8, texture.Height / 8, 1, 0);
+			cmdbuf.BindComputeTextures(new TextureLevelBinding(texture, 0));
+			cmdbuf.DispatchCompute(texture.Width / 8, texture.Height / 8, 1);
 
 			// This calculates the squares of the first N integers!
 			cmdbuf.BindComputePipeline(calculateSquaresComputePipeline);
 			cmdbuf.BindComputeBuffers(squaresBuffer);
-			cmdbuf.DispatchCompute((uint) squares.Length / 8, 1, 1, 0);
+			cmdbuf.DispatchCompute((uint) squares.Length / 8, 1, 1);
+
+			cmdbuf.EndComputePass();
+
+			cmdbuf.BeginCopyPass();
+			cmdbuf.DownloadFromBuffer(squaresBuffer, transferBuffer);
+			cmdbuf.EndCopyPass();
 
 			var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 			GraphicsDevice.WaitForFences(fence);
 			GraphicsDevice.ReleaseFence(fence);
 
 			// Print the squares!
-			squaresBuffer.GetData(squares);
+			transferBuffer.GetData<uint>(squares, 0);
 			Logger.LogInfo("Squares of the first " + squares.Length + " integers: " + string.Join(", ", squares));
 		}
 
@@ -127,7 +140,7 @@ namespace MoonWorks.Test
 				cmdbuf.BindGraphicsPipeline(drawPipeline);
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(texture, sampler));
 				cmdbuf.BindVertexBuffers(vertexBuffer);
-				cmdbuf.DrawPrimitives(0, 2, 0, 0);
+				cmdbuf.DrawPrimitives(0, 2);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

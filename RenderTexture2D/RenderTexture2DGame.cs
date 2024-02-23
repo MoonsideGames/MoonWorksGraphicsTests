@@ -7,8 +7,8 @@ namespace MoonWorks.Test
 	class RenderTexture2DGame : Game
 	{
 		private GraphicsPipeline pipeline;
-		private Buffer vertexBuffer;
-		private Buffer indexBuffer;
+		private GpuBuffer vertexBuffer;
+		private GpuBuffer indexBuffer;
 		private Texture[] textures = new Texture[4];
 		private Sampler sampler;
 
@@ -34,25 +34,10 @@ namespace MoonWorks.Test
 			sampler = new Sampler(GraphicsDevice, samplerCreateInfo);
 
 			// Create and populate the GPU resources
-			vertexBuffer = Buffer.Create<PositionTextureVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 16);
-			indexBuffer = Buffer.Create<ushort>(GraphicsDevice, BufferUsageFlags.Index, 6);
+			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
 
-			for (int i = 0; i < textures.Length; i += 1)
-			{
-				textures[i] = Texture.CreateTexture2D(
-					GraphicsDevice,
-					MainWindow.Width / 4,
-					MainWindow.Height / 4,
-					TextureFormat.R8G8B8A8,
-					TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler
-				);
-			}
-
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
-				vertexBuffer,
-				new PositionTextureVertex[]
-				{
+			vertexBuffer = resourceInitializer.CreateBuffer(
+				[
 					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
 					new PositionTextureVertex(new Vector3(0, -1, 0), new Vector2(1, 0)),
 					new PositionTextureVertex(new Vector3(0, 0, 0), new Vector2(1, 1)),
@@ -72,18 +57,31 @@ namespace MoonWorks.Test
 					new PositionTextureVertex(new Vector3(1, 0, 0), new Vector2(1, 0)),
 					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
 					new PositionTextureVertex(new Vector3(0, 1, 0), new Vector2(0, 1)),
-				}
-			);
-			cmdbuf.SetBufferData(
-				indexBuffer,
-				new ushort[]
-				{
-					0, 1, 2,
-					0, 2, 3,
-				}
+				],
+				BufferUsageFlags.Vertex
 			);
 
-			GraphicsDevice.Submit(cmdbuf);
+			indexBuffer = resourceInitializer.CreateBuffer<ushort>(
+				[
+					0, 1, 2,
+					0, 2, 3,
+				],
+				BufferUsageFlags.Index
+			);
+
+			resourceInitializer.Upload();
+			resourceInitializer.Dispose();
+
+			for (int i = 0; i < textures.Length; i += 1)
+			{
+				textures[i] = Texture.CreateTexture2D(
+					GraphicsDevice,
+					MainWindow.Width / 4,
+					MainWindow.Height / 4,
+					TextureFormat.R8G8B8A8,
+					TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler
+				);
+			}
 		}
 
 		protected override void Update(System.TimeSpan delta) { }
@@ -114,7 +112,7 @@ namespace MoonWorks.Test
 				for (uint i = 0; i < textures.Length; i += 1)
 				{
 					cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(textures[i], sampler));
-					cmdbuf.DrawIndexedPrimitives(4 * i, 0, 2, 0, 0);
+					cmdbuf.DrawIndexedPrimitives(4 * i, 0, 2);
 				}
 
 				cmdbuf.EndRenderPass();

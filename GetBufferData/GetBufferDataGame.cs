@@ -1,5 +1,4 @@
-﻿using MoonWorks;
-using MoonWorks.Graphics;
+﻿using MoonWorks.Graphics;
 using MoonWorks.Math.Float;
 using System.Runtime.InteropServices;
 
@@ -9,9 +8,9 @@ namespace MoonWorks.Test
 	{
 		public GetBufferDataGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
 		{
-			PositionVertex[] vertices = new PositionVertex[]
-			{
-				new PositionVertex(new Vector3(0, 0, 0)),
+			var vertices = new System.Span<PositionVertex>(
+            [
+                new PositionVertex(new Vector3(0, 0, 0)),
 				new PositionVertex(new Vector3(0, 0, 1)),
 				new PositionVertex(new Vector3(0, 1, 0)),
 				new PositionVertex(new Vector3(0, 1, 1)),
@@ -19,76 +18,103 @@ namespace MoonWorks.Test
 				new PositionVertex(new Vector3(1, 0, 1)),
 				new PositionVertex(new Vector3(1, 1, 0)),
 				new PositionVertex(new Vector3(1, 1, 1)),
-			};
+			]);
 
-			PositionVertex[] otherVerts = new PositionVertex[]
-			{
-				new PositionVertex(new Vector3(1, 2, 3)),
+			var otherVerts = new System.Span<PositionVertex>(
+            [
+                new PositionVertex(new Vector3(1, 2, 3)),
 				new PositionVertex(new Vector3(4, 5, 6)),
 				new PositionVertex(new Vector3(7, 8, 9))
-			};
+			]);
 
 			int vertexSize = Marshal.SizeOf<PositionVertex>();
 
-			Buffer vertexBuffer = Buffer.Create<PositionVertex>(
-				GraphicsDevice,
-				BufferUsageFlags.Vertex,
-				(uint) vertices.Length
-			);
+			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+
+			var vertexBuffer = resourceInitializer.CreateBuffer(vertices, BufferUsageFlags.Vertex);
+
+			resourceInitializer.Upload();
+			resourceInitializer.Dispose();
+
+			var transferBuffer = new TransferBuffer(GraphicsDevice, vertexBuffer.Size);
 
 			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(vertexBuffer, vertices);
+
+			cmdbuf.BeginCopyPass();
+			cmdbuf.DownloadFromBuffer(vertexBuffer, transferBuffer);
+			cmdbuf.EndCopyPass();
+
 			var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 
-			// Wait for the vertices to finish uploading...
+			// Wait for the vertices to finish copying...
 			GraphicsDevice.WaitForFences(fence);
 			GraphicsDevice.ReleaseFence(fence);
 
 			// Read back and print out the vertex values
 			PositionVertex[] readbackVertices = new PositionVertex[vertices.Length];
-			vertexBuffer.GetData(readbackVertices);
+			transferBuffer.GetData<PositionVertex>(readbackVertices);
 			for (int i = 0; i < readbackVertices.Length; i += 1)
 			{
 				Logger.LogInfo(readbackVertices[i].ToString());
 			}
 
-			// Change the first three vertices
+			// Change the first three vertices and upload
 			cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(vertexBuffer, otherVerts);
+			transferBuffer.SetData(otherVerts, SetDataOptions.Overwrite);
+			cmdbuf.BeginCopyPass();
+			cmdbuf.UploadToBuffer(transferBuffer, vertexBuffer);
+			cmdbuf.EndCopyPass();
+			fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
+			GraphicsDevice.WaitForFences(fence);
+			GraphicsDevice.ReleaseFence(fence);
+
+			// Download the data
+			cmdbuf = GraphicsDevice.AcquireCommandBuffer();
+			cmdbuf.BeginCopyPass();
+			cmdbuf.DownloadFromBuffer(vertexBuffer, transferBuffer);
+			cmdbuf.EndCopyPass();
 			fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 			GraphicsDevice.WaitForFences(fence);
 			GraphicsDevice.ReleaseFence(fence);
 
 			// Read the updated buffer
-			vertexBuffer.GetData(readbackVertices);
+			transferBuffer.GetData<PositionVertex>(readbackVertices);
 			Logger.LogInfo("=== Change first three vertices ===");
 			for (int i = 0; i < readbackVertices.Length; i += 1)
 			{
 				Logger.LogInfo(readbackVertices[i].ToString());
 			}
 
-			// Change the last two vertices
+			// Change the last two vertices and upload
 			cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
+			var lastTwoSpan = otherVerts.Slice(1, 2);
+			transferBuffer.SetData(lastTwoSpan, SetDataOptions.Overwrite);
+			cmdbuf.BeginCopyPass();
+			cmdbuf.UploadToBuffer(
+				transferBuffer,
 				vertexBuffer,
-				otherVerts,
-				(uint) (vertexSize * (vertices.Length - 2)),
-				1,
-				2
-			);
+				new BufferCopy(0, (uint) (vertexSize * (vertices.Length - 2)), (uint) (vertexSize * 2)));
+			cmdbuf.EndCopyPass();
+			fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
+			GraphicsDevice.WaitForFences(fence);
+			GraphicsDevice.ReleaseFence(fence);
+
+			cmdbuf = GraphicsDevice.AcquireCommandBuffer();
+			cmdbuf.BeginCopyPass();
+			cmdbuf.DownloadFromBuffer(vertexBuffer, transferBuffer);
+			cmdbuf.EndCopyPass();
 			fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 			GraphicsDevice.WaitForFences(fence);
 			GraphicsDevice.ReleaseFence(fence);
 
 			// Read the updated buffer
-			vertexBuffer.GetData(readbackVertices);
+			transferBuffer.GetData<PositionVertex>(readbackVertices);
 			Logger.LogInfo("=== Change last two vertices ===");
 			for (int i = 0; i < readbackVertices.Length; i += 1)
 			{
 				Logger.LogInfo(readbackVertices[i].ToString());
 			}
 		}
-
 
 		protected override void Update(System.TimeSpan delta) { }
 

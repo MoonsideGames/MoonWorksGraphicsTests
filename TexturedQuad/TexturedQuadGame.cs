@@ -1,4 +1,4 @@
-﻿using MoonWorks;
+﻿using System;
 using MoonWorks.Graphics;
 using MoonWorks.Math.Float;
 
@@ -7,8 +7,8 @@ namespace MoonWorks.Test
 	class TexturedQuadGame : Game
 	{
 		private GraphicsPipeline pipeline;
-		private Buffer vertexBuffer;
-		private Buffer indexBuffer;
+		private GpuBuffer vertexBuffer;
+		private GpuBuffer indexBuffer;
 		private Sampler[] samplers = new Sampler[6];
 		private string[] samplerNames = new string[]
 		{
@@ -71,34 +71,32 @@ namespace MoonWorks.Test
 			samplers[4] = new Sampler(GraphicsDevice, SamplerCreateInfo.AnisotropicClamp);
 			samplers[5] = new Sampler(GraphicsDevice, SamplerCreateInfo.AnisotropicWrap);
 
-			// Create and populate the GPU resources
-			vertexBuffer = Buffer.Create<PositionTextureVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 4);
-			indexBuffer = Buffer.Create<ushort>(GraphicsDevice, BufferUsageFlags.Index, 6);
+			var vertexData = new Span<PositionTextureVertex>([
+				new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
+				new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(4, 0)),
+				new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(4, 4)),
+				new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 4)),
+			]);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
-				vertexBuffer,
-				new PositionTextureVertex[]
-				{
-					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
-					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(4, 0)),
-					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(4, 4)),
-					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 4)),
-				}
-			);
-			cmdbuf.SetBufferData(
-				indexBuffer,
-				new ushort[]
-				{
-					0, 1, 2,
-					0, 2, 3,
-				}
-			);
-			textures[0] = Texture.FromImageFile(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.png"));
-			textures[1] = Texture.FromImageBytes(GraphicsDevice, cmdbuf, pngBytes);
-			textures[2] = Texture.FromImageFile(GraphicsDevice, cmdbuf, TestUtils.GetTexturePath("ravioli.qoi"));
-			textures[3] = Texture.FromImageBytes(GraphicsDevice, cmdbuf, qoiBytes);
-			GraphicsDevice.Submit(cmdbuf);
+			var indexData = new Span<ushort>([
+				0, 1, 2,
+				0, 2, 3,
+			]);
+
+			// Create and populate the GPU resources
+
+			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+
+			vertexBuffer = resourceInitializer.CreateBuffer(vertexData, BufferUsageFlags.Vertex);
+			indexBuffer = resourceInitializer.CreateBuffer(indexData, BufferUsageFlags.Index);
+
+			textures[0] = resourceInitializer.CreateTexture2D(TestUtils.GetTexturePath("ravioli.png"));
+			textures[1] = resourceInitializer.CreateTexture2D(pngBytes);
+			textures[2] = resourceInitializer.CreateTexture2D(TestUtils.GetTexturePath("ravioli.qoi"));
+			textures[3] = resourceInitializer.CreateTexture2D(qoiBytes);
+
+			resourceInitializer.Upload();
+			resourceInitializer.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta)
@@ -152,7 +150,7 @@ namespace MoonWorks.Test
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(textures[currentTextureIndex], samplers[currentSamplerIndex]));
-				cmdbuf.DrawIndexedPrimitives(0, 0, 2, 0, 0);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 2);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

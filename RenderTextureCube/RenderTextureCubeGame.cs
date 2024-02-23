@@ -1,5 +1,4 @@
-﻿using MoonWorks;
-using MoonWorks.Graphics;
+﻿using MoonWorks.Graphics;
 using MoonWorks.Math.Float;
 using MoonWorks.Math;
 using System.Runtime.InteropServices;
@@ -9,8 +8,8 @@ namespace MoonWorks.Test
 	class RenderTextureCubeGame : Game
 	{
 		private GraphicsPipeline pipeline;
-		private Buffer vertexBuffer;
-		private Buffer indexBuffer;
+		private GpuBuffer vertexBuffer;
+		private GpuBuffer indexBuffer;
 		private Texture cubemap;
 		private Sampler sampler;
 
@@ -49,20 +48,10 @@ namespace MoonWorks.Test
 			sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 			// Create and populate the GPU resources
-			vertexBuffer = Buffer.Create<PositionVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 24);
-			indexBuffer = Buffer.Create<ushort>(GraphicsDevice, BufferUsageFlags.Index, 36);
-			cubemap = Texture.CreateTextureCube(
-				GraphicsDevice,
-				16,
-				TextureFormat.R8G8B8A8,
-				TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler
-			);
+			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
-				vertexBuffer,
-				new PositionVertex[]
-				{
+			vertexBuffer = resourceInitializer.CreateBuffer(
+				[
 					new PositionVertex(new Vector3(-10, -10, -10)),
 					new PositionVertex(new Vector3(10, -10, -10)),
 					new PositionVertex(new Vector3(10, 10, -10)),
@@ -92,21 +81,33 @@ namespace MoonWorks.Test
 					new PositionVertex(new Vector3(-10, 10, 10)),
 					new PositionVertex(new Vector3(10, 10, 10)),
 					new PositionVertex(new Vector3(10, 10, -10))
-				}
+				],
+				BufferUsageFlags.Vertex
 			);
 
-			cmdbuf.SetBufferData(
-				indexBuffer,
-				new ushort[]
-				{
-					 0,  1,  2,  0,  2,  3,
-					 6,  5,  4,  7,  6,  4,
-					 8,  9, 10,  8, 10, 11,
+			indexBuffer = resourceInitializer.CreateBuffer<ushort>(
+				[
+					0,  1,  2,  0,  2,  3,
+					6,  5,  4,  7,  6,  4,
+					8,  9, 10,  8, 10, 11,
 					14, 13, 12, 15, 14, 12,
 					16, 17, 18, 16, 18, 19,
 					22, 21, 20, 23, 22, 20
-				}
+				],
+				BufferUsageFlags.Index
 			);
+
+			resourceInitializer.Upload();
+			resourceInitializer.Dispose();
+
+			cubemap = Texture.CreateTextureCube(
+				GraphicsDevice,
+				16,
+				TextureFormat.R8G8B8A8,
+				TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler
+			);
+
+			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 
 			// Clear each slice of the cubemap to a different color
 			for (uint i = 0; i < 6; i += 1)
@@ -160,8 +161,8 @@ namespace MoonWorks.Test
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(cubemap, sampler));
-				uint vertexUniformOffset = cmdbuf.PushVertexShaderUniforms(vertUniforms);
-				cmdbuf.DrawIndexedPrimitives(0, 0, 12, vertexUniformOffset, 0);
+				cmdbuf.PushVertexShaderUniforms(vertUniforms);
+				cmdbuf.DrawIndexedPrimitives(0, 0, 12);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

@@ -9,7 +9,7 @@ namespace MoonWorks.Test
 		private GraphicsPipeline drawPipeline;
 		private Texture texture;
 		private Sampler sampler;
-		private Buffer vertexBuffer;
+		private GpuBuffer vertexBuffer;
 
 		struct GradientTextureComputeUniforms
 		{
@@ -60,13 +60,6 @@ namespace MoonWorks.Test
 				drawPipelineCreateInfo
 			);
 
-			// Create buffers and textures
-			vertexBuffer = Buffer.Create<PositionTextureVertex>(
-				GraphicsDevice,
-				BufferUsageFlags.Vertex,
-				6
-			);
-
 			texture = Texture.CreateTexture2D(
 				GraphicsDevice,
 				MainWindow.Width,
@@ -78,26 +71,36 @@ namespace MoonWorks.Test
 			sampler = new Sampler(GraphicsDevice, new SamplerCreateInfo());
 
 			// Upload GPU resources and dispatch compute work
+
+			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
+
+			vertexBuffer = resourceInitializer.CreateBuffer(
+				[
+					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
+					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
+					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
+					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
+					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
+					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
+				],
+				BufferUsageFlags.Vertex
+			);
+
+			resourceInitializer.Upload();
+			resourceInitializer.Dispose();
 			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(vertexBuffer, new PositionTextureVertex[]
-			{
-				new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
-				new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
-				new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-				new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
-				new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-				new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
-			});
 
 			GradientTextureComputeUniforms gradientUniforms = new GradientTextureComputeUniforms(
 				texture.Width / 8,
 				texture.Height / 8
 			);
 
+			cmdbuf.BeginComputePass();
 			cmdbuf.BindComputePipeline(gradientTextureComputePipeline);
-			cmdbuf.BindComputeTextures(texture);
-			uint offset = cmdbuf.PushComputeShaderUniforms(gradientUniforms);
-			cmdbuf.DispatchCompute(gradientUniforms.groupCountX, gradientUniforms.groupCountY, 1, offset);
+			cmdbuf.BindComputeTextures(new TextureLevelBinding(texture, 0));
+			cmdbuf.PushComputeShaderUniforms(gradientUniforms);
+			cmdbuf.DispatchCompute(gradientUniforms.groupCountX, gradientUniforms.groupCountY, 1);
+			cmdbuf.EndComputePass();
 
 			GraphicsDevice.Submit(cmdbuf);
 		}
@@ -114,7 +117,7 @@ namespace MoonWorks.Test
 				cmdbuf.BindGraphicsPipeline(drawPipeline);
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(texture, sampler));
 				cmdbuf.BindVertexBuffers(vertexBuffer);
-				cmdbuf.DrawPrimitives(0, 2, 0, 0);
+				cmdbuf.DrawPrimitives(0, 2);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

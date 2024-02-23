@@ -7,8 +7,8 @@ namespace MoonWorks.Test
 	class InstancingAndOffsetsGame : Game
 	{
 		private GraphicsPipeline pipeline;
-		private Buffer vertexBuffer;
-		private Buffer indexBuffer;
+		private GpuBuffer vertexBuffer;
+		private GpuBuffer indexBuffer;
 
 		private bool useVertexOffset;
 		private bool useIndexOffset;
@@ -31,14 +31,10 @@ namespace MoonWorks.Test
 			pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 			// Create and populate the vertex and index buffers
-			vertexBuffer = Buffer.Create<PositionColorVertex>(GraphicsDevice, BufferUsageFlags.Vertex, 9);
-			indexBuffer = Buffer.Create<ushort>(GraphicsDevice, BufferUsageFlags.Index, 6);
+			var resourceInitializer = new ResourceInitializer(GraphicsDevice);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.SetBufferData(
-				vertexBuffer,
-				new PositionColorVertex[]
-				{
+			vertexBuffer = resourceInitializer.CreateBuffer(
+				[
 					new PositionColorVertex(new Vector3(-1, 1, 0), Color.Red),
 					new PositionColorVertex(new Vector3(1, 1, 0), Color.Lime),
 					new PositionColorVertex(new Vector3(0, -1, 0), Color.Blue),
@@ -50,17 +46,20 @@ namespace MoonWorks.Test
 					new PositionColorVertex(new Vector3(-1, 1, 0), Color.White),
 					new PositionColorVertex(new Vector3(1, 1, 0), Color.White),
 					new PositionColorVertex(new Vector3(0, -1, 0), Color.White),
-				}
+				],
+				BufferUsageFlags.Vertex
 			);
-			cmdbuf.SetBufferData(
-				indexBuffer,
-				new ushort[]
-				{
+
+			indexBuffer = resourceInitializer.CreateBuffer<ushort>(
+				[
 					0, 1, 2,
 					3, 4, 5,
-				}
+				],
+				BufferUsageFlags.Index
 			);
-			GraphicsDevice.Submit(cmdbuf);
+
+			resourceInitializer.Upload();
+			resourceInitializer.Dispose();
 		}
 
 		protected override void Update(System.TimeSpan delta)
@@ -91,7 +90,7 @@ namespace MoonWorks.Test
 				cmdbuf.BindGraphicsPipeline(pipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
-				cmdbuf.DrawInstancedPrimitives(vertexOffset, indexOffset, 1, 16, 0, 0);
+				cmdbuf.DrawInstancedPrimitives(vertexOffset, indexOffset, 1, 16);
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

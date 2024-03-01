@@ -97,7 +97,7 @@ namespace MoonWorks.Test
 
 			cmdbuf.BeginComputePass();
 			cmdbuf.BindComputePipeline(gradientTextureComputePipeline);
-			cmdbuf.BindComputeTextures(new TextureLevelBinding(texture, 0));
+			cmdbuf.BindComputeTextures(new ComputeTextureBinding(texture, 0));
 			cmdbuf.PushComputeShaderUniforms(gradientUniforms);
 			cmdbuf.DispatchCompute(gradientUniforms.groupCountX, gradientUniforms.groupCountY, 1);
 			cmdbuf.EndComputePass();
@@ -113,7 +113,7 @@ namespace MoonWorks.Test
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (backbuffer != null)
 			{
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.CornflowerBlue));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, Color.CornflowerBlue));
 				cmdbuf.BindGraphicsPipeline(drawPipeline);
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(texture, sampler));
 				cmdbuf.BindVertexBuffers(vertexBuffer);

@@ -41,7 +41,7 @@ namespace MoonWorks.Test
 			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 
 			cmdbuf.BeginCopyPass();
-			cmdbuf.DownloadFromBuffer(vertexBuffer, transferBuffer);
+			cmdbuf.DownloadFromBuffer(vertexBuffer, transferBuffer, TransferOptions.Overwrite);
 			cmdbuf.EndCopyPass();
 
 			var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
@@ -60,9 +60,9 @@ namespace MoonWorks.Test
 
 			// Change the first three vertices and upload
 			cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			transferBuffer.SetData(otherVerts, SetDataOptions.Overwrite);
+			transferBuffer.SetData(otherVerts, TransferOptions.Overwrite);
 			cmdbuf.BeginCopyPass();
-			cmdbuf.UploadToBuffer(transferBuffer, vertexBuffer);
+			cmdbuf.UploadToBuffer(transferBuffer, vertexBuffer, WriteOptions.SafeOverwrite);
 			cmdbuf.EndCopyPass();
 			fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 			GraphicsDevice.WaitForFences(fence);
@@ -71,7 +71,7 @@ namespace MoonWorks.Test
 			// Download the data
 			cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 			cmdbuf.BeginCopyPass();
-			cmdbuf.DownloadFromBuffer(vertexBuffer, transferBuffer);
+			cmdbuf.DownloadFromBuffer(vertexBuffer, transferBuffer, TransferOptions.Overwrite);
 			cmdbuf.EndCopyPass();
 			fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 			GraphicsDevice.WaitForFences(fence);
@@ -88,14 +88,15 @@ namespace MoonWorks.Test
 			// Change the last two vertices and upload
 			cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 			var lastTwoSpan = otherVerts.Slice(1, 2);
-			transferBuffer.SetData(lastTwoSpan, SetDataOptions.Overwrite);
+			transferBuffer.SetData(lastTwoSpan, TransferOptions.Overwrite);
 			cmdbuf.BeginCopyPass();
 			cmdbuf.UploadToBuffer<PositionVertex>(
 				transferBuffer,
 				vertexBuffer,
 				0,
                 (uint)(vertices.Length - 2),
-				2
+				2,
+				WriteOptions.SafeOverwrite
 			);
 			cmdbuf.EndCopyPass();
 			fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
@@ -104,7 +105,7 @@ namespace MoonWorks.Test
 
 			cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 			cmdbuf.BeginCopyPass();
-			cmdbuf.DownloadFromBuffer(vertexBuffer, transferBuffer);
+			cmdbuf.DownloadFromBuffer(vertexBuffer, transferBuffer, TransferOptions.Overwrite);
 			cmdbuf.EndCopyPass();
 			fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 			GraphicsDevice.WaitForFences(fence);
@@ -127,7 +128,7 @@ namespace MoonWorks.Test
 			Texture? swapchainTexture = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (swapchainTexture != null)
 			{
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchainTexture, Color.Black));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchainTexture, WriteOptions.SafeDiscard, Color.Black));
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

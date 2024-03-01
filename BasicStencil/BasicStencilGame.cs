@@ -89,8 +89,8 @@ namespace MoonWorks.Test
 			if (backbuffer != null)
 			{
 				cmdbuf.BeginRenderPass(
-					new DepthStencilAttachmentInfo(depthStencilTexture, new DepthStencilValue(0, 0), StoreOp.DontCare, StoreOp.DontCare),
-					new ColorAttachmentInfo(backbuffer, Color.Black)
+					new DepthStencilAttachmentInfo(depthStencilTexture, WriteOptions.SafeDiscard, new DepthStencilValue(0, 0), StoreOp.DontCare, StoreOp.DontCare),
+					new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, Color.Black)
 				);
 				cmdbuf.BindGraphicsPipeline(maskerPipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);

@@ -29,7 +29,7 @@ namespace MoonWorks.Test
 				backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
 				if (backbuffer != null)
 				{
-					cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.CornflowerBlue));
+					cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, Color.CornflowerBlue));
 					cmdbuf.EndRenderPass();
 				}
 				GraphicsDevice.Submit(cmdbuf);
@@ -41,7 +41,7 @@ namespace MoonWorks.Test
 				backbuffer = cmdbuf.AcquireSwapchainTexture(secondaryWindow);
 				if (backbuffer != null)
 				{
-					cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.Aquamarine));
+					cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, Color.Aquamarine));
 					cmdbuf.EndRenderPass();
 				}
 				GraphicsDevice.Submit(cmdbuf);

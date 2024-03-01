@@ -31,11 +31,11 @@ namespace MoonWorks.Test
 			Texture? swapchain = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (swapchain != null)
 			{
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchain, Color.Blue));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchain, WriteOptions.SafeDiscard, Color.Blue));
 				cmdbuf.BindGraphicsPipeline(fillPipeline);
 				cmdbuf.DrawPrimitives(0, 1);
 				cmdbuf.EndRenderPass();
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchain, LoadOp.Load, StoreOp.Store));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchain, WriteOptions.SafeOverwrite, LoadOp.Load, StoreOp.Store));
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

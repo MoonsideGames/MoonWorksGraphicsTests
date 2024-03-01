@@ -67,7 +67,8 @@ namespace MoonWorks.Test
 					LevelCount = 1,
 					SampleCount = (SampleCount)i,
 					UsageFlags = TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler,
-					IsCube = true
+					IsCube = true,
+					LayerCount = 6
 				};
 				renderTargets[i] = new Texture(GraphicsDevice, cubeCreateInfo);
 			}
@@ -185,13 +186,14 @@ namespace MoonWorks.Test
 				Texture rt = renderTargets[rtIndex];
 				ColorAttachmentInfo rtAttachmentInfo = new ColorAttachmentInfo(
 					rt,
+					WriteOptions.SafeDiscard,
 					Color.Black
 				);
 
 				// Render a triangle to each slice of the cubemap
 				for (uint i = 0; i < 6; i += 1)
 				{
-					rtAttachmentInfo.Layer = i;
+					rtAttachmentInfo.TextureSlice.Layer = i;
 
 					cmdbuf.BeginRenderPass(rtAttachmentInfo);
 					cmdbuf.BindGraphicsPipeline(msaaPipelines[rtIndex]);
@@ -199,7 +201,7 @@ namespace MoonWorks.Test
 					cmdbuf.EndRenderPass();
 				}
 
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.Black));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, Color.Black));
 				cmdbuf.BindGraphicsPipeline(cubemapPipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);

@@ -61,7 +61,7 @@ namespace MoonWorks.Test
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (backbuffer != null)
 			{
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.CornflowerBlue));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, Color.CornflowerBlue));
 				cmdbuf.BindGraphicsPipeline(graphicsPipeline);
 				cmdbuf.BindVertexBuffers(new BufferBinding(vertexBuffer, 0));
 				cmdbuf.DrawPrimitivesIndirect(drawBuffer, 0, 2, (uint) Marshal.SizeOf<IndirectDrawCommand>());

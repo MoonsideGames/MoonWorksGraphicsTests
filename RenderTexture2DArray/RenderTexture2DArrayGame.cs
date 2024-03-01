@@ -1,34 +1,40 @@
-﻿using MoonWorks.Graphics;
+﻿using System;
+using MoonWorks.Graphics;
 using MoonWorks.Math.Float;
-using System.IO;
 
 namespace MoonWorks.Test
 {
-	class CompressedTexturesGame : Game
+	class RenderTexture2DArrayGame : Game
 	{
 		private GraphicsPipeline pipeline;
 		private GpuBuffer vertexBuffer;
 		private GpuBuffer indexBuffer;
+		private Texture rt;
 		private Sampler sampler;
-		private Texture[] textures;
-		private string[] textureNames = new string[]
+
+		private float t;
+		private Color[] colors = new Color[]
 		{
-			"BC1",
-			"BC2",
-			"BC3",
-			"BC7"
+			Color.Red,
+			Color.Green,
+			Color.Blue,
 		};
 
-		private int currentTextureIndex;
-
-		public CompressedTexturesGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+		struct FragUniform
 		{
-			Logger.LogInfo("Press Left and Right to cycle between textures");
-			Logger.LogInfo("Setting texture to: " + textureNames[0]);
+			public float Depth;
 
+			public FragUniform(float depth)
+			{
+				Depth = depth;
+			}
+		}
+
+		public RenderTexture2DArrayGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+		{
 			// Load the shaders
 			ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuad.vert"));
-			ShaderModule fragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuad.frag"));
+			ShaderModule fragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuad2DArray.frag"));
 
 			// Create the graphics pipeline
 			GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
@@ -37,14 +43,11 @@ namespace MoonWorks.Test
 				fragShaderModule
 			);
 			pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
-			pipelineCreateInfo.FragmentShaderInfo.SamplerBindingCount = 1;
+			pipelineCreateInfo.FragmentShaderInfo = GraphicsShaderInfo.Create<FragUniform>(fragShaderModule, "main", 1);
 			pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
-			// Create sampler
-			sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.LinearWrap);
-
-			// Create texture array
-			textures = new Texture[textureNames.Length];
+			// Create samplers
+			sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointWrap);
 
 			// Create and populate the GPU resources
 			var resourceUploader = new ResourceUploader(GraphicsDevice);
@@ -54,7 +57,7 @@ namespace MoonWorks.Test
 					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
 					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
 					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1))
+					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
 				],
 				BufferUsageFlags.Vertex
 			);
@@ -67,46 +70,50 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Index
 			);
 
-			for (int i = 0; i < textureNames.Length; i += 1)
-			{
-				Logger.LogInfo(textureNames[i]);
-				textures[i] = resourceUploader.CreateTextureFromDDS(TestUtils.GetTexturePath(textureNames[i] + ".dds"));
-			}
-
 			resourceUploader.Upload();
 			resourceUploader.Dispose();
+
+			rt = Texture.CreateTexture2DArray(
+				GraphicsDevice,
+				16,
+				16,
+				(uint) colors.Length,
+				TextureFormat.R8G8B8A8,
+				TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler
+			);
+
+			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
+
+			// Clear each depth slice of the RT to a different color
+			for (uint i = 0; i < colors.Length; i += 1)
+			{
+				ColorAttachmentInfo attachmentInfo = new ColorAttachmentInfo
+				{
+					TextureSlice = new TextureSlice
+					{
+						Texture = rt,
+						Layer = i,
+						MipLevel = 0
+					},
+					ClearColor = colors[i],
+					LoadOp = LoadOp.Clear,
+					StoreOp = StoreOp.Store
+				};
+				cmdbuf.BeginRenderPass(attachmentInfo);
+				cmdbuf.EndRenderPass();
+			}
+
+			GraphicsDevice.Submit(cmdbuf);
 		}
 
-		protected override void Update(System.TimeSpan delta)
-		{
-			int prevSamplerIndex = currentTextureIndex;
-
-			if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Left))
-			{
-				currentTextureIndex -= 1;
-				if (currentTextureIndex < 0)
-				{
-					currentTextureIndex = textureNames.Length - 1;
-				}
-			}
-
-			if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Right))
-			{
-				currentTextureIndex += 1;
-				if (currentTextureIndex >= textureNames.Length)
-				{
-					currentTextureIndex = 0;
-				}
-			}
-
-			if (prevSamplerIndex != currentTextureIndex)
-			{
-				Logger.LogInfo("Setting texture to: " + textureNames[currentTextureIndex]);
-			}
-		}
+		protected override void Update(System.TimeSpan delta) { }
 
 		protected override void Draw(double alpha)
 		{
+			t += 0.01f;
+			t %= 3;
+			FragUniform fragUniform = new FragUniform(MathF.Floor(t));
+
 			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (backbuffer != null)
@@ -115,7 +122,8 @@ namespace MoonWorks.Test
 				cmdbuf.BindGraphicsPipeline(pipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
-				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(textures[currentTextureIndex], sampler));
+				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(rt, sampler));
+				cmdbuf.PushFragmentShaderUniforms(fragUniform);
 				cmdbuf.DrawIndexedPrimitives(0, 0, 2);
 				cmdbuf.EndRenderPass();
 			}
@@ -124,7 +132,7 @@ namespace MoonWorks.Test
 
 		public static void Main(string[] args)
 		{
-			CompressedTexturesGame game = new CompressedTexturesGame();
+			RenderTexture2DArrayGame game = new RenderTexture2DArrayGame();
 			game.Run();
 		}
 	}

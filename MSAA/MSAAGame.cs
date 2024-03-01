@@ -126,12 +126,12 @@ namespace MoonWorks.Test
 			{
 				Texture rt = renderTargets[(int) currentSampleCount];
 
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(rt, Color.Black));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(rt, WriteOptions.SafeDiscard, Color.Black));
 				cmdbuf.BindGraphicsPipeline(msaaPipelines[(int) currentSampleCount]);
 				cmdbuf.DrawPrimitives(0, 1);
 				cmdbuf.EndRenderPass();
 
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, LoadOp.DontCare));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, LoadOp.DontCare));
 				cmdbuf.BindGraphicsPipeline(blitPipeline);
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(rt, rtSampler));
 				cmdbuf.BindVertexBuffers(quadVertexBuffer);

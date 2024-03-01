@@ -45,7 +45,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstancingAndOffsets", "Ins
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VertexSampler", "VertexSampler\VertexSampler.csproj", "{C525B6DE-3003-45D5-BB83-89679B108C08}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderTexture3D", "RenderTexture3D\RenderTexture3D.csproj", "{6D625A4C-8618-4DFC-A6AD-AA3BE3488D70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderTexture2DArray", "RenderTexture2DArray\RenderTexture2DArray.csproj", "{6D625A4C-8618-4DFC-A6AD-AA3BE3488D70}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderTextureCube", "RenderTextureCube\RenderTextureCube.csproj", "{D7A8452F-123F-4965-8716-9E39F677A831}"
 EndProject
@@ -64,6 +64,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderTexture2D", "RenderTexture2D\RenderTexture2D.csproj", "{F9C9E15D-1000-46DA-BA39-1D4C0D43F023}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSAACube", "MSAACube\MSAACube.csproj", "{A1568AAF-DD02-4A6E-9C68-9AE07130A60D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Texture3DCopy", "Texture3DCopy\Texture3DCopy.csproj", "{A18B6D92-A699-480C-9ABC-4000A3FE4B94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -195,6 +197,10 @@ Global
 		{A1568AAF-DD02-4A6E-9C68-9AE07130A60D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1568AAF-DD02-4A6E-9C68-9AE07130A60D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1568AAF-DD02-4A6E-9C68-9AE07130A60D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A18B6D92-A699-480C-9ABC-4000A3FE4B94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A18B6D92-A699-480C-9ABC-4000A3FE4B94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A18B6D92-A699-480C-9ABC-4000A3FE4B94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A18B6D92-A699-480C-9ABC-4000A3FE4B94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -65,17 +65,26 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Index
 			);
 
-			texture = Texture.CreateTexture3D(GraphicsDevice, 16, 16, 7, TextureFormat.R8G8B8A8, TextureUsageFlags.Sampler);
+			texture = Texture.CreateTexture3D(
+				GraphicsDevice,
+				16,
+				16,
+				7,
+				TextureFormat.R8G8B8A8,
+				TextureUsageFlags.Sampler
+			);
 
 			// Load each depth subimage of the 3D texture
 			for (uint i = 0; i < texture.Depth; i += 1)
 			{
-				TextureSlice slice = new TextureSlice
+				var region = new TextureRegion
 				{
-					Texture = texture,
-					MipLevel = 0,
-					BaseLayer = 0,
-					LayerCount = 1,
+					TextureSlice = new TextureSlice
+					{
+						Texture = texture,
+						MipLevel = 0,
+						Layer = 0
+					},
 					X = 0,
 					Y = 0,
 					Z = i,
@@ -85,7 +94,7 @@ namespace MoonWorks.Test
 				};
 
 				resourceUploader.SetTextureDataFromCompressed(
-					slice,
+					region,
 					TestUtils.GetTexturePath($"tex3d_{i}.png")
 				);
 			}
@@ -130,7 +139,7 @@ namespace MoonWorks.Test
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (backbuffer != null)
 			{
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.Black));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, Color.Black));
 				cmdbuf.BindGraphicsPipeline(pipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);

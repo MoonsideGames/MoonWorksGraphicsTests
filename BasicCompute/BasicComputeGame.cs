@@ -105,18 +105,18 @@ namespace MoonWorks.Test
 
 			// This should result in a bright yellow texture!
 			cmdbuf.BindComputePipeline(fillTextureComputePipeline);
-			cmdbuf.BindComputeTextures(new TextureLevelBinding(texture, 0));
+			cmdbuf.BindComputeTextures(new ComputeTextureBinding(texture, WriteOptions.SafeOverwrite));
 			cmdbuf.DispatchCompute(texture.Width / 8, texture.Height / 8, 1);
 
 			// This calculates the squares of the first N integers!
 			cmdbuf.BindComputePipeline(calculateSquaresComputePipeline);
-			cmdbuf.BindComputeBuffers(squaresBuffer);
+			cmdbuf.BindComputeBuffers(new ComputeBufferBinding(squaresBuffer, WriteOptions.SafeOverwrite));
 			cmdbuf.DispatchCompute((uint) squares.Length / 8, 1, 1);
 
 			cmdbuf.EndComputePass();
 
 			cmdbuf.BeginCopyPass();
-			cmdbuf.DownloadFromBuffer(squaresBuffer, transferBuffer);
+			cmdbuf.DownloadFromBuffer(squaresBuffer, transferBuffer, TransferOptions.Overwrite);
 			cmdbuf.EndCopyPass();
 
 			var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
@@ -136,7 +136,7 @@ namespace MoonWorks.Test
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (backbuffer != null)
 			{
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.CornflowerBlue));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, Color.CornflowerBlue));
 				cmdbuf.BindGraphicsPipeline(drawPipeline);
 				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(texture, sampler));
 				cmdbuf.BindVertexBuffers(vertexBuffer);

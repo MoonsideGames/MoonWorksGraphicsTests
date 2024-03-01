@@ -8,15 +8,11 @@ namespace MoonWorks.Test
 	class DepthMSAAGame : Game
 	{
 		private GraphicsPipeline[] cubePipelines = new GraphicsPipeline[4];
-		private GraphicsPipeline blitPipeline;
 		private Texture[] renderTargets = new Texture[4];
 		private Texture[] depthRTs = new Texture[4];
-		private Sampler rtSampler;
 		private GpuBuffer cubeVertexBuffer1;
 		private GpuBuffer cubeVertexBuffer2;
 		private GpuBuffer cubeIndexBuffer;
-		private GpuBuffer quadVertexBuffer;
-		private GpuBuffer quadIndexBuffer;
 
 		private float cubeTimer = 0f;
 		private Quaternion cubeRotation = Quaternion.Identity;
@@ -64,19 +60,6 @@ namespace MoonWorks.Test
 				cubePipelines[i] = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 			}
 
-			// Create the blit pipeline
-			ShaderModule blitVertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuad.vert"));
-			ShaderModule blitFragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuad.frag"));
-
-			pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
-				MainWindow.SwapchainFormat,
-				blitVertShaderModule,
-				blitFragShaderModule
-			);
-			pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
-			pipelineCreateInfo.FragmentShaderInfo.SamplerBindingCount = 1;
-			blitPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
-
 			// Create the MSAA render textures and depth textures
 			for (int i = 0; i < renderTargets.Length; i += 1)
 			{
@@ -101,29 +84,8 @@ namespace MoonWorks.Test
 				);
 			}
 
-			// Create the sampler
-			rtSampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
-
 			// Create the buffers
 			var resourceUploader = new ResourceUploader(GraphicsDevice);
-
-			quadVertexBuffer = resourceUploader.CreateBuffer(
-				[
-					new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
-					new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
-					new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-					new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1))
-				],
-				BufferUsageFlags.Vertex
-			);
-
-			quadIndexBuffer = resourceUploader.CreateBuffer<ushort>(
-				[
-					0, 1, 2,
-					0, 2, 3,
-				],
-				BufferUsageFlags.Index
-			);
 
 			var cubeVertexData = new System.Span<PositionColorVertex>(
 			[
@@ -248,8 +210,8 @@ namespace MoonWorks.Test
 				// Begin the MSAA RT pass
 				int index = (int) currentSampleCount;
 				cmdbuf.BeginRenderPass(
-					new DepthStencilAttachmentInfo(depthRTs[index], new DepthStencilValue(1, 0)),
-					new ColorAttachmentInfo(renderTargets[index], Color.Black)
+					new DepthStencilAttachmentInfo(depthRTs[index], WriteOptions.SafeDiscard, new DepthStencilValue(1, 0)),
+					new ColorAttachmentInfo(renderTargets[index], WriteOptions.SafeDiscard, Color.Black)
 				);
 				cmdbuf.BindGraphicsPipeline(cubePipelines[index]);
 
@@ -267,14 +229,13 @@ namespace MoonWorks.Test
 
 				cmdbuf.EndRenderPass();
 
-				// Blit the MSAA RT to the backbuffer
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, LoadOp.DontCare));
-				cmdbuf.BindGraphicsPipeline(blitPipeline);
-				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(renderTargets[index], rtSampler));
-				cmdbuf.BindVertexBuffers(quadVertexBuffer);
-				cmdbuf.BindIndexBuffer(quadIndexBuffer, IndexElementSize.Sixteen);
-				cmdbuf.DrawIndexedPrimitives(0, 0, 2);
-				cmdbuf.EndRenderPass();
+				// Copy the MSAA RT to the backbuffer
+				cmdbuf.Blit(
+					renderTargets[index],
+					backbuffer,
+					Filter.Nearest,
+					WriteOptions.SafeOverwrite
+				);
 			}
 			GraphicsDevice.Submit(cmdbuf);
 		}

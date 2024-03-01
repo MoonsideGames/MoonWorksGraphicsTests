@@ -1,4 +1,5 @@
-﻿using MoonWorks;
+﻿using System;
+using MoonWorks;
 using MoonWorks.Graphics;
 using MoonWorks.Math.Float;
 
@@ -28,7 +29,6 @@ namespace MoonWorks.Test
 			pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 			// Create and populate the GPU resources
-			texture = Texture.CreateTexture2D(GraphicsDevice, 3, 1, TextureFormat.R8G8B8A8, TextureUsageFlags.Sampler);
 			sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 			var resourceUploader = new ResourceUploader(GraphicsDevice);
@@ -42,9 +42,10 @@ namespace MoonWorks.Test
 				BufferUsageFlags.Vertex
 			);
 
-			resourceUploader.SetTextureData(
-				texture,
-				[Color.Yellow, Color.Indigo, Color.HotPink]
+			texture = resourceUploader.CreateTexture2D(
+				new Span<Color>([Color.Yellow, Color.Indigo, Color.HotPink]),
+				3,
+				1
 			);
 
 			resourceUploader.Upload();
@@ -59,7 +60,7 @@ namespace MoonWorks.Test
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (backbuffer != null)
 			{
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.Black));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, Color.Black));
 				cmdbuf.BindGraphicsPipeline(pipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindVertexSamplers(new TextureSamplerBinding(texture, sampler));

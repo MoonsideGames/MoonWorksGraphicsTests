@@ -88,6 +88,7 @@ namespace MoonWorks.Test
 				Height = originalTexture.Height,
 				Depth = originalTexture.Depth,
 				IsCube = originalTexture.IsCube,
+				LayerCount = originalTexture.LayerCount,
 				LevelCount = originalTexture.LevelCount,
 				SampleCount = originalTexture.SampleCount,
 				Format = originalTexture.Format,
@@ -100,7 +101,8 @@ namespace MoonWorks.Test
 			cmdbuf.BeginCopyPass();
 			cmdbuf.CopyTextureToTexture(
 				originalTexture,
-				textureCopy
+				textureCopy,
+				WriteOptions.SafeOverwrite
 			);
 			cmdbuf.EndCopyPass();
 
@@ -111,16 +113,17 @@ namespace MoonWorks.Test
 			textureSmallCopy = new Texture(GraphicsDevice, textureCreateInfo);
 
 			// Render the half-size copy
-			cmdbuf.Blit(originalTexture, textureSmallCopy, Filter.Linear);
+			cmdbuf.Blit(originalTexture, textureSmallCopy, Filter.Linear, WriteOptions.SafeOverwrite);
 
 			// Copy the texture to a transfer buffer
 			TransferBuffer compareBuffer = new TransferBuffer(GraphicsDevice, byteCount);
 
 			cmdbuf.BeginCopyPass();
 			cmdbuf.DownloadFromTexture(
-				new TextureSlice(originalTexture),
+				originalTexture,
 				compareBuffer,
-				new BufferImageCopy(0, 0, 0)
+				new BufferImageCopy(0, 0, 0),
+				TransferOptions.Overwrite
 			);
 			cmdbuf.EndCopyPass();
 
@@ -156,7 +159,7 @@ namespace MoonWorks.Test
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (backbuffer != null)
 			{
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.Black));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, Color.Black));
 				cmdbuf.BindGraphicsPipeline(pipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);

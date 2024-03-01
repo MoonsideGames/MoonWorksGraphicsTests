@@ -69,12 +69,14 @@ namespace MoonWorks.Test
 			{
 				var w = texture.Width >> (int) i;
 				var h = texture.Height >> (int) i;
-				var slice = new TextureSlice
+				var region = new TextureRegion
 				{
-					Texture = texture,
-					MipLevel = i,
-					BaseLayer = 0,
-					LayerCount = 1,
+					TextureSlice = new TextureSlice
+					{
+						Texture = texture,
+						Layer = 0,
+						MipLevel = i
+					},
 					X = 0,
 					Y = 0,
 					Z = 0,
@@ -84,7 +86,7 @@ namespace MoonWorks.Test
 				};
 
 				resourceUploader.SetTextureDataFromCompressed(
-					slice,
+					region,
 					TestUtils.GetTexturePath($"mip{i}.png")
 				);
 			}
@@ -114,7 +116,7 @@ namespace MoonWorks.Test
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (backbuffer != null)
 			{
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.Black));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, Color.Black));
 				cmdbuf.BindGraphicsPipeline(pipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);

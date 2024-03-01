@@ -114,11 +114,13 @@ namespace MoonWorks.Test
 			{
 				ColorAttachmentInfo attachmentInfo = new ColorAttachmentInfo
 				{
-					Texture = cubemap,
+					TextureSlice = new TextureSlice
+					{
+						Texture = cubemap,
+						Layer = i,
+						MipLevel = 0
+					},
 					ClearColor = colors[i],
-					Depth = 0,
-					Layer = i,
-					Level = 0,
 					LoadOp = LoadOp.Clear,
 					StoreOp = StoreOp.Store
 				};
@@ -156,7 +158,7 @@ namespace MoonWorks.Test
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (backbuffer != null)
 			{
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.Black));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, Color.Black));
 				cmdbuf.BindGraphicsPipeline(pipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);

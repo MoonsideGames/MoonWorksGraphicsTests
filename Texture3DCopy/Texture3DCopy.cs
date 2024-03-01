@@ -9,6 +9,7 @@ namespace MoonWorks.Test
 		private GpuBuffer vertexBuffer;
 		private GpuBuffer indexBuffer;
 		private Texture rt;
+		private Texture texture3D;
 		private Sampler sampler;
 
 		private float t;
@@ -72,7 +73,7 @@ namespace MoonWorks.Test
 			resourceUploader.Upload();
 			resourceUploader.Dispose();
 
-			rt = Texture.CreateTexture3D(
+			rt = Texture.CreateTexture2DArray(
 				GraphicsDevice,
 				16,
 				16,
@@ -81,24 +82,79 @@ namespace MoonWorks.Test
 				TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler
 			);
 
+			texture3D = new Texture(GraphicsDevice, new TextureCreateInfo
+			{
+				Width = 16,
+				Height = 16,
+				Depth = 3,
+				IsCube = false,
+				LayerCount = 1,
+				LevelCount = 1,
+				SampleCount = SampleCount.One,
+				Format = TextureFormat.R8G8B8A8,
+				UsageFlags = TextureUsageFlags.Sampler
+			});
+
 			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 
-			// Clear each depth slice of the RT to a different color
+			// Clear each layer slice of the RT to a different color
 			for (uint i = 0; i < colors.Length; i += 1)
 			{
 				ColorAttachmentInfo attachmentInfo = new ColorAttachmentInfo
 				{
-					Texture = rt,
+					TextureSlice = new TextureSlice
+					{
+						Texture = rt,
+						Layer = i,
+						MipLevel = 0
+					},
 					ClearColor = colors[i],
-					Depth = i,
-					Layer = 0,
-					Level = 0,
 					LoadOp = LoadOp.Clear,
 					StoreOp = StoreOp.Store
 				};
 				cmdbuf.BeginRenderPass(attachmentInfo);
 				cmdbuf.EndRenderPass();
 			}
+
+			// Copy each layer slice to a different 3D depth
+			cmdbuf.BeginCopyPass();
+			for (var i = 0; i < 3; i += 1)
+			{
+				cmdbuf.CopyTextureToTexture(
+					new TextureRegion
+					{
+						TextureSlice = new TextureSlice
+						{
+							Texture = rt,
+							Layer = (uint) i,
+							MipLevel = 0
+						},
+						X = 0,
+						Y = 0,
+						Z = 0,
+						Width = 16,
+						Height = 16,
+						Depth = 1
+					},
+					new TextureRegion
+					{
+						TextureSlice = new TextureSlice
+						{
+							Texture = texture3D,
+							Layer = 0,
+							MipLevel = 0
+						},
+						X = 0,
+						Y = 0,
+						Z = (uint) i,
+						Width = 16,
+						Height = 16,
+						Depth = 1
+					},
+					WriteOptions.SafeOverwrite
+				);
+			}
+			cmdbuf.EndCopyPass();
 
 			GraphicsDevice.Submit(cmdbuf);
 		}
@@ -114,11 +170,11 @@ namespace MoonWorks.Test
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (backbuffer != null)
 			{
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, Color.Black));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, Color.Black));
 				cmdbuf.BindGraphicsPipeline(pipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
-				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(rt, sampler));
+				cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(texture3D, sampler));
 				cmdbuf.PushFragmentShaderUniforms(fragUniform);
 				cmdbuf.DrawIndexedPrimitives(0, 0, 2);
 				cmdbuf.EndRenderPass();

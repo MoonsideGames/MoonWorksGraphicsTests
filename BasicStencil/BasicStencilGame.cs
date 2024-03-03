@@ -29,26 +29,26 @@ namespace MoonWorks.Test
 			pipelineCreateInfo.DepthStencilState = new DepthStencilState
 			{
 				StencilTestEnable = true,
-				StencilState = new StencilOpState
+				FrontStencilState = new StencilOpState
 				{
-					Reference = 1,
-					WriteMask = 0xFF,
 					CompareOp = CompareOp.Never,
 					FailOp = StencilOp.Replace,
-				}
+				},
+				Reference = 1,
+				WriteMask = 0xFF
 			};
 			maskerPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 			pipelineCreateInfo.DepthStencilState = new DepthStencilState
 			{
 				StencilTestEnable = true,
-				StencilState = new StencilOpState
+				FrontStencilState = new StencilOpState
 				{
-					Reference = 0,
-					CompareMask = 0xFF,
-					WriteMask = 0,
 					CompareOp = CompareOp.Equal,
-				}
+				},
+				Reference = 0,
+				CompareMask = 0xFF,
+				WriteMask = 0
 			};
 			maskeePipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 

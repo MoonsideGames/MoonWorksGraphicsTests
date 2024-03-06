@@ -16,7 +16,7 @@ namespace MoonWorks.Test
 
 		private SampleCount currentSampleCount = SampleCount.Four;
 
-		public MSAAGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+		public MSAAGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
 		{
 			Logger.LogInfo("Press Left and Right to cycle between sample counts");
 			Logger.LogInfo("Setting sample count to: " + currentSampleCount);

@@ -17,7 +17,7 @@ namespace MoonWorks.Test
 
 		private bool useClockwiseWinding;
 
-		public CullFaceGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+		public CullFaceGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
 		{
 			Logger.LogInfo("Press Down to toggle the winding order of the triangles (default is counter-clockwise)");
 

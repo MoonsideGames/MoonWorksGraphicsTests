@@ -26,6 +26,7 @@ namespace MoonWorks.Test
 
 		private TransferBuffer screenshotTransferBuffer;
 		private Texture screenshotTexture;
+		private Fence? screenshotFence;
 
 		private Texture skyboxTexture;
 		private Sampler skyboxSampler;
@@ -38,6 +39,7 @@ namespace MoonWorks.Test
 		private Vector3 camPos = new Vector3(0, 1.5f, 4f);
 
 		private bool takeScreenshot;
+		private bool screenshotInProgress;
 		private bool swapchainCopied; // don't want to take screenshot if the swapchain was invalid
 
 		struct DepthUniforms
@@ -86,7 +88,7 @@ namespace MoonWorks.Test
 			cubemapUploader.Dispose();
 		}
 
-		public CubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+		public CubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
 		{
 			ShaderModule cubeVertShaderModule = new ShaderModule(
 				GraphicsDevice,
@@ -360,7 +362,7 @@ namespace MoonWorks.Test
 				Logger.LogInfo("Depth-Only Mode enabled: " + depthOnlyEnabled);
 			}
 
-			if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Right))
+			if (!screenshotInProgress && TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Right))
 			{
 				takeScreenshot = true;
 			}
@@ -461,32 +463,31 @@ namespace MoonWorks.Test
 				}
 			}
 
-			GraphicsDevice.Submit(cmdbuf);
-
 			if (takeScreenshot && swapchainCopied)
 			{
+				screenshotFence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 				Task.Run(TakeScreenshot);
 
 				takeScreenshot = false;
 				swapchainCopied = false;
 			}
+			else
+			{
+				GraphicsDevice.Submit(cmdbuf);
+			}
 		}
 
 		private unsafe void TakeScreenshot()
 		{
-			var commandBuffer = GraphicsDevice.AcquireCommandBuffer();
+			screenshotInProgress = true;
 
-			commandBuffer.BeginCopyPass();
-			commandBuffer.DownloadFromTexture(
+			GraphicsDevice.WaitForFences(screenshotFence);
+
+			GraphicsDevice.DownloadFromTexture(
 				screenshotTexture,
 				screenshotTransferBuffer,
 				TransferOptions.Overwrite
 			);
-			commandBuffer.EndCopyPass();
-
-			var fence = GraphicsDevice.SubmitAndAcquireFence(commandBuffer);
-			GraphicsDevice.WaitForFences(fence);
-			GraphicsDevice.ReleaseFence(fence);
 
 			ImageUtils.SavePNG(
 				Path.Combine(System.AppContext.BaseDirectory, "screenshot.png"),
@@ -496,6 +497,11 @@ namespace MoonWorks.Test
 				(int) screenshotTexture.Height,
 				screenshotTexture.Format == TextureFormat.B8G8R8A8
 			);
+
+			GraphicsDevice.ReleaseFence(screenshotFence);
+			screenshotFence = null;
+
+			screenshotInProgress = false;
 		}
 
 		public static void Main(string[] args)

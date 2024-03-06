@@ -6,7 +6,7 @@ namespace MoonWorks.Test
 {
 	class GetBufferDataGame : Game
 	{
-		public GetBufferDataGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+		public GetBufferDataGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
 		{
 			var vertices = new System.Span<PositionVertex>(
             [
@@ -33,24 +33,19 @@ namespace MoonWorks.Test
 
 			var vertexBuffer = resourceUploader.CreateBuffer(vertices, BufferUsageFlags.Vertex);
 
-			resourceUploader.Upload();
+			// Wait for the vertices to finish copying...
+			resourceUploader.UploadAndWait();
 			resourceUploader.Dispose();
 
 			var transferBuffer = new TransferBuffer(GraphicsDevice, vertexBuffer.Size);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-
-			cmdbuf.BeginCopyPass();
-			cmdbuf.DownloadFromBuffer(vertexBuffer, transferBuffer, TransferOptions.Overwrite);
-			cmdbuf.EndCopyPass();
-
-			var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
-
-			// Wait for the vertices to finish copying...
-			GraphicsDevice.WaitForFences(fence);
-			GraphicsDevice.ReleaseFence(fence);
-
 			// Read back and print out the vertex values
+			GraphicsDevice.DownloadFromBuffer(
+				vertexBuffer,
+				transferBuffer,
+				TransferOptions.Overwrite
+			);
+
 			PositionVertex[] readbackVertices = new PositionVertex[vertices.Length];
 			transferBuffer.GetData<PositionVertex>(readbackVertices);
 			for (int i = 0; i < readbackVertices.Length; i += 1)
@@ -59,23 +54,22 @@ namespace MoonWorks.Test
 			}
 
 			// Change the first three vertices and upload
-			cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 			transferBuffer.SetData(otherVerts, TransferOptions.Overwrite);
+
+			var cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 			cmdbuf.BeginCopyPass();
 			cmdbuf.UploadToBuffer(transferBuffer, vertexBuffer, WriteOptions.SafeOverwrite);
 			cmdbuf.EndCopyPass();
-			fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
+			var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 			GraphicsDevice.WaitForFences(fence);
 			GraphicsDevice.ReleaseFence(fence);
 
 			// Download the data
-			cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.BeginCopyPass();
-			cmdbuf.DownloadFromBuffer(vertexBuffer, transferBuffer, TransferOptions.Overwrite);
-			cmdbuf.EndCopyPass();
-			fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
-			GraphicsDevice.WaitForFences(fence);
-			GraphicsDevice.ReleaseFence(fence);
+			GraphicsDevice.DownloadFromBuffer(
+				vertexBuffer,
+				transferBuffer,
+				TransferOptions.Overwrite
+			);
 
 			// Read the updated buffer
 			transferBuffer.GetData<PositionVertex>(readbackVertices);
@@ -103,13 +97,11 @@ namespace MoonWorks.Test
 			GraphicsDevice.WaitForFences(fence);
 			GraphicsDevice.ReleaseFence(fence);
 
-			cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			cmdbuf.BeginCopyPass();
-			cmdbuf.DownloadFromBuffer(vertexBuffer, transferBuffer, TransferOptions.Overwrite);
-			cmdbuf.EndCopyPass();
-			fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
-			GraphicsDevice.WaitForFences(fence);
-			GraphicsDevice.ReleaseFence(fence);
+			GraphicsDevice.DownloadFromBuffer(
+				vertexBuffer,
+				transferBuffer,
+				TransferOptions.Overwrite
+			);
 
 			// Read the updated buffer
 			transferBuffer.GetData<PositionVertex>(readbackVertices);

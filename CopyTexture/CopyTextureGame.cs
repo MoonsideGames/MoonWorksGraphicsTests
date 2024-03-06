@@ -14,7 +14,7 @@ namespace MoonWorks.Test
 		private Texture textureSmallCopy;
 		private Sampler sampler;
 
-		public unsafe CopyTextureGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+		public unsafe CopyTextureGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
 		{
 			// Load the shaders
 			ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuad.vert"));
@@ -115,21 +115,18 @@ namespace MoonWorks.Test
 			// Render the half-size copy
 			cmdbuf.Blit(originalTexture, textureSmallCopy, Filter.Linear, WriteOptions.SafeOverwrite);
 
-			// Copy the texture to a transfer buffer
-			TransferBuffer compareBuffer = new TransferBuffer(GraphicsDevice, byteCount);
-
-			cmdbuf.BeginCopyPass();
-			cmdbuf.DownloadFromTexture(
-				originalTexture,
-				compareBuffer,
-				new BufferImageCopy(0, 0, 0),
-				TransferOptions.Overwrite
-			);
-			cmdbuf.EndCopyPass();
-
 			var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 			GraphicsDevice.WaitForFences(fence);
 			GraphicsDevice.ReleaseFence(fence);
+
+			// Copy the texture to a transfer buffer
+			TransferBuffer compareBuffer = new TransferBuffer(GraphicsDevice, byteCount);
+
+			GraphicsDevice.DownloadFromTexture(
+				textureCopy,
+				compareBuffer,
+				TransferOptions.Overwrite
+			);
 
 			// Compare the original bytes to the copied bytes.
 			var copiedBytes = NativeMemory.Alloc(byteCount);
@@ -140,12 +137,12 @@ namespace MoonWorks.Test
 
 			if (System.MemoryExtensions.SequenceEqual(originalSpan, copiedSpan))
 			{
-				Logger.LogError("SUCCESS! Original texture bytes and the bytes from CopyTextureToBuffer match!");
+				Logger.LogError("SUCCESS! Original texture bytes and the downloaded bytes match!");
 
 			}
 			else
 			{
-				Logger.LogError("FAIL! Original texture bytes do not match bytes from CopyTextureToBuffer!");
+				Logger.LogError("FAIL! Original texture bytes do not match downloaded bytes!");
 			}
 
 			RefreshCS.Refresh.Refresh_Image_Free(pixels);

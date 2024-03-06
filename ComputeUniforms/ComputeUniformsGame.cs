@@ -23,7 +23,7 @@ namespace MoonWorks.Test
 			}
 		}
 
-		public ComputeUniformsGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+		public ComputeUniformsGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
 		{
 			// Create the compute pipeline that writes texture data
 			ShaderModule gradientTextureComputeShaderModule = new ShaderModule(

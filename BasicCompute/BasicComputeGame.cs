@@ -11,7 +11,7 @@ namespace MoonWorks.Test
 		private Sampler sampler;
 		private GpuBuffer vertexBuffer;
 
-		public BasicComputeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+		public BasicComputeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
 		{
 			// Create the compute pipeline that writes texture data
 			ShaderModule fillTextureComputeShaderModule = new ShaderModule(
@@ -115,15 +115,12 @@ namespace MoonWorks.Test
 
 			cmdbuf.EndComputePass();
 
-			cmdbuf.BeginCopyPass();
-			cmdbuf.DownloadFromBuffer(squaresBuffer, transferBuffer, TransferOptions.Overwrite);
-			cmdbuf.EndCopyPass();
-
 			var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 			GraphicsDevice.WaitForFences(fence);
 			GraphicsDevice.ReleaseFence(fence);
 
 			// Print the squares!
+			GraphicsDevice.DownloadFromBuffer(squaresBuffer, transferBuffer, TransferOptions.Overwrite);
 			transferBuffer.GetData<uint>(squares, 0);
 			Logger.LogInfo("Squares of the first " + squares.Length + " integers: " + string.Join(", ", squares));
 		}

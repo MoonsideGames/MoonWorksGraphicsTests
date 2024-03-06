@@ -13,7 +13,7 @@ namespace MoonWorks.Test
 		private bool useVertexOffset;
 		private bool useIndexOffset;
 
-		public InstancingAndOffsetsGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+		public InstancingAndOffsetsGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
 		{
 			Logger.LogInfo("Press Left to toggle vertex offset\nPress Right to toggle index offset");
 

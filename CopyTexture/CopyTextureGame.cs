@@ -146,6 +146,7 @@ namespace MoonWorks.Test
 			}
 
 			RefreshCS.Refresh.Refresh_Image_Free(pixels);
+			NativeMemory.Free(copiedBytes);
 		}
 
 		protected override void Update(System.TimeSpan delta) { }

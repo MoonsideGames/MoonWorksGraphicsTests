@@ -23,7 +23,7 @@ namespace MoonWorks.Test
 			}
 		}
 
-		public Texture3DGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), 60, true)
+		public Texture3DGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
 		{
 			Logger.LogInfo("Press Left and Right to cycle between depth slices");
 

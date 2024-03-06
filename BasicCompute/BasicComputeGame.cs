@@ -11,7 +11,7 @@ namespace MoonWorks.Test
 		private Sampler sampler;
 		private GpuBuffer vertexBuffer;
 
-		public BasicComputeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
+		public BasicComputeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.Backend, 60, true)
 		{
 			// Create the compute pipeline that writes texture data
 			ShaderModule fillTextureComputeShaderModule = new ShaderModule(

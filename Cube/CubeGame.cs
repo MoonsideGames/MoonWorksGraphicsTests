@@ -88,7 +88,7 @@ namespace MoonWorks.Test
 			cubemapUploader.Dispose();
 		}
 
-		public CubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
+		public CubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.Backend, 60, true)
 		{
 			ShaderModule cubeVertShaderModule = new ShaderModule(
 				GraphicsDevice,

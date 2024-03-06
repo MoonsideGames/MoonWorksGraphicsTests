@@ -14,7 +14,7 @@ namespace MoonWorks.Test
 		private bool useSmallViewport;
 		private bool useScissorRect;
 
-		public BasicTriangleGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
+		public BasicTriangleGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.Backend, 60, true)
 		{
 			Logger.LogInfo("Press Left to toggle wireframe mode\nPress Down to toggle small viewport\nPress Right to toggle scissor rect");
 

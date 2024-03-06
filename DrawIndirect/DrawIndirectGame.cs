@@ -10,7 +10,7 @@ namespace MoonWorks.Test
 		private GpuBuffer vertexBuffer;
 		private GpuBuffer drawBuffer;
 
-		public DrawIndirectGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
+		public DrawIndirectGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.Backend, 60, true)
 		{
 			// Load the shaders
 			ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("PositionColor.vert"));

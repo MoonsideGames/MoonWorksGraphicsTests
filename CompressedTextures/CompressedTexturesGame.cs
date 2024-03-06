@@ -21,7 +21,7 @@ namespace MoonWorks.Test
 
 		private int currentTextureIndex;
 
-		public CompressedTexturesGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
+		public CompressedTexturesGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.Backend, 60, true)
 		{
 			Logger.LogInfo("Press Left and Right to cycle between textures");
 			Logger.LogInfo("Setting texture to: " + textureNames[0]);

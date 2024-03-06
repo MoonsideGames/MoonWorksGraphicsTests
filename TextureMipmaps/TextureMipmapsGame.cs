@@ -13,7 +13,7 @@ namespace MoonWorks.Test
 
 		private float scale = 0.5f;
 
-		public TextureMipmapsGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
+		public TextureMipmapsGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.Backend, 60, true)
 		{
 			Logger.LogInfo("Press Left and Right to shrink/expand the scale of the quad");
 

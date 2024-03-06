@@ -6,7 +6,7 @@ namespace MoonWorks.Test
 {
 	class GetBufferDataGame : Game
 	{
-		public GetBufferDataGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.DefaultBackend, 60, true)
+		public GetBufferDataGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.Backend, 60, true)
 		{
 			var vertices = new System.Span<PositionVertex>(
             [

@@ -5,7 +5,7 @@ namespace MoonWorks.Test
 {
 	class ClearScreenGame : Game
 	{
-		public ClearScreenGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.Backend, 60, true) { }
+		public ClearScreenGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.PreferredBackends, 60, true) { }
 
 		protected override void Update(System.TimeSpan delta) { }
 

@@ -41,7 +41,7 @@ namespace MoonWorks.Test
 			}
 		}
 
-		public RenderTextureMipmapsGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.Backend, 60, true)
+		public RenderTextureMipmapsGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.PreferredBackends, 60, true)
 		{
 			Logger.LogInfo("Press Left and Right to shrink/expand the scale of the quad");
 			Logger.LogInfo("Press Down to cycle through sampler states");

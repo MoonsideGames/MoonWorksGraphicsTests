@@ -20,7 +20,7 @@ namespace MoonWorks.Test
 
 		private SampleCount currentSampleCount = SampleCount.Four;
 
-		public MSAACubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.Backend, 60, true)
+		public MSAACubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.PreferredBackends, 60, true)
 		{
 			Logger.LogInfo("Press Down to view the other side of the cubemap");
 			Logger.LogInfo("Press Left and Right to cycle between sample counts");

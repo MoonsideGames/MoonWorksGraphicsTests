@@ -11,7 +11,7 @@ namespace MoonWorks.Test
 		private GpuBuffer vertexBuffer;
 		private Texture depthStencilTexture;
 
-		public BasicStencilGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.Backend, 60, true)
+		public BasicStencilGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.PreferredBackends, 60, true)
 		{
 			// Load the shaders
 			ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("PositionColor.vert"));

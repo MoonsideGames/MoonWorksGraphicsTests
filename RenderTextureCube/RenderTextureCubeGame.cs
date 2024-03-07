@@ -25,7 +25,7 @@ namespace MoonWorks.Test
 			Color.Purple,
 		};
 
-		public RenderTextureCubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.Backend, 60, true)
+		public RenderTextureCubeGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.PreferredBackends, 60, true)
 		{
 			Logger.LogInfo("Press Down to view the other side of the cubemap");
 

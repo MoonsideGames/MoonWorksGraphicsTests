@@ -35,7 +35,7 @@ namespace MoonWorks.Test
 
 		private System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
 
-		public TexturedQuadGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.Backend, 60, true)
+		public TexturedQuadGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.PreferredBackends, 60, true)
 		{
 			Logger.LogInfo("Press Left and Right to cycle between sampler states");
 			Logger.LogInfo("Setting sampler state to: " + samplerNames[0]);

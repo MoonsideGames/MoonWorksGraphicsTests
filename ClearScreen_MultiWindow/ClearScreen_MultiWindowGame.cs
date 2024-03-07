@@ -7,7 +7,7 @@ namespace MoonWorks.Test
 	{
 		private Window secondaryWindow;
 
-		public ClearScreen_MultiWindowGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.Backend, 60, true)
+		public ClearScreen_MultiWindowGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.PreferredBackends, 60, true)
 		{
 			var (windowX, windowY) = MainWindow.Position;
 			MainWindow.SetPosition(windowX - 360, windowY);

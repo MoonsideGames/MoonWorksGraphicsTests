@@ -137,7 +137,7 @@ namespace MoonWorks.Test
 
 			if (System.MemoryExtensions.SequenceEqual(originalSpan, copiedSpan))
 			{
-				Logger.LogError("SUCCESS! Original texture bytes and the downloaded bytes match!");
+				Logger.LogInfo("SUCCESS! Original texture bytes and the downloaded bytes match!");
 
 			}
 			else

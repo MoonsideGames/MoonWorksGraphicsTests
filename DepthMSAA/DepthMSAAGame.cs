@@ -229,7 +229,8 @@ namespace MoonWorks.Test
 
 				cmdbuf.EndRenderPass();
 
-				// Copy the MSAA RT to the backbuffer
+				// Blit the MSAA RT to the backbuffer
+				// A copy would work fine here as well
 				cmdbuf.Blit(
 					renderTargets[index],
 					backbuffer,

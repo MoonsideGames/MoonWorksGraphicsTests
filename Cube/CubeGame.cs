@@ -402,7 +402,7 @@ namespace MoonWorks.Test
 					Color clearColor = new Color(sine, sine, sine);
 
 					// Just show a clear screen.
-					cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchainTexture, WriteOptions.SafeDiscard, clearColor));
+					cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchainTexture, WriteOptions.Cycle, clearColor));
 					cmdbuf.EndRenderPass();
 				}
 				else
@@ -410,14 +410,14 @@ namespace MoonWorks.Test
 					if (!depthOnlyEnabled)
 					{
 						cmdbuf.BeginRenderPass(
-							new DepthStencilAttachmentInfo(depthTexture, WriteOptions.SafeDiscard, new DepthStencilValue(1f, 0)),
-							new ColorAttachmentInfo(swapchainTexture, WriteOptions.SafeDiscard, LoadOp.DontCare)
+							new DepthStencilAttachmentInfo(depthTexture, WriteOptions.Cycle, new DepthStencilValue(1f, 0)),
+							new ColorAttachmentInfo(swapchainTexture, WriteOptions.Cycle, LoadOp.DontCare)
 						);
 					}
 					else
 					{
 						cmdbuf.BeginRenderPass(
-							new DepthStencilAttachmentInfo(depthTexture, WriteOptions.SafeDiscard, new DepthStencilValue(1f, 0), StoreOp.Store)
+							new DepthStencilAttachmentInfo(depthTexture, WriteOptions.Cycle, new DepthStencilValue(1f, 0), StoreOp.Store)
 						);
 					}
 

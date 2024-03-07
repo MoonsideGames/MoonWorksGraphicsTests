@@ -120,7 +120,7 @@ namespace MoonWorks.Test
 			Texture? swapchainTexture = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (swapchainTexture != null)
 			{
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchainTexture, WriteOptions.SafeDiscard, Color.Black));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchainTexture, WriteOptions.Cycle, Color.Black));
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

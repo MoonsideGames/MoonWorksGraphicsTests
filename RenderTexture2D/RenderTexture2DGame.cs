@@ -92,19 +92,19 @@ namespace MoonWorks.Test
 			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
 			if (backbuffer != null)
 			{
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(textures[0], WriteOptions.SafeDiscard, Color.Red));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(textures[0], WriteOptions.Cycle, Color.Red));
 				cmdbuf.EndRenderPass();
 
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(textures[1], WriteOptions.SafeDiscard, Color.Blue));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(textures[1], WriteOptions.Cycle, Color.Blue));
 				cmdbuf.EndRenderPass();
 
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(textures[2], WriteOptions.SafeDiscard, Color.Green));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(textures[2], WriteOptions.Cycle, Color.Green));
 				cmdbuf.EndRenderPass();
 
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(textures[3], WriteOptions.SafeDiscard, Color.Yellow));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(textures[3], WriteOptions.Cycle, Color.Yellow));
 				cmdbuf.EndRenderPass();
 
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, Color.Black));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.Cycle, Color.Black));
 				cmdbuf.BindGraphicsPipeline(pipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);

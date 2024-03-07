@@ -186,7 +186,7 @@ namespace MoonWorks.Test
 				Texture rt = renderTargets[rtIndex];
 				ColorAttachmentInfo rtAttachmentInfo = new ColorAttachmentInfo(
 					rt,
-					WriteOptions.SafeDiscard,
+					WriteOptions.Cycle,
 					Color.Black
 				);
 
@@ -201,7 +201,7 @@ namespace MoonWorks.Test
 					cmdbuf.EndRenderPass();
 				}
 
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.SafeDiscard, Color.Black));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(backbuffer, WriteOptions.Cycle, Color.Black));
 				cmdbuf.BindGraphicsPipeline(cubemapPipeline);
 				cmdbuf.BindVertexBuffers(vertexBuffer);
 				cmdbuf.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);

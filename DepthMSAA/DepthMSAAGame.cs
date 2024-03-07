@@ -210,8 +210,8 @@ namespace MoonWorks.Test
 				// Begin the MSAA RT pass
 				int index = (int) currentSampleCount;
 				cmdbuf.BeginRenderPass(
-					new DepthStencilAttachmentInfo(depthRTs[index], WriteOptions.SafeDiscard, new DepthStencilValue(1, 0)),
-					new ColorAttachmentInfo(renderTargets[index], WriteOptions.SafeDiscard, Color.Black)
+					new DepthStencilAttachmentInfo(depthRTs[index], WriteOptions.Cycle, new DepthStencilValue(1, 0)),
+					new ColorAttachmentInfo(renderTargets[index], WriteOptions.Cycle, Color.Black)
 				);
 				cmdbuf.BindGraphicsPipeline(cubePipelines[index]);
 

@@ -5,7 +5,7 @@ namespace MoonWorks.Test
 	public static class TestUtils
 	{
 		// change this to test different backends
-		public static Backend[] PreferredBackends = [Backend.D3D11];
+		public static Backend[] PreferredBackends = [Backend.Vulkan];
 
 		public static WindowCreateInfo GetStandardWindowCreateInfo()
 		{

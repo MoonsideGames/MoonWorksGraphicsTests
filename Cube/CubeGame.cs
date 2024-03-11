@@ -124,6 +124,8 @@ namespace MoonWorks.Test
 				TextureFormat.D16,
 				TextureUsageFlags.DepthStencilTarget | TextureUsageFlags.Sampler
 			);
+			depthTexture.Name = "Depth Texture";
+
 			depthSampler = new Sampler(GraphicsDevice, new SamplerCreateInfo());
 			depthUniforms = new DepthUniforms(0.01f, 100f);
 
@@ -133,32 +135,13 @@ namespace MoonWorks.Test
 				TextureFormat.R8G8B8A8,
 				TextureUsageFlags.Sampler
 			);
+			skyboxTexture.Name = "Skybox";
+
 			skyboxSampler = new Sampler(GraphicsDevice, new SamplerCreateInfo());
-
-			cubeVertexBuffer = GpuBuffer.Create<PositionColorVertex>(
-				GraphicsDevice,
-				BufferUsageFlags.Vertex,
-				24
-			);
-			skyboxVertexBuffer = GpuBuffer.Create<PositionVertex>(
-				GraphicsDevice,
-				BufferUsageFlags.Vertex,
-				24
-			);
-			indexBuffer = GpuBuffer.Create<uint>(
-				GraphicsDevice,
-				BufferUsageFlags.Index,
-				36
-			); // Using uint here just to test IndexElementSize=32
-
-			blitVertexBuffer = GpuBuffer.Create<PositionTextureVertex>(
-				GraphicsDevice,
-				BufferUsageFlags.Vertex,
-				6
-			);
 
 			screenshotTransferBuffer = new TransferBuffer(GraphicsDevice, TransferUsage.Texture, MainWindow.Width * MainWindow.Height * 4);
 			screenshotTexture = Texture.CreateTexture2D(GraphicsDevice, MainWindow.Width, MainWindow.Height, MainWindow.SwapchainFormat, TextureUsageFlags.Sampler);
+			screenshotTexture.Name = "Screenshot";
 
 			Task loadingTask = Task.Run(() => UploadGPUAssets());
 
@@ -314,6 +297,11 @@ namespace MoonWorks.Test
 			skyboxVertexBuffer = resourceUploader.CreateBuffer(skyboxVertexData, BufferUsageFlags.Vertex);
 			indexBuffer = resourceUploader.CreateBuffer(indexData, BufferUsageFlags.Index);
 			blitVertexBuffer = resourceUploader.CreateBuffer(blitVertexData, BufferUsageFlags.Vertex);
+
+			cubeVertexBuffer.Name = "Cube Vertices";
+			skyboxVertexBuffer.Name = "Skybox Vertices";
+			indexBuffer.Name = "Cube Indices";
+			blitVertexBuffer.Name = "Blit Vertices";
 
 			resourceUploader.Upload();
 			resourceUploader.Dispose();

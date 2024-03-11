@@ -235,7 +235,7 @@ namespace MoonWorks.Test
 					renderTargets[index],
 					backbuffer,
 					Filter.Nearest,
-					WriteOptions.SafeOverwrite
+					WriteOptions.Safe
 				);
 			}
 			GraphicsDevice.Submit(cmdbuf);

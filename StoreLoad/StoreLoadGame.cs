@@ -35,7 +35,7 @@ namespace MoonWorks.Test
 				cmdbuf.BindGraphicsPipeline(fillPipeline);
 				cmdbuf.DrawPrimitives(0, 1);
 				cmdbuf.EndRenderPass();
-				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchain, WriteOptions.SafeOverwrite, LoadOp.Load, StoreOp.Store));
+				cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchain, WriteOptions.Safe, LoadOp.Load, StoreOp.Store));
 				cmdbuf.EndRenderPass();
 			}
 			GraphicsDevice.Submit(cmdbuf);

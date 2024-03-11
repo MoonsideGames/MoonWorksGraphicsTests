@@ -130,7 +130,7 @@ namespace MoonWorks.Test
 					ClearColor = colors[i],
 					LoadOp = LoadOp.Clear,
 					StoreOp = StoreOp.Store,
-					WriteOption = WriteOptions.SafeOverwrite
+					WriteOption = WriteOptions.Safe
 				};
 				cmdbuf.BeginRenderPass(attachmentInfo);
 				cmdbuf.EndRenderPass();

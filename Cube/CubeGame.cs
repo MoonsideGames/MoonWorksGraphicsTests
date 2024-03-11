@@ -157,7 +157,7 @@ namespace MoonWorks.Test
 				6
 			);
 
-			screenshotTransferBuffer = new TransferBuffer(GraphicsDevice, MainWindow.Width * MainWindow.Height * 4);
+			screenshotTransferBuffer = new TransferBuffer(GraphicsDevice, TransferUsage.Texture, MainWindow.Width * MainWindow.Height * 4);
 			screenshotTexture = Texture.CreateTexture2D(GraphicsDevice, MainWindow.Width, MainWindow.Height, MainWindow.SwapchainFormat, TextureUsageFlags.Sampler);
 
 			Task loadingTask = Task.Run(() => UploadGPUAssets());
@@ -441,7 +441,7 @@ namespace MoonWorks.Test
 					if (depthOnlyEnabled)
 					{
 						// Draw the depth buffer as a grayscale image
-						cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchainTexture, WriteOptions.SafeOverwrite, LoadOp.Load));
+						cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchainTexture, WriteOptions.Safe, LoadOp.Load));
 
 						cmdbuf.BindGraphicsPipeline(blitPipeline);
 						cmdbuf.BindFragmentSamplers(new TextureSamplerBinding(depthTexture, depthSampler));
@@ -455,7 +455,7 @@ namespace MoonWorks.Test
 					if (takeScreenshot)
 					{
 						cmdbuf.BeginCopyPass();
-						cmdbuf.CopyTextureToTexture(swapchainTexture, screenshotTexture, WriteOptions.SafeOverwrite);
+						cmdbuf.CopyTextureToTexture(swapchainTexture, screenshotTexture, WriteOptions.Unsafe);
 						cmdbuf.EndCopyPass();
 
 						swapchainCopied = true;
@@ -486,7 +486,7 @@ namespace MoonWorks.Test
 			GraphicsDevice.DownloadFromTexture(
 				screenshotTexture,
 				screenshotTransferBuffer,
-				TransferOptions.Overwrite
+				TransferOptions.Unsafe
 			);
 
 			ImageUtils.SavePNG(

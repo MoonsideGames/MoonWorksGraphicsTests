@@ -69,6 +69,7 @@ namespace MoonWorks.Test
 
 			TransferBuffer transferBuffer = new TransferBuffer(
 				GraphicsDevice,
+				TransferUsage.Buffer,
 				squaresBuffer.Size
 			);
 
@@ -105,12 +106,12 @@ namespace MoonWorks.Test
 
 			// This should result in a bright yellow texture!
 			cmdbuf.BindComputePipeline(fillTextureComputePipeline);
-			cmdbuf.BindComputeTextures(new ComputeTextureBinding(texture, WriteOptions.SafeOverwrite));
+			cmdbuf.BindComputeTextures(new ComputeTextureBinding(texture, WriteOptions.Unsafe));
 			cmdbuf.DispatchCompute(texture.Width / 8, texture.Height / 8, 1);
 
 			// This calculates the squares of the first N integers!
 			cmdbuf.BindComputePipeline(calculateSquaresComputePipeline);
-			cmdbuf.BindComputeBuffers(new ComputeBufferBinding(squaresBuffer, WriteOptions.SafeOverwrite));
+			cmdbuf.BindComputeBuffers(new ComputeBufferBinding(squaresBuffer, WriteOptions.Unsafe));
 			cmdbuf.DispatchCompute((uint) squares.Length / 8, 1, 1);
 
 			cmdbuf.EndComputePass();
@@ -120,7 +121,7 @@ namespace MoonWorks.Test
 			GraphicsDevice.ReleaseFence(fence);
 
 			// Print the squares!
-			GraphicsDevice.DownloadFromBuffer(squaresBuffer, transferBuffer, TransferOptions.Overwrite);
+			GraphicsDevice.DownloadFromBuffer(squaresBuffer, transferBuffer, TransferOptions.Unsafe);
 			transferBuffer.GetData<uint>(squares, 0);
 			Logger.LogInfo("Squares of the first " + squares.Length + " integers: " + string.Join(", ", squares));
 		}

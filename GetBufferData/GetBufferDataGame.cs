@@ -37,13 +37,13 @@ namespace MoonWorks.Test
 			resourceUploader.UploadAndWait();
 			resourceUploader.Dispose();
 
-			var transferBuffer = new TransferBuffer(GraphicsDevice, vertexBuffer.Size);
+			var transferBuffer = new TransferBuffer(GraphicsDevice, TransferUsage.Buffer, vertexBuffer.Size);
 
 			// Read back and print out the vertex values
 			GraphicsDevice.DownloadFromBuffer(
 				vertexBuffer,
 				transferBuffer,
-				TransferOptions.Overwrite
+				TransferOptions.Unsafe
 			);
 
 			PositionVertex[] readbackVertices = new PositionVertex[vertices.Length];
@@ -54,11 +54,11 @@ namespace MoonWorks.Test
 			}
 
 			// Change the first three vertices and upload
-			transferBuffer.SetData(otherVerts, TransferOptions.Overwrite);
+			transferBuffer.SetData(otherVerts, TransferOptions.Unsafe);
 
 			var cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 			cmdbuf.BeginCopyPass();
-			cmdbuf.UploadToBuffer(transferBuffer, vertexBuffer, WriteOptions.SafeOverwrite);
+			cmdbuf.UploadToBuffer(transferBuffer, vertexBuffer, WriteOptions.Unsafe);
 			cmdbuf.EndCopyPass();
 			var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 			GraphicsDevice.WaitForFences(fence);
@@ -68,7 +68,7 @@ namespace MoonWorks.Test
 			GraphicsDevice.DownloadFromBuffer(
 				vertexBuffer,
 				transferBuffer,
-				TransferOptions.Overwrite
+				TransferOptions.Unsafe
 			);
 
 			// Read the updated buffer
@@ -82,7 +82,7 @@ namespace MoonWorks.Test
 			// Change the last two vertices and upload
 			cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 			var lastTwoSpan = otherVerts.Slice(1, 2);
-			transferBuffer.SetData(lastTwoSpan, TransferOptions.Overwrite);
+			transferBuffer.SetData(lastTwoSpan, TransferOptions.Unsafe);
 			cmdbuf.BeginCopyPass();
 			cmdbuf.UploadToBuffer<PositionVertex>(
 				transferBuffer,
@@ -90,7 +90,7 @@ namespace MoonWorks.Test
 				0,
                 (uint)(vertices.Length - 2),
 				2,
-				WriteOptions.SafeOverwrite
+				WriteOptions.Unsafe
 			);
 			cmdbuf.EndCopyPass();
 			fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
@@ -100,7 +100,7 @@ namespace MoonWorks.Test
 			GraphicsDevice.DownloadFromBuffer(
 				vertexBuffer,
 				transferBuffer,
-				TransferOptions.Overwrite
+				TransferOptions.Unsafe
 			);
 
 			// Read the updated buffer

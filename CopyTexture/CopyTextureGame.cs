@@ -102,7 +102,7 @@ namespace MoonWorks.Test
 			cmdbuf.CopyTextureToTexture(
 				originalTexture,
 				textureCopy,
-				WriteOptions.SafeOverwrite
+				WriteOptions.Unsafe
 			);
 			cmdbuf.EndCopyPass();
 
@@ -113,19 +113,19 @@ namespace MoonWorks.Test
 			textureSmallCopy = new Texture(GraphicsDevice, textureCreateInfo);
 
 			// Render the half-size copy
-			cmdbuf.Blit(originalTexture, textureSmallCopy, Filter.Linear, WriteOptions.SafeOverwrite);
+			cmdbuf.Blit(originalTexture, textureSmallCopy, Filter.Linear, WriteOptions.Unsafe);
 
 			var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 			GraphicsDevice.WaitForFences(fence);
 			GraphicsDevice.ReleaseFence(fence);
 
 			// Copy the texture to a transfer buffer
-			TransferBuffer compareBuffer = new TransferBuffer(GraphicsDevice, byteCount);
+			TransferBuffer compareBuffer = new TransferBuffer(GraphicsDevice, TransferUsage.Texture, byteCount);
 
 			GraphicsDevice.DownloadFromTexture(
 				textureCopy,
 				compareBuffer,
-				TransferOptions.Overwrite
+				TransferOptions.Unsafe
 			);
 
 			// Compare the original bytes to the copied bytes.

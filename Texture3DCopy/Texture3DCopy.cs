@@ -151,7 +151,7 @@ namespace MoonWorks.Test
 						Height = 16,
 						Depth = 1
 					},
-					WriteOptions.SafeOverwrite
+					WriteOptions.Unsafe
 				);
 			}
 			cmdbuf.EndCopyPass();

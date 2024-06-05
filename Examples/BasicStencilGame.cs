@@ -2,29 +2,44 @@
 using MoonWorks.Graphics;
 using MoonWorks.Math.Float;
 
-namespace MoonWorks.Test
+namespace MoonWorksGraphicsTests
 {
-	class BasicStencilGame : Game
+	class BasicStencilGame : Example
 	{
 		private GraphicsPipeline maskerPipeline;
 		private GraphicsPipeline maskeePipeline;
 		private GpuBuffer vertexBuffer;
 		private Texture depthStencilTexture;
 
-		public BasicStencilGame() : base(TestUtils.GetStandardWindowCreateInfo(), TestUtils.GetStandardFrameLimiterSettings(), TestUtils.PreferredBackends, 60, true)
+		public override void Init(Window window, GraphicsDevice graphicsDevice)
 		{
+			Window = window;
+			GraphicsDevice = graphicsDevice;
+
 			// Load the shaders
-			ShaderModule vertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("PositionColor.vert"));
-			ShaderModule fragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("SolidColor.frag"));
+			Shader vertShaderModule = new Shader(
+				GraphicsDevice,
+				TestUtils.GetShaderPath("PositionColor.vert"),
+				"main",
+				ShaderStage.Vertex,
+				ShaderFormat.SPIRV
+			);
+			Shader fragShaderModule = new Shader(
+				GraphicsDevice,
+				TestUtils.GetShaderPath("SolidColor.frag"),
+				"main",
+				ShaderStage.Fragment,
+				ShaderFormat.SPIRV
+			);
 
 			// Create the graphics pipelines
 			GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
-				MainWindow.SwapchainFormat,
+				Window.SwapchainFormat,
 				vertShaderModule,
 				fragShaderModule
 			);
 			pipelineCreateInfo.AttachmentInfo.HasDepthStencilAttachment = true;
-			pipelineCreateInfo.AttachmentInfo.DepthStencilFormat = TextureFormat.D16S8;
+			pipelineCreateInfo.AttachmentInfo.DepthStencilFormat = TextureFormat.D24_UNORM_S8_UINT;
 			pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionColorVertex>();
 			pipelineCreateInfo.DepthStencilState = new DepthStencilState
 			{
@@ -55,10 +70,10 @@ namespace MoonWorks.Test
 			// Create and populate the GPU resources
 			depthStencilTexture = Texture.CreateTexture2D(
 				GraphicsDevice,
-				MainWindow.Width,
-				MainWindow.Height,
-				TextureFormat.D16S8,
-				TextureUsageFlags.DepthStencilTarget
+				Window.Width,
+				Window.Height,
+				TextureFormat.D24_UNORM_S8_UINT,
+				TextureUsageFlags.DepthStencil
 			);
 
 			var resourceUploader = new ResourceUploader(GraphicsDevice);
@@ -80,32 +95,31 @@ namespace MoonWorks.Test
 			resourceUploader.Dispose();
 		}
 
-		protected override void Update(System.TimeSpan delta) { }
+		public override void Update(System.TimeSpan delta) { }
 
-		protected override void Draw(double alpha)
+		public override void Draw(double alpha)
 		{
 			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
-			Texture? backbuffer = cmdbuf.AcquireSwapchainTexture(MainWindow);
-			if (backbuffer != null)
+			Texture swapchainTexture = cmdbuf.AcquireSwapchainTexture(Window);
+			if (swapchainTexture != null)
 			{
-				cmdbuf.BeginRenderPass(
-					new DepthStencilAttachmentInfo(depthStencilTexture, WriteOptions.Cycle, new DepthStencilValue(0, 0), StoreOp.DontCare, StoreOp.DontCare),
-					new ColorAttachmentInfo(backbuffer, WriteOptions.Cycle, Color.Black)
+				var renderPass = cmdbuf.BeginRenderPass(
+					new DepthStencilAttachmentInfo(depthStencilTexture, true, new DepthStencilValue(0, 0), StoreOp.DontCare, StoreOp.DontCare),
+					new ColorAttachmentInfo(swapchainTexture, false, Color.Black)
 				);
-				cmdbuf.BindGraphicsPipeline(maskerPipeline);
-				cmdbuf.BindVertexBuffers(vertexBuffer);
-				cmdbuf.DrawPrimitives(0, 1);
-				cmdbuf.BindGraphicsPipeline(maskeePipeline);
-				cmdbuf.DrawPrimitives(3, 1);
-				cmdbuf.EndRenderPass();
+				renderPass.BindGraphicsPipeline(maskerPipeline);
+				renderPass.BindVertexBuffer(vertexBuffer);
+				renderPass.DrawPrimitives(0, 1);
+				renderPass.BindGraphicsPipeline(maskeePipeline);
+				renderPass.DrawPrimitives(3, 1);
+				cmdbuf.EndRenderPass(renderPass);
 			}
 			GraphicsDevice.Submit(cmdbuf);
 		}
 
-		public static void Main(string[] args)
-		{
-			BasicStencilGame p = new BasicStencilGame();
-			p.Run();
-		}
-	}
+        public override void Destroy()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }

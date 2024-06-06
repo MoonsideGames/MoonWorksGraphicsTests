@@ -14,7 +14,8 @@ class Program : Game
 		new BasicTriangleExample(),
 		new CompressedTexturesExample(),
 		new BasicComputeExample(),
-		new ComputeUniformsExample()
+		new ComputeUniformsExample(),
+		new CopyTextureExample()
 	];
 
 	int ExampleIndex = 0;

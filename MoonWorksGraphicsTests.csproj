@@ -31,6 +31,7 @@
 		<Compile Include="Examples\ClearScreen_MultiWindowExample.cs" />
 		<Compile Include="Examples\CompressedTexturesExample.cs" />
 		<Compile Include="Examples\ComputeUniformsExample.cs" />
+		<Compile Include="Examples\CopyTextureExample.cs" />
 	</ItemGroup>
 
 	<Import Project=".\CopyMoonlibs.targets" />

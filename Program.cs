@@ -30,7 +30,8 @@ class Program : Game
 		new RenderTextureMipmapsExample(),
 		new StoreLoadExample(),
 		new Texture3DCopyExample(),
-		new Texture3DExample()
+		new Texture3DExample(),
+		new TexturedAnimatedQuadExample()
 	];
 
 	int ExampleIndex = 0;

@@ -24,7 +24,8 @@ class Program : Game
 		new InstancingAndOffsetsExample(),
 		new MSAACubeExample(),
 		new MSAAExample(),
-		new RenderTexture2DArrayExample()
+		new RenderTexture2DArrayExample(),
+		new RenderTexture2DExample()
 	];
 
 	int ExampleIndex = 0;

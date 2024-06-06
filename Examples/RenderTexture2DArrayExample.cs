@@ -22,6 +22,8 @@ class RenderTexture2DArrayExample : Example
 		Window = window;
 		GraphicsDevice = graphicsDevice;
 
+		Window.SetTitle("RenderTexture2DArray");
+
 		RenderTarget = Texture.CreateTexture2DArray(
 			GraphicsDevice,
 			16,

@@ -41,6 +41,7 @@
 		<Compile Include="Examples\MSAACubeExample.cs" />
 		<Compile Include="Examples\MSAAExample.cs" />
 		<Compile Include="Examples\RenderTexture2DArrayExample.cs" />
+		<Compile Include="Examples\RenderTexture2DExample.cs" />
 	</ItemGroup>
 
 	<Import Project=".\CopyMoonlibs.targets" />

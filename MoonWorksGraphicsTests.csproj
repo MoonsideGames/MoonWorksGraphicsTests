@@ -40,6 +40,7 @@
 		<Compile Include="Examples\InstancingAndOffsetsExample.cs" />
 		<Compile Include="Examples\MSAACubeExample.cs" />
 		<Compile Include="Examples\MSAAExample.cs" />
+		<Compile Include="Examples\RenderTexture2DArrayExample.cs" />
 	</ItemGroup>
 
 	<Import Project=".\CopyMoonlibs.targets" />

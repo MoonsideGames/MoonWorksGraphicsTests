@@ -23,7 +23,8 @@ class Program : Game
 		new GetBufferDataExample(),
 		new InstancingAndOffsetsExample(),
 		new MSAACubeExample(),
-		new MSAAExample()
+		new MSAAExample(),
+		new RenderTexture2DArrayExample()
 	];
 
 	int ExampleIndex = 0;

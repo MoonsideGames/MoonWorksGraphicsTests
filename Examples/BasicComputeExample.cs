@@ -160,7 +160,7 @@ class BasicComputeExample : Example
 		cmdbuf.EndCopyPass(copyPass);
 
 		var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
-		GraphicsDevice.WaitForFences(fence);
+		GraphicsDevice.WaitForFence(fence);
 		GraphicsDevice.ReleaseFence(fence);
 
 		// Print the squares!

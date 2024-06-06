@@ -18,7 +18,8 @@ class Program : Game
 		new CopyTextureExample(),
 		new CubeExample(),
 		new CullFaceExample(),
-		new DepthMSAAExample()
+		new DepthMSAAExample(),
+		new DrawIndirectExample()
 	];
 
 	int ExampleIndex = 0;

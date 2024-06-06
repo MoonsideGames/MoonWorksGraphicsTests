@@ -35,6 +35,7 @@
 		<Compile Include="Examples\CubeExample.cs" />
 		<Compile Include="Examples\CullFaceExample.cs" />
 		<Compile Include="Examples\DepthMSAAExample.cs" />
+		<Compile Include="Examples\DrawIndirectExample.cs" />
 	</ItemGroup>
 
 	<Import Project=".\CopyMoonlibs.targets" />

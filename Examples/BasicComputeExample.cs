@@ -17,6 +17,8 @@ class BasicComputeExample : Example
 		Window = window;
 		GraphicsDevice = graphicsDevice;
 
+		Window.SetTitle("BasicCompute");
+
 		// Create the compute pipeline that writes texture data
 		Shader fillTextureComputeShader = new Shader(
 			GraphicsDevice,

@@ -13,6 +13,8 @@ namespace MoonWorksGraphicsTests
 			Window = window;
 			GraphicsDevice = graphicsDevice;
 
+			Window.SetTitle("ClearScreen");
+			Window.SetPosition(SDL2.SDL.SDL_WINDOWPOS_CENTERED, SDL2.SDL.SDL_WINDOWPOS_CENTERED);
 			var (windowX, windowY) = Window.Position;
 			Window.SetPosition(windowX - 360, windowY);
 
@@ -66,6 +68,8 @@ namespace MoonWorksGraphicsTests
         {
 			GraphicsDevice.UnclaimWindow(SecondaryWindow);
 			SecondaryWindow.Dispose();
+
+			Window.SetPosition(SDL2.SDL.SDL_WINDOWPOS_CENTERED, SDL2.SDL.SDL_WINDOWPOS_CENTERED);
         }
     }
 }

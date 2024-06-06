@@ -28,6 +28,8 @@ class CompressedTexturesExample : Example
 		GraphicsDevice = graphicsDevice;
 		Inputs = inputs;
 
+		Window.SetTitle("CompressedTextures");
+
 		Logger.LogInfo("Press Left and Right to cycle between textures");
 		Logger.LogInfo("Setting texture to: " + TextureNames[0]);
 
@@ -72,10 +74,10 @@ class CompressedTexturesExample : Example
 
 		VertexBuffer = resourceUploader.CreateBuffer(
 			[
-				new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
-				new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
-				new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-				new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1))
+				new PositionTextureVertex(new Vector3(-1,  1, 0), new Vector2(0, 0)),
+				new PositionTextureVertex(new Vector3( 1,  1, 0), new Vector2(1, 0)),
+				new PositionTextureVertex(new Vector3( 1, -1, 0), new Vector2(1, 1)),
+				new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 1))
 			],
 			BufferUsageFlags.Vertex
 		);

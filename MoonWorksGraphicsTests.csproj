@@ -53,6 +53,7 @@
 		<Compile Include="Examples\TriangleVertexBufferExample.cs" />
 		<Compile Include="Examples\VertexSamplerExample.cs" />
 		<Compile Include="Examples\VideoPlayerExample.cs" />
+		<Compile Include="Examples\WindowResizingExample.cs" />
 	</ItemGroup>
 
 	<Import Project=".\CopyMoonlibs.targets" />

@@ -51,6 +51,7 @@
 		<Compile Include="Examples\TexturedQuadExample.cs" />
 		<Compile Include="Examples\TextureMipmapsExample.cs" />
 		<Compile Include="Examples\TriangleVertexBufferExample.cs" />
+		<Compile Include="Examples\VertexSamplerExample.cs" />
 	</ItemGroup>
 
 	<Import Project=".\CopyMoonlibs.targets" />

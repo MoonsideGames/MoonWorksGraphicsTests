@@ -43,6 +43,7 @@
 		<Compile Include="Examples\RenderTexture2DArrayExample.cs" />
 		<Compile Include="Examples\RenderTexture2DExample.cs" />
 		<Compile Include="Examples\RenderTextureCubeExample.cs" />
+		<Compile Include="Examples\RenderTextureMipmapsExample.cs" />
 	</ItemGroup>
 
 	<Import Project=".\CopyMoonlibs.targets" />

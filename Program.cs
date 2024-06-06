@@ -29,7 +29,8 @@ class Program : Game
 		new RenderTextureCubeExample(),
 		new RenderTextureMipmapsExample(),
 		new StoreLoadExample(),
-		new Texture3DCopyExample()
+		new Texture3DCopyExample(),
+		new Texture3DExample()
 	];
 
 	int ExampleIndex = 0;

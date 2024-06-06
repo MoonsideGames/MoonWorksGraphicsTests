@@ -46,6 +46,7 @@
 		<Compile Include="Examples\RenderTextureMipmapsExample.cs" />
 		<Compile Include="Examples\StoreLoadExample.cs" />
 		<Compile Include="Examples\Texture3DCopyExample.cs" />
+		<Compile Include="Examples\Texture3DExample.cs" />
 	</ItemGroup>
 
 	<Import Project=".\CopyMoonlibs.targets" />

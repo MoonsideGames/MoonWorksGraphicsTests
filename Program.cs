@@ -25,7 +25,8 @@ class Program : Game
 		new MSAACubeExample(),
 		new MSAAExample(),
 		new RenderTexture2DArrayExample(),
-		new RenderTexture2DExample()
+		new RenderTexture2DExample(),
+		new RenderTextureCubeExample()
 	];
 
 	int ExampleIndex = 0;

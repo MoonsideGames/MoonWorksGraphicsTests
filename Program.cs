@@ -21,7 +21,8 @@ class Program : Game
 		new DepthMSAAExample(),
 		new DrawIndirectExample(),
 		new GetBufferDataExample(),
-		new InstancingAndOffsetsExample()
+		new InstancingAndOffsetsExample(),
+		new MSAACubeExample()
 	];
 
 	int ExampleIndex = 0;

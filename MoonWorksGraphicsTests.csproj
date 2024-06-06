@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<OutputType>Exe</OutputType>
 		<TargetFramework>net8.0</TargetFramework>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="..\MoonWorks.Test.Common\Content\**\*.*">
+		<Content Include="Common\Content\**\*.*">
 			<Link>Content\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
@@ -14,6 +15,22 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\MoonWorks\MoonWorks.csproj" />
+	</ItemGroup>
+
+	<!-- TODO: remove this once examples are fully converted  -->
+	<PropertyGroup>
+		<DefaultItemExcludes>$(DefaultItemExcludes);Examples\**\*</DefaultItemExcludes>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="Examples\Example.cs" />
+		<Compile Include="Examples\BasicComputeExample.cs" />
+		<Compile Include="Examples\BasicStencilExample.cs" />
+		<Compile Include="Examples\BasicTriangleExample.cs" />
+		<Compile Include="Examples\ClearScreenExample.cs" />
+		<Compile Include="Examples\ClearScreen_MultiWindowExample.cs" />
+		<Compile Include="Examples\CompressedTexturesExample.cs" />
+		<Compile Include="Examples\ComputeUniformsExample.cs" />
 	</ItemGroup>
 
 	<Import Project=".\CopyMoonlibs.targets" />

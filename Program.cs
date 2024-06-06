@@ -1,7 +1,6 @@
 using System;
 using MoonWorks;
 using MoonWorks.Graphics;
-using MoonWorks.Test;
 
 namespace MoonWorksGraphicsTests;
 
@@ -9,8 +8,13 @@ class Program : Game
 {
 	Example[] Examples =
 	[
+		new ClearScreenExample(),
+		new ClearScreen_MultiWindowExample(),
+		new BasicStencilExample(),
+		new BasicTriangleExample(),
+		new CompressedTexturesExample(),
 		new BasicComputeExample(),
-		new BasicStencilGame()
+		new ComputeUniformsExample()
 	];
 
 	int ExampleIndex = 0;
@@ -23,11 +27,12 @@ class Program : Game
 		bool debugMode = false
 	) : base(windowCreateInfo, frameLimiterSettings, preferredBackends, targetTimestep, debugMode)
     {
+		Examples[ExampleIndex].Init(MainWindow, GraphicsDevice, Inputs);
     }
 
     protected override void Update(TimeSpan delta)
     {
-		if (Inputs.Keyboard.IsPressed(MoonWorks.Input.KeyCode.A))
+		if (Inputs.Keyboard.IsPressed(MoonWorks.Input.KeyCode.Q))
 		{
 			Examples[ExampleIndex].Destroy();
 
@@ -37,15 +42,15 @@ class Program : Game
 				ExampleIndex = Examples.Length - 1;
 			}
 
-			Examples[ExampleIndex].Init(MainWindow, GraphicsDevice);
+			Examples[ExampleIndex].Init(MainWindow, GraphicsDevice, Inputs);
 		}
-		else if (Inputs.Keyboard.IsPressed(MoonWorks.Input.KeyCode.D))
+		else if (Inputs.Keyboard.IsPressed(MoonWorks.Input.KeyCode.E))
 		{
 			Examples[ExampleIndex].Destroy();
 
 			ExampleIndex = (ExampleIndex + 1) % Examples.Length;
 
-			Examples[ExampleIndex].Init(MainWindow, GraphicsDevice);
+			Examples[ExampleIndex].Init(MainWindow, GraphicsDevice, Inputs);
 		}
 		else
 		{
@@ -68,8 +73,8 @@ class Program : Game
 
 		var windowCreateInfo = new WindowCreateInfo(
 			"MoonWorksGraphicsTests",
-			1280,
-			720,
+			640,
+			480,
 			ScreenMode.Windowed,
 			SwapchainComposition.SDR,
 			PresentMode.VSync

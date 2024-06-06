@@ -3,7 +3,7 @@
 layout(location = 0) in vec3 inPos;
 layout(location = 0) out vec3 vPos;
 
-layout(set = 2, binding = 0) uniform UBO
+layout(set = 1, binding = 0) uniform UBO
 {
 	mat4 ViewProjection;
 } ubo;

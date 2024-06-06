@@ -1,20 +1,23 @@
 ﻿using MoonWorks;
 using MoonWorks.Graphics;
+using MoonWorks.Input;
 using MoonWorks.Math.Float;
 
 namespace MoonWorksGraphicsTests
 {
-	class BasicStencilGame : Example
+	class BasicStencilExample : Example
 	{
-		private GraphicsPipeline maskerPipeline;
-		private GraphicsPipeline maskeePipeline;
-		private GpuBuffer vertexBuffer;
-		private Texture depthStencilTexture;
+		private GraphicsPipeline MaskerPipeline;
+		private GraphicsPipeline MaskeePipeline;
+		private GpuBuffer VertexBuffer;
+		private Texture DepthStencilTexture;
 
-		public override void Init(Window window, GraphicsDevice graphicsDevice)
+		public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
 		{
 			Window = window;
 			GraphicsDevice = graphicsDevice;
+
+			Window.SetTitle("BasicStencil");
 
 			// Load the shaders
 			Shader vertShaderModule = new Shader(
@@ -52,7 +55,7 @@ namespace MoonWorksGraphicsTests
 				Reference = 1,
 				WriteMask = 0xFF
 			};
-			maskerPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+			MaskerPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 			pipelineCreateInfo.DepthStencilState = new DepthStencilState
 			{
@@ -65,10 +68,10 @@ namespace MoonWorksGraphicsTests
 				CompareMask = 0xFF,
 				WriteMask = 0
 			};
-			maskeePipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+			MaskeePipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 			// Create and populate the GPU resources
-			depthStencilTexture = Texture.CreateTexture2D(
+			DepthStencilTexture = Texture.CreateTexture2D(
 				GraphicsDevice,
 				Window.Width,
 				Window.Height,
@@ -78,15 +81,15 @@ namespace MoonWorksGraphicsTests
 
 			var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-			vertexBuffer = resourceUploader.CreateBuffer(
+			VertexBuffer = resourceUploader.CreateBuffer(
 				[
-					new PositionColorVertex(new Vector3(-0.5f, 0.5f, 0), Color.Yellow),
-					new PositionColorVertex(new Vector3(0.5f, 0.5f, 0), Color.Yellow),
-					new PositionColorVertex(new Vector3(0, -0.5f, 0), Color.Yellow),
+					new PositionColorVertex(new Vector3(-0.5f,  -0.5f, 0), Color.Yellow),
+					new PositionColorVertex(new Vector3( 0.5f,  -0.5f, 0), Color.Yellow),
+					new PositionColorVertex(new Vector3(    0,   0.5f, 0), Color.Yellow),
 
-					new PositionColorVertex(new Vector3(-1, 1, 0), Color.Red),
-					new PositionColorVertex(new Vector3(1, 1, 0), Color.Lime),
-					new PositionColorVertex(new Vector3(0, -1, 0), Color.Blue),
+					new PositionColorVertex(new Vector3(-1, -1, 0), Color.Red),
+					new PositionColorVertex(new Vector3( 1, -1, 0), Color.Lime),
+					new PositionColorVertex(new Vector3( 0,  1, 0), Color.Blue),
 				],
 				BufferUsageFlags.Vertex
 			);
@@ -104,13 +107,13 @@ namespace MoonWorksGraphicsTests
 			if (swapchainTexture != null)
 			{
 				var renderPass = cmdbuf.BeginRenderPass(
-					new DepthStencilAttachmentInfo(depthStencilTexture, true, new DepthStencilValue(0, 0), StoreOp.DontCare, StoreOp.DontCare),
+					new DepthStencilAttachmentInfo(DepthStencilTexture, true, new DepthStencilValue(0, 0), StoreOp.DontCare, StoreOp.DontCare),
 					new ColorAttachmentInfo(swapchainTexture, false, Color.Black)
 				);
-				renderPass.BindGraphicsPipeline(maskerPipeline);
-				renderPass.BindVertexBuffer(vertexBuffer);
+				renderPass.BindGraphicsPipeline(MaskerPipeline);
+				renderPass.BindVertexBuffer(VertexBuffer);
 				renderPass.DrawPrimitives(0, 1);
-				renderPass.BindGraphicsPipeline(maskeePipeline);
+				renderPass.BindGraphicsPipeline(MaskeePipeline);
 				renderPass.DrawPrimitives(3, 1);
 				cmdbuf.EndRenderPass(renderPass);
 			}
@@ -119,7 +122,10 @@ namespace MoonWorksGraphicsTests
 
         public override void Destroy()
         {
-            throw new System.NotImplementedException();
+            MaskerPipeline.Dispose();
+			MaskeePipeline.Dispose();
+			VertexBuffer.Dispose();
+			DepthStencilTexture.Dispose();
         }
     }
 }

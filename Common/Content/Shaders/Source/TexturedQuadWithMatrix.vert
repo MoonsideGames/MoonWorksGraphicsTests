@@ -5,7 +5,7 @@ layout (location = 1) in vec2 TexCoord;
 
 layout (location = 0) out vec2 outTexCoord;
 
-layout (binding = 0, set = 2) uniform UniformBlock
+layout (set = 1, binding = 0) uniform UniformBlock
 {
 	mat4x4 MatrixTransform;
 };

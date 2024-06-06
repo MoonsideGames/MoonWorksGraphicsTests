@@ -8,17 +8,17 @@ void main()
 
 	if (gl_VertexIndex == 0)
 	{
-		pos = vec2(-1, 1);
+		pos = vec2(-1, -1);
 		outColor = vec4(1, 0, 0, 1);
 	}
 	else if (gl_VertexIndex == 1)
 	{
-		pos = vec2(1, 1);
+		pos = vec2(1, -1);
 		outColor = vec4(0, 1, 0, 1);
 	}
 	else if (gl_VertexIndex == 2)
 	{
-		pos = vec2(0, -1);
+		pos = vec2(0, 1);
 		outColor = vec4(0, 0, 1, 1);
 	}
 

@@ -1,5 +1,6 @@
 ﻿using MoonWorks;
 using MoonWorks.Graphics;
+using MoonWorks.Input;
 using MoonWorks.Math.Float;
 
 namespace MoonWorksGraphicsTests;
@@ -11,7 +12,7 @@ class BasicComputeExample : Example
 	private Sampler Sampler;
 	private GpuBuffer VertexBuffer;
 
-	public override void Init(Window window, GraphicsDevice graphicsDevice)
+	public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
 	{
 		Window = window;
 		GraphicsDevice = graphicsDevice;
@@ -73,7 +74,9 @@ class BasicComputeExample : Example
 			fragShaderModule
 		);
 		drawPipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
-		drawPipelineCreateInfo.FragmentShaderResourceInfo.SamplerCount = 1;
+		drawPipelineCreateInfo.FragmentShaderResourceInfo = new GraphicsPipelineResourceInfo{
+			SamplerCount = 1
+		};
 
 		DrawPipeline = new GraphicsPipeline(
 			GraphicsDevice,

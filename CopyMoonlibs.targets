@@ -6,43 +6,43 @@
 	</Target>
 
 	<ItemGroup Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))">
-		<Content Include="..\..\moonlibs\x64\FAudio.dll">
+		<Content Include="..\moonlibs\x64\FAudio.dll">
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\..\moonlibs\x64\Refresh.dll">
+		<Content Include="..\moonlibs\x64\Refresh.dll">
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\..\moonlibs\x64\SDL2.dll">
+		<Content Include="..\moonlibs\x64\SDL2.dll">
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\..\moonlibs\x64\dav1dfile.dll">
+		<Content Include="..\moonlibs\x64\dav1dfile.dll">
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
 	<ItemGroup Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))">
-		<Content Include="..\..\moonlibs\lib64\libFAudio.*">
+		<Content Include="..\moonlibs\lib64\libFAudio.*">
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\..\moonlibs\lib64\libRefresh.*">
+		<Content Include="..\moonlibs\lib64\libRefresh.*">
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\..\moonlibs\lib64\libSDL2-2.0.*">
+		<Content Include="..\moonlibs\lib64\libSDL2-2.0.*">
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\..\moonlibs\windows\libdav1dfile.*">
+		<Content Include="..\moonlibs\windows\libdav1dfile.*">
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
 	<ItemGroup Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))">
-		<Content Include="..\..\moonlibs\osx\**\*.*" >
+		<Content Include="..\moonlibs\osx\**\*.*" >
 			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>

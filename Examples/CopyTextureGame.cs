@@ -2,7 +2,7 @@
 using MoonWorks.Graphics;
 using MoonWorks.Math.Float;
 
-namespace MoonWorks.Test
+namespace MoonWorksGraphicsTests
 {
 	class CopyTextureGame : Game
 	{

@@ -53,7 +53,7 @@ public static class TestUtils
 
 	public static string GetShaderPath(string shaderName)
 	{
-		return SDL2.SDL.SDL_GetBasePath() + "Content/Shaders/Compiled/" + shaderName + ".refresh";
+		return SDL2.SDL.SDL_GetBasePath() + "Content/Shaders/Compiled/" + shaderName + ".spv";
 	}
 
 	public static string GetTexturePath(string textureName)
@@ -73,7 +73,7 @@ public static class TestUtils
 		Right	// D/right arrow on keyboard, right face button on gamepad
 	}
 
-	public static bool CheckButtonPressed(Input.Inputs inputs, ButtonType buttonType)
+	public static bool CheckButtonPressed(MoonWorks.Input.Inputs inputs, ButtonType buttonType)
 	{
 		bool pressed = false;
 
@@ -81,28 +81,31 @@ public static class TestUtils
 		{
 			pressed = (
 				(inputs.GamepadExists(0) && inputs.GetGamepad(0).DpadLeft.IsPressed) ||
-				inputs.Keyboard.IsPressed(Input.KeyCode.Left)
+				inputs.Keyboard.IsPressed(MoonWorks.Input.KeyCode.Left) ||
+				inputs.Keyboard.IsPressed(MoonWorks.Input.KeyCode.A)
 			);
 		}
 		else if (buttonType == ButtonType.Bottom)
 		{
 			pressed = (
 				(inputs.GamepadExists(0) && inputs.GetGamepad(0).DpadDown.IsPressed) ||
-				inputs.Keyboard.IsPressed(Input.KeyCode.Down)
+				inputs.Keyboard.IsPressed(MoonWorks.Input.KeyCode.Down) ||
+				inputs.Keyboard.IsPressed(MoonWorks.Input.KeyCode.S)
 			);
 		}
 		else if (buttonType == ButtonType.Right)
 		{
 			pressed = (
 				(inputs.GamepadExists(0) && inputs.GetGamepad(0).DpadRight.IsPressed) ||
-				inputs.Keyboard.IsPressed(Input.KeyCode.Right)
+				inputs.Keyboard.IsPressed(MoonWorks.Input.KeyCode.Right) ||
+				inputs.Keyboard.IsPressed(MoonWorks.Input.KeyCode.D)
 			);
 		}
 
 		return pressed;
 	}
 
-	public static bool CheckButtonDown(Input.Inputs inputs, ButtonType buttonType)
+	public static bool CheckButtonDown(MoonWorks.Input.Inputs inputs, ButtonType buttonType)
 	{
 		bool down = false;
 
@@ -110,24 +113,24 @@ public static class TestUtils
 		{
 			down = (
 				(inputs.GamepadExists(0) && inputs.GetGamepad(0).DpadLeft.IsDown) ||
-				inputs.Keyboard.IsDown(Input.KeyCode.A) ||
-				inputs.Keyboard.IsDown(Input.KeyCode.Left)
+				inputs.Keyboard.IsDown(MoonWorks.Input.KeyCode.Left) ||
+				inputs.Keyboard.IsDown(MoonWorks.Input.KeyCode.A)
 			);
 		}
 		else if (buttonType == ButtonType.Bottom)
 		{
 			down = (
 				(inputs.GamepadExists(0) && inputs.GetGamepad(0).DpadDown.IsDown) ||
-				inputs.Keyboard.IsDown(Input.KeyCode.S) ||
-				inputs.Keyboard.IsDown(Input.KeyCode.Down)
+				inputs.Keyboard.IsDown(MoonWorks.Input.KeyCode.Down) ||
+				inputs.Keyboard.IsDown(MoonWorks.Input.KeyCode.S)
 			);
 		}
 		else if (buttonType == ButtonType.Right)
 		{
 			down = (
 				(inputs.GamepadExists(0) && inputs.GetGamepad(0).DpadRight.IsDown) ||
-				inputs.Keyboard.IsDown(Input.KeyCode.D) ||
-				inputs.Keyboard.IsDown(Input.KeyCode.Right)
+				inputs.Keyboard.IsDown(MoonWorks.Input.KeyCode.Right) ||
+				inputs.Keyboard.IsDown(MoonWorks.Input.KeyCode.D)
 			);
 		}
 

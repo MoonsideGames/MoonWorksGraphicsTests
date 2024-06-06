@@ -15,7 +15,8 @@ class Program : Game
 		new CompressedTexturesExample(),
 		new BasicComputeExample(),
 		new ComputeUniformsExample(),
-		new CopyTextureExample()
+		new CopyTextureExample(),
+		new CubeExample()
 	];
 
 	int ExampleIndex = 0;
@@ -62,6 +63,11 @@ class Program : Game
     protected override void Draw(double alpha)
     {
         Examples[ExampleIndex].Draw(alpha);
+    }
+
+    protected override void Destroy()
+    {
+        Examples[ExampleIndex].Destroy();
     }
 
     static void Main(string[] args)

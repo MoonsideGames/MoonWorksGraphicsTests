@@ -32,6 +32,7 @@
 		<Compile Include="Examples\CompressedTexturesExample.cs" />
 		<Compile Include="Examples\ComputeUniformsExample.cs" />
 		<Compile Include="Examples\CopyTextureExample.cs" />
+		<Compile Include="Examples\CubeExample.cs" />
 	</ItemGroup>
 
 	<Import Project=".\CopyMoonlibs.targets" />

@@ -37,6 +37,7 @@
 		<Compile Include="Examples\DepthMSAAExample.cs" />
 		<Compile Include="Examples\DrawIndirectExample.cs" />
 		<Compile Include="Examples\GetBufferDataExample.cs" />
+		<Compile Include="Examples\InstancingAndOffsetsExample.cs" />
 	</ItemGroup>
 
 	<Import Project=".\CopyMoonlibs.targets" />

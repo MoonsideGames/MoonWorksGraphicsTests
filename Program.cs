@@ -20,7 +20,8 @@ class Program : Game
 		new CullFaceExample(),
 		new DepthMSAAExample(),
 		new DrawIndirectExample(),
-		new GetBufferDataExample()
+		new GetBufferDataExample(),
+		new InstancingAndOffsetsExample()
 	];
 
 	int ExampleIndex = 0;
@@ -33,6 +34,7 @@ class Program : Game
 		bool debugMode = false
 	) : base(windowCreateInfo, frameLimiterSettings, preferredBackends, targetTimestep, debugMode)
     {
+		Logger.LogInfo("Welcome to the MoonWorks Graphics Tests program! Press Q and E to cycle through examples!");
 		Examples[ExampleIndex].Init(MainWindow, GraphicsDevice, Inputs);
     }
 

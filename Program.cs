@@ -19,7 +19,8 @@ class Program : Game
 		new CubeExample(),
 		new CullFaceExample(),
 		new DepthMSAAExample(),
-		new DrawIndirectExample()
+		new DrawIndirectExample(),
+		new GetBufferDataExample()
 	];
 
 	int ExampleIndex = 0;

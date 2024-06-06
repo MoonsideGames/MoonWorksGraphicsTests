@@ -16,7 +16,8 @@ class Program : Game
 		new BasicComputeExample(),
 		new ComputeUniformsExample(),
 		new CopyTextureExample(),
-		new CubeExample()
+		new CubeExample(),
+		new CullFaceExample()
 	];
 
 	int ExampleIndex = 0;

@@ -27,7 +27,8 @@ class Program : Game
 		new RenderTexture2DArrayExample(),
 		new RenderTexture2DExample(),
 		new RenderTextureCubeExample(),
-		new RenderTextureMipmapsExample()
+		new RenderTextureMipmapsExample(),
+		new StoreLoadExample()
 	];
 
 	int ExampleIndex = 0;

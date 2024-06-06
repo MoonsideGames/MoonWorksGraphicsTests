@@ -35,7 +35,8 @@ class Program : Game
 		new TexturedQuadExample(),
 		new TextureMipmapsExample(),
 		new TriangleVertexBufferExample(),
-		new VertexSamplerExample()
+		new VertexSamplerExample(),
+		new VideoPlayerExample()
 	];
 
 	int ExampleIndex = 0;

@@ -31,7 +31,8 @@ class Program : Game
 		new StoreLoadExample(),
 		new Texture3DCopyExample(),
 		new Texture3DExample(),
-		new TexturedAnimatedQuadExample()
+		new TexturedAnimatedQuadExample(),
+		new TexturedQuadExample()
 	];
 
 	int ExampleIndex = 0;

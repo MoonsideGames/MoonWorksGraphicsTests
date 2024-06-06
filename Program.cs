@@ -33,7 +33,8 @@ class Program : Game
 		new Texture3DExample(),
 		new TexturedAnimatedQuadExample(),
 		new TexturedQuadExample(),
-		new TextureMipmapsExample()
+		new TextureMipmapsExample(),
+		new TriangleVertexBufferExample()
 	];
 
 	int ExampleIndex = 0;

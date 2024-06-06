@@ -2,7 +2,6 @@
 using MoonWorks.Graphics;
 using MoonWorks.Math.Float;
 using MoonWorks.Math;
-using System.Runtime.InteropServices;
 using MoonWorks.Input;
 
 namespace MoonWorksGraphicsTests;

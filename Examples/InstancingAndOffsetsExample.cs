@@ -29,16 +29,22 @@ class InstancingAndOffsetsExample : Example
 			GraphicsDevice,
 			TestUtils.GetShaderPath("PositionColorInstanced.vert"),
 			"main",
-			ShaderStage.Vertex,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Vertex,
+				ShaderFormat = ShaderFormat.SPIRV
+			}
 		);
 
 		Shader fragShader = new Shader(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
-			ShaderStage.Fragment,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Fragment,
+				ShaderFormat = ShaderFormat.SPIRV
+			}
 		);
 
 		// Create the graphics pipeline

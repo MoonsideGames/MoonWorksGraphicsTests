@@ -39,16 +39,25 @@ class TexturedAnimatedQuadExample : Example
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadWithMatrix.vert"),
 			"main",
-			ShaderStage.Vertex,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Vertex,
+				ShaderFormat = ShaderFormat.SPIRV,
+				UniformBufferCount = 1
+			}
 		);
 
 		Shader fragShader = new Shader(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadWithMultiplyColor.frag"),
 			"main",
-			ShaderStage.Fragment,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Fragment,
+				ShaderFormat = ShaderFormat.SPIRV,
+				SamplerCount = 1,
+				UniformBufferCount = 1
+			}
 		);
 
 		// Create the graphics pipeline
@@ -59,15 +68,7 @@ class TexturedAnimatedQuadExample : Example
 		);
 		pipelineCreateInfo.AttachmentInfo.ColorAttachmentDescriptions[0].BlendState = ColorAttachmentBlendState.AlphaBlend;
 		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
-		pipelineCreateInfo.VertexShaderResourceInfo = new GraphicsPipelineResourceInfo
-		{
-			UniformBufferCount = 1
-		};
-		pipelineCreateInfo.FragmentShaderResourceInfo = new GraphicsPipelineResourceInfo
-		{
-			SamplerCount = 1,
-			UniformBufferCount = 1
-		};
+
 		Pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 		Sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);

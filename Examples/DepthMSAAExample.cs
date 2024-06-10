@@ -43,16 +43,23 @@ class DepthMSAAExample : Example
 			GraphicsDevice,
 			TestUtils.GetShaderPath("PositionColorWithMatrix.vert"),
 			"main",
-			ShaderStage.Vertex,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Vertex,
+				ShaderFormat = ShaderFormat.SPIRV,
+				UniformBufferCount = 1
+			}
 		);
 
 		Shader cubeFragShader = new Shader(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
-			ShaderStage.Fragment,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Fragment,
+				ShaderFormat = ShaderFormat.SPIRV
+			}
 		);
 
 		GraphicsPipelineCreateInfo pipelineCreateInfo = new GraphicsPipelineCreateInfo
@@ -70,10 +77,6 @@ class DepthMSAAExample : Example
 			RasterizerState = RasterizerState.CW_CullBack,
 			MultisampleState = MultisampleState.None,
 			VertexShader = cubeVertShader,
-			VertexShaderResourceInfo = new GraphicsPipelineResourceInfo
-			{
-				UniformBufferCount = 1
-			},
 			FragmentShader = cubeFragShader
 		};
 

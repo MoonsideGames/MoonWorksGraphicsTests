@@ -30,16 +30,22 @@ class BasicTriangleExample : Example
 			GraphicsDevice,
 			TestUtils.GetShaderPath("RawTriangle.vert"),
 			"main",
-			ShaderStage.Vertex,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Vertex,
+				ShaderFormat = ShaderFormat.SPIRV
+			}
 		);
 
 		Shader fragShaderModule = new Shader(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
-			ShaderStage.Fragment,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Fragment,
+				ShaderFormat = ShaderFormat.SPIRV
+			}
 		);
 
 		GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(

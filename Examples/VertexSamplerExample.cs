@@ -21,33 +21,37 @@ class VertexSamplerExample : Example
 		Window.SetTitle("VertexSampler");
 
 		// Load the shaders
-		Shader vertShaderModule = new Shader(
+		Shader vertShader = new Shader(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("PositionSampler.vert"),
 			"main",
-			ShaderStage.Vertex,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Vertex,
+				ShaderFormat = ShaderFormat.SPIRV,
+				SamplerCount = 1
+			}
 		);
 
-		Shader fragShaderModule = new Shader(
+		Shader fragShader = new Shader(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
-			ShaderStage.Fragment,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Fragment,
+				ShaderFormat = ShaderFormat.SPIRV
+			}
 		);
 
 		// Create the graphics pipeline
 		GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
 			Window.SwapchainFormat,
-			vertShaderModule,
-			fragShaderModule
+			vertShader,
+			fragShader
 		);
 		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
-		pipelineCreateInfo.VertexShaderResourceInfo = new GraphicsPipelineResourceInfo
-		{
-			SamplerCount = 1
-		};
+
 		Pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 		// Create and populate the GPU resources

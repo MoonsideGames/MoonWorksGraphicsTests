@@ -41,16 +41,24 @@ class RenderTextureCubeExample : Example
 			GraphicsDevice,
 			TestUtils.GetShaderPath("Skybox.vert"),
 			"main",
-			ShaderStage.Vertex,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Vertex,
+				ShaderFormat = ShaderFormat.SPIRV,
+				UniformBufferCount = 1
+			}
 		);
 
 		Shader fragShader = new Shader(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("Skybox.frag"),
 			"main",
-			ShaderStage.Fragment,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Fragment,
+				ShaderFormat = ShaderFormat.SPIRV,
+				SamplerCount = 1
+			}
 		);
 
 		// Create the graphics pipeline
@@ -60,14 +68,7 @@ class RenderTextureCubeExample : Example
 			fragShader
 		);
 		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionVertex>();
-		pipelineCreateInfo.VertexShaderResourceInfo = new GraphicsPipelineResourceInfo
-		{
-			UniformBufferCount = 1
-		};
-		pipelineCreateInfo.FragmentShaderResourceInfo = new GraphicsPipelineResourceInfo
-		{
-			SamplerCount = 1
-		};
+
 		pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 		// Create samplers

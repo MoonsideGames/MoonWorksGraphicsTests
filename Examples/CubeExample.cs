@@ -109,48 +109,71 @@ namespace MoonWorksGraphicsTests
 				GraphicsDevice,
 				TestUtils.GetShaderPath("PositionColorWithMatrix.vert"),
 				"main",
-				ShaderStage.Vertex,
-				ShaderFormat.SPIRV
+				new ShaderCreateInfo
+				{
+					ShaderStage = ShaderStage.Vertex,
+					ShaderFormat = ShaderFormat.SPIRV,
+					UniformBufferCount = 1
+				}
 			);
 
 			Shader cubeFragShader = new Shader(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("SolidColor.frag"),
 				"main",
-				ShaderStage.Fragment,
-				ShaderFormat.SPIRV
+				new ShaderCreateInfo
+				{
+					ShaderStage = ShaderStage.Fragment,
+					ShaderFormat = ShaderFormat.SPIRV
+				}
 			);
 
 			Shader skyboxVertShader = new Shader(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("Skybox.vert"),
 				"main",
-				ShaderStage.Vertex,
-				ShaderFormat.SPIRV
+				new ShaderCreateInfo
+				{
+					ShaderStage = ShaderStage.Vertex,
+					ShaderFormat = ShaderFormat.SPIRV,
+					UniformBufferCount = 1
+				}
 			);
 
 			Shader skyboxFragShader = new Shader(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("Skybox.frag"),
 				"main",
-				ShaderStage.Fragment,
-				ShaderFormat.SPIRV
+				new ShaderCreateInfo
+				{
+					ShaderStage = ShaderStage.Fragment,
+					ShaderFormat = ShaderFormat.SPIRV,
+					SamplerCount = 1
+				}
 			);
 
 			Shader blitVertShader = new Shader(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("TexturedQuad.vert"),
 				"main",
-				ShaderStage.Vertex,
-				ShaderFormat.SPIRV
+				new ShaderCreateInfo
+				{
+					ShaderStage = ShaderStage.Vertex,
+					ShaderFormat = ShaderFormat.SPIRV
+				}
 			);
 
 			Shader blitFragShader = new Shader(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("TexturedDepthQuad.frag"),
 				"main",
-				ShaderStage.Fragment,
-				ShaderFormat.SPIRV
+				new ShaderCreateInfo
+				{
+					ShaderStage = ShaderStage.Fragment,
+					ShaderFormat = ShaderFormat.SPIRV,
+					SamplerCount = 1,
+					UniformBufferCount = 1
+				}
 			);
 
 			DepthTexture = Texture.CreateTexture2D(
@@ -209,10 +232,6 @@ namespace MoonWorksGraphicsTests
 				RasterizerState = RasterizerState.CW_CullBack,
 				MultisampleState = MultisampleState.None,
 				VertexShader = cubeVertShader,
-				VertexShaderResourceInfo = new GraphicsPipelineResourceInfo
-				{
-					UniformBufferCount = 1
-				},
 				FragmentShader = cubeFragShader
 			};
 			CubePipeline = new GraphicsPipeline(GraphicsDevice, cubePipelineCreateInfo);
@@ -237,15 +256,7 @@ namespace MoonWorksGraphicsTests
 				RasterizerState = RasterizerState.CW_CullNone,
 				MultisampleState = MultisampleState.None,
 				VertexShader = skyboxVertShader,
-				VertexShaderResourceInfo = new GraphicsPipelineResourceInfo
-				{
-					UniformBufferCount = 1
-				},
-				FragmentShader = skyboxFragShader,
-				FragmentShaderResourceInfo = new GraphicsPipelineResourceInfo
-				{
-					SamplerCount = 1
-				}
+				FragmentShader = skyboxFragShader
 			};
 			SkyboxPipeline = new GraphicsPipeline(GraphicsDevice, skyboxPipelineCreateInfo);
 
@@ -260,11 +271,7 @@ namespace MoonWorksGraphicsTests
 				blitFragShader
 			);
 			blitPipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
-			blitPipelineCreateInfo.FragmentShaderResourceInfo = new GraphicsPipelineResourceInfo
-			{
-				SamplerCount = 1,
-				UniformBufferCount = 1
-			};
+
 			BlitPipeline = new GraphicsPipeline(GraphicsDevice, blitPipelineCreateInfo);
 		}
 

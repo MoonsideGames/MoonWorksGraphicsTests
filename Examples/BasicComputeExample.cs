@@ -19,66 +19,66 @@ class BasicComputeExample : Example
 
 		Window.SetTitle("BasicCompute");
 
-		// Create the compute pipeline that writes texture data
-		Shader fillTextureComputeShader = new Shader(
+        // Create the compute pipeline that writes texture data
+        ComputePipeline fillTextureComputePipeline = new ComputePipeline(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("FillTexture.comp"),
 			"main",
-			ShaderStage.Compute,
-			ShaderFormat.SPIRV
+			new ComputePipelineCreateInfo
+			{
+				ShaderFormat = ShaderFormat.SPIRV,
+				ReadWriteStorageTextureCount = 1,
+				ThreadCountX = 8,
+				ThreadCountY = 8,
+				ThreadCountZ = 1
+			}
 		);
 
-		ComputePipeline fillTextureComputePipeline = new ComputePipeline(
-			GraphicsDevice,
-			fillTextureComputeShader,
-			new ComputePipelineResourceInfo { ReadWriteStorageTextureCount = 1 }
-		);
-
-		fillTextureComputeShader.Dispose();
-
-		// Create the compute pipeline that calculates squares of numbers
-		Shader calculateSquaresComputeShader = new Shader(
+        // Create the compute pipeline that calculates squares of numbers
+        ComputePipeline calculateSquaresComputePipeline = new ComputePipeline(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("CalculateSquares.comp"),
 			"main",
-			ShaderStage.Compute,
-			ShaderFormat.SPIRV
+			new ComputePipelineCreateInfo
+			{
+				ShaderFormat = ShaderFormat.SPIRV,
+				ReadWriteStorageBufferCount = 1,
+				ThreadCountX = 8,
+				ThreadCountY = 1,
+				ThreadCountZ = 1
+			}
 		);
-
-		ComputePipeline calculateSquaresComputePipeline = new ComputePipeline(
-			GraphicsDevice,
-			calculateSquaresComputeShader,
-			new ComputePipelineResourceInfo { ReadWriteStorageBufferCount = 1 }
-		);
-
-		calculateSquaresComputeShader.Dispose();
 
 		// Create the graphics pipeline
-		Shader vertShaderModule = new Shader(
+		Shader vertShader = new Shader(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.vert"),
 			"main",
-			ShaderStage.Vertex,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Vertex,
+				ShaderFormat = ShaderFormat.SPIRV
+			}
 		);
 
-		Shader fragShaderModule = new Shader(
+		Shader fragShader = new Shader(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.frag"),
 			"main",
-			ShaderStage.Fragment,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Fragment,
+				ShaderFormat = ShaderFormat.SPIRV,
+				SamplerCount = 1
+			}
 		);
 
 		GraphicsPipelineCreateInfo drawPipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
 			Window.SwapchainFormat,
-			vertShaderModule,
-			fragShaderModule
+			vertShader,
+			fragShader
 		);
 		drawPipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
-		drawPipelineCreateInfo.FragmentShaderResourceInfo = new GraphicsPipelineResourceInfo{
-			SamplerCount = 1
-		};
 
 		DrawPipeline = new GraphicsPipeline(
 			GraphicsDevice,

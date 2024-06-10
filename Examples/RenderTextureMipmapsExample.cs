@@ -60,16 +60,24 @@ class RenderTextureMipmapsExample : Example
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadWithMatrix.vert"),
 			"main",
-			ShaderStage.Vertex,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Vertex,
+				ShaderFormat = ShaderFormat.SPIRV,
+				UniformBufferCount = 1
+			}
 		);
 
 		Shader fragShaderModule = new Shader(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.frag"),
 			"main",
-			ShaderStage.Fragment,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Fragment,
+				ShaderFormat = ShaderFormat.SPIRV,
+				SamplerCount = 1
+			}
 		);
 
 		// Create the graphics pipeline
@@ -79,14 +87,7 @@ class RenderTextureMipmapsExample : Example
 			fragShaderModule
 		);
 		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
-		pipelineCreateInfo.VertexShaderResourceInfo = new GraphicsPipelineResourceInfo
-		{
-			UniformBufferCount = 1
-		};
-		pipelineCreateInfo.FragmentShaderResourceInfo = new GraphicsPipelineResourceInfo
-		{
-			SamplerCount = 1
-		};
+
 		Pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 		// Create samplers

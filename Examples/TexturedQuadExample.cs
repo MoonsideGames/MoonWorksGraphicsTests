@@ -62,16 +62,23 @@ class TexturedQuadExample : Example
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.vert"),
 			"main",
-			ShaderStage.Vertex,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Vertex,
+				ShaderFormat = ShaderFormat.SPIRV
+			}
 		);
 
 		Shader fragShader = new Shader(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.frag"),
 			"main",
-			ShaderStage.Fragment,
-			ShaderFormat.SPIRV
+			new ShaderCreateInfo
+			{
+				ShaderStage = ShaderStage.Fragment,
+				ShaderFormat = ShaderFormat.SPIRV,
+				SamplerCount = 1
+			}
 		);
 
 		// Create the graphics pipeline
@@ -81,10 +88,7 @@ class TexturedQuadExample : Example
 			fragShader
 		);
 		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
-		pipelineCreateInfo.FragmentShaderResourceInfo = new GraphicsPipelineResourceInfo
-		{
-			SamplerCount = 1
-		};
+
 		pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
 
 		// Create samplers

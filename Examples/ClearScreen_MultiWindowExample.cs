@@ -19,7 +19,7 @@ namespace MoonWorksGraphicsTests
 			Window.SetPosition(windowX - 360, windowY);
 
 			SecondaryWindow = new Window(
-				new WindowCreateInfo("Secondary Window", 640, 480, ScreenMode.Windowed, SwapchainComposition.SDR, PresentMode.VSync, false, false),
+				new WindowCreateInfo("Secondary Window", 640, 480, ScreenMode.Windowed, false, false),
 				SDL2.SDL.SDL_WindowFlags.SDL_WINDOW_VULKAN
 			);
 			(windowX, windowY) = SecondaryWindow.Position;

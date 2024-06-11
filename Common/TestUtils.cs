@@ -5,29 +5,6 @@ namespace MoonWorksGraphicsTests;
 
 public static class TestUtils
 {
-	// change this to test different backends
-	public static BackendFlags PreferredBackends = BackendFlags.Vulkan | BackendFlags.D3D11 | BackendFlags.Metal;
-
-	public static WindowCreateInfo GetStandardWindowCreateInfo()
-	{
-		return new WindowCreateInfo(
-			"Main Window",
-			640,
-			480,
-			ScreenMode.Windowed,
-			SwapchainComposition.SDR,
-			PresentMode.VSync
-		);
-	}
-
-	public static FrameLimiterSettings GetStandardFrameLimiterSettings()
-	{
-		return new FrameLimiterSettings(
-			FrameLimiterMode.Capped,
-			60
-		);
-	}
-
 	public static GraphicsPipelineCreateInfo GetStandardGraphicsPipelineCreateInfo(
 		TextureFormat swapchainFormat,
 		Shader vertShader,

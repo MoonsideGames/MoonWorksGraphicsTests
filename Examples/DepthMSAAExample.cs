@@ -11,9 +11,9 @@ class DepthMSAAExample : Example
 	private GraphicsPipeline[] CubePipelines = new GraphicsPipeline[4];
 	private Texture[] RenderTargets = new Texture[4];
 	private Texture[] DepthRTs = new Texture[4];
-	private GpuBuffer CubeVertexBuffer1;
-	private GpuBuffer CubeVertexBuffer2;
-	private GpuBuffer CubeIndexBuffer;
+	private Buffer CubeVertexBuffer1;
+	private Buffer CubeVertexBuffer2;
+	private Buffer CubeIndexBuffer;
 
 	private float cubeTimer;
 	private Quaternion cubeRotation;

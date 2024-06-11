@@ -48,8 +48,15 @@ class Program : Game
 		BackendFlags preferredBackends,
 		int targetTimestep = 60,
 		bool debugMode = false
-	) : base(windowCreateInfo, frameLimiterSettings, preferredBackends, targetTimestep, debugMode)
-    {
+	) : base(
+		windowCreateInfo,
+		SwapchainComposition.SDR,
+		PresentMode.VSync,
+		frameLimiterSettings,
+		preferredBackends,
+		targetTimestep,
+		debugMode
+	) {
 		Logger.LogInfo("Welcome to the MoonWorks Graphics Tests program! Press Q and E to cycle through examples!");
 		Examples[ExampleIndex].Init(MainWindow, GraphicsDevice, Inputs);
     }
@@ -104,9 +111,7 @@ class Program : Game
 			"MoonWorksGraphicsTests",
 			640,
 			480,
-			ScreenMode.Windowed,
-			SwapchainComposition.SDR,
-			PresentMode.VSync
+			ScreenMode.Windowed
 		);
 
 		var frameLimiterSettings = new FrameLimiterSettings(

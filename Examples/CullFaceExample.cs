@@ -13,8 +13,8 @@ class CullFaceExample : Example
 	private GraphicsPipeline CCW_CullNonePipeline;
 	private GraphicsPipeline CCW_CullFrontPipeline;
 	private GraphicsPipeline CCW_CullBackPipeline;
-	private GpuBuffer CW_VertexBuffer;
-	private GpuBuffer CCW_VertexBuffer;
+	private Buffer CW_VertexBuffer;
+	private Buffer CCW_VertexBuffer;
 
 	private bool UseClockwiseWinding;
 

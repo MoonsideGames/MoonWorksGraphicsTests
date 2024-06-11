@@ -12,8 +12,8 @@ class MSAACubeExample : Example
 	private GraphicsPipeline CubemapPipeline;
 
 	private Texture[] RenderTargets = new Texture[4];
-	private GpuBuffer VertexBuffer;
-	private GpuBuffer IndexBuffer;
+	private Buffer VertexBuffer;
+	private Buffer IndexBuffer;
 	private Sampler Sampler;
 
 	private Vector3 camPos;

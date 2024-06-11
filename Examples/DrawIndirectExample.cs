@@ -9,8 +9,8 @@ namespace MoonWorksGraphicsTests;
 class DrawIndirectExample : Example
 {
 	private GraphicsPipeline GraphicsPipeline;
-	private GpuBuffer VertexBuffer;
-	private GpuBuffer DrawBuffer;
+	private Buffer VertexBuffer;
+	private Buffer DrawBuffer;
 
     public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
     {

@@ -8,7 +8,7 @@ namespace MoonWorksGraphicsTests;
 class TriangleVertexBufferExample : Example
 {
 	private GraphicsPipeline Pipeline;
-	private GpuBuffer VertexBuffer;
+	private Buffer VertexBuffer;
 
     public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
 	{

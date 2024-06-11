@@ -3,13 +3,14 @@ using MoonWorks;
 using MoonWorks.Graphics;
 using MoonWorks.Input;
 using MoonWorks.Math.Float;
+using Buffer = MoonWorks.Graphics.Buffer;
 
 namespace MoonWorksGraphicsTests;
 
 class VertexSamplerExample : Example
 {
 	private GraphicsPipeline Pipeline;
-	private GpuBuffer VertexBuffer;
+	private Buffer VertexBuffer;
 	private Texture Texture;
 	private Sampler Sampler;
 

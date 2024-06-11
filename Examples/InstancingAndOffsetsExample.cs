@@ -8,8 +8,8 @@ namespace MoonWorksGraphicsTests;
 class InstancingAndOffsetsExample : Example
 {
 	private GraphicsPipeline Pipeline;
-	private GpuBuffer VertexBuffer;
-	private GpuBuffer IndexBuffer;
+	private Buffer VertexBuffer;
+	private Buffer IndexBuffer;
 
 	private bool useVertexOffset;
 	private bool useIndexOffset;

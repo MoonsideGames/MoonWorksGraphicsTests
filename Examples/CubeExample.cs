@@ -6,6 +6,7 @@ using MoonWorks.Math.Float;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Buffer = MoonWorks.Graphics.Buffer;
 
 namespace MoonWorksGraphicsTests
 {
@@ -33,10 +34,10 @@ namespace MoonWorksGraphicsTests
 		private Sampler DepthSampler;
 		private DepthUniforms DepthUniforms;
 
-		private GpuBuffer CubeVertexBuffer;
-		private GpuBuffer skyboxVertexBuffer;
-		private GpuBuffer BlitVertexBuffer;
-		private GpuBuffer IndexBuffer;
+		private Buffer CubeVertexBuffer;
+		private Buffer skyboxVertexBuffer;
+		private Buffer BlitVertexBuffer;
+		private Buffer IndexBuffer;
 
 		private TransferBuffer ScreenshotTransferBuffer;
 		private Texture ScreenshotTexture;

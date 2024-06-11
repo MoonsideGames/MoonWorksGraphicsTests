@@ -8,8 +8,8 @@ namespace MoonWorksGraphicsTests;
 class Texture3DExample : Example
 {
 	private GraphicsPipeline Pipeline;
-	private GpuBuffer VertexBuffer;
-	private GpuBuffer IndexBuffer;
+	private Buffer VertexBuffer;
+	private Buffer IndexBuffer;
 	private Texture Texture;
 	private Sampler Sampler;
 

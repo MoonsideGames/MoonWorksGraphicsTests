@@ -10,7 +10,7 @@ class BasicComputeExample : Example
 	private GraphicsPipeline DrawPipeline;
 	private Texture Texture;
 	private Sampler Sampler;
-	private GpuBuffer VertexBuffer;
+	private Buffer VertexBuffer;
 
 	public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
 	{
@@ -87,7 +87,7 @@ class BasicComputeExample : Example
 
 		// Create buffers and textures
 		uint[] squares = new uint[64];
-		GpuBuffer squaresBuffer = GpuBuffer.Create<uint>(
+		Buffer squaresBuffer = Buffer.Create<uint>(
 			GraphicsDevice,
 			BufferUsageFlags.ComputeStorageWrite,
 			(uint) squares.Length

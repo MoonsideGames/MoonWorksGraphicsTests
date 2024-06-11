@@ -9,7 +9,7 @@ namespace MoonWorksGraphicsTests
 	{
 		private GraphicsPipeline MaskerPipeline;
 		private GraphicsPipeline MaskeePipeline;
-		private GpuBuffer VertexBuffer;
+		private Buffer VertexBuffer;
 		private Texture DepthStencilTexture;
 
 		public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)

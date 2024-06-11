@@ -9,8 +9,8 @@ namespace MoonWorksGraphicsTests;
 class RenderTextureCubeExample : Example
 {
 	private GraphicsPipeline pipeline;
-	private GpuBuffer vertexBuffer;
-	private GpuBuffer indexBuffer;
+	private Buffer vertexBuffer;
+	private Buffer indexBuffer;
 	private Texture cubemap;
 	private Sampler sampler;
 

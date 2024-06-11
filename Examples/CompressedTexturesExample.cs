@@ -8,8 +8,8 @@ namespace MoonWorksGraphicsTests;
 class CompressedTexturesExample : Example
 {
 	private GraphicsPipeline Pipeline;
-	private GpuBuffer VertexBuffer;
-	private GpuBuffer IndexBuffer;
+	private Buffer VertexBuffer;
+	private Buffer IndexBuffer;
 	private Sampler Sampler;
 	private Texture[] Textures;
 	private string[] TextureNames =

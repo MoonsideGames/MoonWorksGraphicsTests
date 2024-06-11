@@ -3,14 +3,15 @@ using MoonWorks;
 using MoonWorks.Graphics;
 using MoonWorks.Input;
 using MoonWorks.Math.Float;
+using Buffer = MoonWorks.Graphics.Buffer;
 
 namespace MoonWorksGraphicsTests;
 
 class TexturedQuadExample : Example
 {
 	private GraphicsPipeline pipeline;
-	private GpuBuffer vertexBuffer;
-	private GpuBuffer indexBuffer;
+	private Buffer vertexBuffer;
+	private Buffer indexBuffer;
 	private Sampler[] samplers = new Sampler[6];
 	private string[] samplerNames = new string[]
 	{

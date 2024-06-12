@@ -1,7 +1,7 @@
 #version 450
 
 layout (local_size_x = 8) in;
-layout (set = 1, binding = 0) buffer outBuffer
+layout (set = 1, binding = 0) writeonly buffer outBuffer
 {
 	uint squares[];
 };

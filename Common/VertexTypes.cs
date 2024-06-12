@@ -14,10 +14,12 @@ public struct PositionVertex : IVertexType
 		Position = position;
 	}
 
-	public static VertexElementFormat[] Formats { get; } = new VertexElementFormat[1]
-	{
+	public static VertexElementFormat[] Formats { get; } =
+	[
 		VertexElementFormat.Vector3
-	};
+	];
+
+	public static uint[] Offsets { get; } = [ 0 ];
 
 	public override string ToString()
 	{
@@ -37,11 +39,17 @@ public struct PositionColorVertex : IVertexType
 		Color = color;
 	}
 
-	public static VertexElementFormat[] Formats { get; } = new VertexElementFormat[2]
-	{
+	public static VertexElementFormat[] Formats { get; } =
+	[
 		VertexElementFormat.Vector3,
 		VertexElementFormat.Color
-	};
+	];
+
+	public static uint[] Offsets { get; } =
+	[
+		0,
+		12
+	];
 
 	public override string ToString()
 	{
@@ -67,8 +75,41 @@ public struct PositionTextureVertex : IVertexType
 		VertexElementFormat.Vector2
 	};
 
+	public static uint[] Offsets { get; } =
+	[
+		0,
+		12
+	];
+
 	public override string ToString()
 	{
 		return Position + " | " + TexCoord;
 	}
+}
+
+[StructLayout(LayoutKind.Explicit, Size = 48)]
+struct PositionTextureColorVertex : IVertexType
+{
+	[FieldOffset(0)]
+	public Vector4 Position;
+
+	[FieldOffset(16)]
+	public Vector2 TexCoord;
+
+	[FieldOffset(32)]
+	public Vector4 Color;
+
+	public static VertexElementFormat[] Formats { get; } =
+	[
+		VertexElementFormat.Vector4,
+		VertexElementFormat.Vector2,
+		VertexElementFormat.Vector4
+	];
+
+	public static uint[] Offsets { get; } =
+	[
+		0,
+		16,
+		32
+	];
 }

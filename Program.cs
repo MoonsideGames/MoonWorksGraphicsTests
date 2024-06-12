@@ -37,7 +37,8 @@ class Program : Game
 		new TriangleVertexBufferExample(),
 		new VertexSamplerExample(),
 		new VideoPlayerExample(),
-		new WindowResizingExample()
+		new WindowResizingExample(),
+		new ComputeSpriteBatchExample()
 	];
 
 	int ExampleIndex = 0;

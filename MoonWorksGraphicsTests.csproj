@@ -17,45 +17,6 @@
 	  <ProjectReference Include="..\MoonWorks\MoonWorks.csproj" />
 	</ItemGroup>
 
-	<!-- TODO: remove this once examples are fully converted  -->
-	<PropertyGroup>
-		<DefaultItemExcludes>$(DefaultItemExcludes);Examples\**\*</DefaultItemExcludes>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<Compile Include="Examples\Example.cs" />
-		<Compile Include="Examples\BasicComputeExample.cs" />
-		<Compile Include="Examples\BasicStencilExample.cs" />
-		<Compile Include="Examples\BasicTriangleExample.cs" />
-		<Compile Include="Examples\ClearScreenExample.cs" />
-		<Compile Include="Examples\ClearScreen_MultiWindowExample.cs" />
-		<Compile Include="Examples\CompressedTexturesExample.cs" />
-		<Compile Include="Examples\ComputeUniformsExample.cs" />
-		<Compile Include="Examples\CopyTextureExample.cs" />
-		<Compile Include="Examples\CubeExample.cs" />
-		<Compile Include="Examples\CullFaceExample.cs" />
-		<Compile Include="Examples\DepthMSAAExample.cs" />
-		<Compile Include="Examples\DrawIndirectExample.cs" />
-		<Compile Include="Examples\GetBufferDataExample.cs" />
-		<Compile Include="Examples\InstancingAndOffsetsExample.cs" />
-		<Compile Include="Examples\MSAACubeExample.cs" />
-		<Compile Include="Examples\MSAAExample.cs" />
-		<Compile Include="Examples\RenderTexture2DArrayExample.cs" />
-		<Compile Include="Examples\RenderTexture2DExample.cs" />
-		<Compile Include="Examples\RenderTextureCubeExample.cs" />
-		<Compile Include="Examples\RenderTextureMipmapsExample.cs" />
-		<Compile Include="Examples\StoreLoadExample.cs" />
-		<Compile Include="Examples\Texture3DCopyExample.cs" />
-		<Compile Include="Examples\Texture3DExample.cs" />
-		<Compile Include="Examples\TexturedAnimatedQuadExample.cs" />
-		<Compile Include="Examples\TexturedQuadExample.cs" />
-		<Compile Include="Examples\TextureMipmapsExample.cs" />
-		<Compile Include="Examples\TriangleVertexBufferExample.cs" />
-		<Compile Include="Examples\VertexSamplerExample.cs" />
-		<Compile Include="Examples\VideoPlayerExample.cs" />
-		<Compile Include="Examples\WindowResizingExample.cs" />
-	</ItemGroup>
-
 	<Import Project=".\CopyMoonlibs.targets" />
 
 </Project>

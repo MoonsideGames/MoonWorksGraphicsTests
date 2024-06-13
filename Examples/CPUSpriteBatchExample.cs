@@ -43,7 +43,7 @@ class CPUSpriteBatchExample : Example
         Window = window;
         GraphicsDevice = graphicsDevice;
 
-        Window.SetTitle("SlowSpriteBatch");
+        Window.SetTitle("CPUSpriteBatch");
 
         Shader vertShader = new Shader(
 			GraphicsDevice,

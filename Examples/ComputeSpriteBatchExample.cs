@@ -8,6 +8,14 @@ using Buffer = MoonWorks.Graphics.Buffer;
 
 namespace MoonWorksGraphicsTests;
 
+/*
+ * This example builds the sprite batch using a compute shader.
+ * Compare with CPUSpriteBatchExample.
+ * This example should be MUCH faster.
+ *
+ * For speed comparisons, make sure to set the framerate to Uncapped
+ * and present mode to Immediate.
+*/
 class ComputeSpriteBatchExample : Example
 {
 	ComputePipeline ComputePipeline;

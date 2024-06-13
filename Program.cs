@@ -38,6 +38,7 @@ class Program : Game
 		new VertexSamplerExample(),
 		new VideoPlayerExample(),
 		new WindowResizingExample(),
+		new CPUSpriteBatchExample(),
 		new ComputeSpriteBatchExample()
 	];
 
@@ -117,7 +118,7 @@ class Program : Game
 
 		var frameLimiterSettings = new FrameLimiterSettings(
 			FrameLimiterMode.Capped,
-			60
+			144
 		);
 
 		var game = new Program(

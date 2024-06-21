@@ -114,8 +114,7 @@ class ComputeSpriteBatchExample : Example
 
 		SpriteComputeTransferBuffer = TransferBuffer.Create<ComputeSpriteData>(
 			GraphicsDevice,
-			TransferUsage.Buffer,
-			TransferBufferMapFlags.Write,
+			TransferBufferUsage.Upload,
 			MAX_SPRITE_COUNT
 		);
 
@@ -139,8 +138,7 @@ class ComputeSpriteBatchExample : Example
 
 		TransferBuffer spriteIndexTransferBuffer = TransferBuffer.Create<uint>(
 			GraphicsDevice,
-			TransferUsage.Buffer,
-			TransferBufferMapFlags.Write,
+			TransferBufferUsage.Upload,
 			MAX_SPRITE_COUNT * 6
 		);
 

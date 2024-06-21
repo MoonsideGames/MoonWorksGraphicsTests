@@ -148,36 +148,11 @@ class Texture3DCopyExample : Example
 		for (var i = 0; i < 3; i += 1)
 		{
 			copyPass.CopyTextureToTexture(
-				new TextureRegion
-				{
-					TextureSlice = new TextureSlice
-					{
-						Texture = RenderTexture,
-						Layer = (uint) i,
-						MipLevel = 0
-					},
-					X = 0,
-					Y = 0,
-					Z = 0,
-					Width = 16,
-					Height = 16,
-					Depth = 1
-				},
-				new TextureRegion
-				{
-					TextureSlice = new TextureSlice
-					{
-						Texture = Texture3D,
-						Layer = 0,
-						MipLevel = 0
-					},
-					X = 0,
-					Y = 0,
-					Z = (uint) i,
-					Width = 16,
-					Height = 16,
-					Depth = 1
-				},
+				new TextureLocation(new TextureSlice(RenderTexture, 0, (uint) i)),
+				new TextureLocation(Texture3D, 0, 0, (uint) i),
+				16,
+				16,
+				1,
 				false
 			);
 		}
@@ -186,11 +161,13 @@ class Texture3DCopyExample : Example
 		GraphicsDevice.Submit(cmdbuf);
 	}
 
-	public override void Update(System.TimeSpan delta) { }
+	public override void Update(System.TimeSpan delta)
+	{
+		t += (float) delta.TotalSeconds;
+	}
 
 	public override void Draw(double alpha)
 	{
-		t += 0.01f;
 		FragUniform fragUniform = new FragUniform(t);
 
 		CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();

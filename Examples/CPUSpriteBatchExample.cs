@@ -102,15 +102,13 @@ class CPUSpriteBatchExample : Example
 
         SpriteVertexTransferBuffer = TransferBuffer.Create<PositionTextureColorVertex>(
             GraphicsDevice,
-            TransferUsage.Buffer,
-            TransferBufferMapFlags.Write,
+            TransferBufferUsage.Upload,
             SPRITE_COUNT * 4
         );
 
 		TransferBuffer spriteIndexTransferBuffer = TransferBuffer.Create<uint>(
 			GraphicsDevice,
-			TransferUsage.Buffer,
-			TransferBufferMapFlags.Write,
+			TransferBufferUsage.Upload,
 			SPRITE_COUNT * 6
 		);
 

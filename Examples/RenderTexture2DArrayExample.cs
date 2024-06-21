@@ -58,13 +58,14 @@ class RenderTexture2DArrayExample : Example
 		GraphicsDevice.Submit(cmdbuf);
 	}
 
-	public override void Update(System.TimeSpan delta) { }
+	public override void Update(System.TimeSpan delta)
+	{
+		t += (float) delta.TotalSeconds;
+		t %= 3;
+	}
 
 	public override void Draw(double alpha)
 	{
-		t += 0.01f;
-		t %= 3;
-
 		CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 		Texture swapchainTexture = cmdbuf.AcquireSwapchainTexture(Window);
 		if (swapchainTexture != null)

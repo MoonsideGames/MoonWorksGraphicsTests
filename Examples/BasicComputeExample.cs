@@ -95,8 +95,7 @@ class BasicComputeExample : Example
 
 		TransferBuffer transferBuffer = new TransferBuffer(
 			GraphicsDevice,
-			TransferUsage.Buffer,
-			TransferBufferMapFlags.Read,
+			TransferBufferUsage.Download,
 			squaresBuffer.Size
 		);
 
@@ -155,7 +154,10 @@ class BasicComputeExample : Example
 
 		var copyPass = cmdbuf.BeginCopyPass();
 
-		copyPass.DownloadFromBuffer(squaresBuffer, transferBuffer, new BufferCopy(0, 0, squaresBuffer.Size));
+		copyPass.DownloadFromBuffer(
+			new BufferRegion(squaresBuffer, 0, squaresBuffer.Size),
+			new TransferBufferLocation(transferBuffer)
+		);
 
 		cmdbuf.EndCopyPass(copyPass);
 

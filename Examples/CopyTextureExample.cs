@@ -58,15 +58,17 @@ namespace MoonWorksGraphicsTests
 			// Create a download transfer buffer
 			TransferBuffer compareBuffer = new TransferBuffer(
 				GraphicsDevice,
-				TransferUsage.Texture,
-				TransferBufferMapFlags.Read,
+				TransferBufferUsage.Download,
 				byteCount
 			);
 
 			var copyPass = cmdbuf.BeginCopyPass();
 			copyPass.CopyTextureToTexture(
-				OriginalTexture,
-				TextureCopy,
+				new TextureLocation(OriginalTexture),
+				new TextureLocation(TextureCopy),
+				OriginalTexture.Width,
+				OriginalTexture.Height,
+				OriginalTexture.Depth,
 				false
 			);
 			cmdbuf.EndCopyPass(copyPass);
@@ -83,9 +85,8 @@ namespace MoonWorksGraphicsTests
 			// Copy the texture to a transfer buffer
 			copyPass = cmdbuf.BeginCopyPass();
 			copyPass.DownloadFromTexture(
-				TextureCopy,
-				compareBuffer,
-				new BufferImageCopy(0, 0, 0)
+				new TextureRegion(TextureCopy),
+				new TextureTransferInfo(compareBuffer)
 			);
 			cmdbuf.EndCopyPass(copyPass);
 

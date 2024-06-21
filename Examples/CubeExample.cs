@@ -201,8 +201,7 @@ namespace MoonWorksGraphicsTests
 
 			ScreenshotTransferBuffer = new TransferBuffer(
 				GraphicsDevice,
-				TransferUsage.Texture,
-				TransferBufferMapFlags.Read,
+				TransferBufferUsage.Download,
 				Window.Width * Window.Height * 4
 			);
 			ScreenshotTexture = Texture.CreateTexture2D(
@@ -528,7 +527,10 @@ namespace MoonWorksGraphicsTests
 					if (takeScreenshot)
 					{
 						var copyPass = cmdbuf.BeginCopyPass();
-						copyPass.DownloadFromTexture(swapchainTexture, ScreenshotTransferBuffer, new BufferImageCopy(0, 0, 0));
+						copyPass.DownloadFromTexture(
+							new TextureRegion(swapchainTexture),
+							new TextureTransferInfo(ScreenshotTransferBuffer)
+						);
 						cmdbuf.EndCopyPass(copyPass);
 
 						swapchainDownloaded = true;

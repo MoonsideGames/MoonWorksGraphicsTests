@@ -41,10 +41,15 @@ class GetBufferDataExample : Example
 		resourceUploader.Upload();
 		resourceUploader.Dispose();
 
-		var transferBuffer = new TransferBuffer(
+		var uploadBuffer = new TransferBuffer(
 			GraphicsDevice,
-			TransferUsage.Buffer,
-			TransferBufferMapFlags.Read | TransferBufferMapFlags.Write,
+			TransferBufferUsage.Upload,
+			vertexBuffer.Size
+		);
+
+		var downloadBuffer = new TransferBuffer(
+			GraphicsDevice,
+			TransferBufferUsage.Download,
 			vertexBuffer.Size
 		);
 
@@ -52,34 +57,39 @@ class GetBufferDataExample : Example
 		var cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 		var copyPass = cmdbuf.BeginCopyPass();
 		copyPass.DownloadFromBuffer(
-			vertexBuffer,
-			transferBuffer,
-			new BufferCopy(0, 0, vertexBuffer.Size)
+			new BufferRegion(vertexBuffer, 0, vertexBuffer.Size),
+			new TransferBufferLocation(downloadBuffer)
 		);
 		cmdbuf.EndCopyPass(copyPass);
-		GraphicsDevice.Submit(cmdbuf);
+		var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
+		GraphicsDevice.WaitForFence(fence);
+		GraphicsDevice.ReleaseFence(fence);
 
 		PositionVertex[] readbackVertices = new PositionVertex[vertices.Length];
-		transferBuffer.GetData<PositionVertex>(readbackVertices);
+		downloadBuffer.GetData<PositionVertex>(readbackVertices);
 		for (int i = 0; i < readbackVertices.Length; i += 1)
 		{
 			Logger.LogInfo(readbackVertices[i].ToString());
 		}
 
 		// Change the first three vertices and upload
-		transferBuffer.SetData(otherVerts, false);
+		uploadBuffer.SetData<PositionVertex>(
+			readbackVertices,
+			false
+		);
+		uploadBuffer.SetData(otherVerts, false);
 
 		cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 		copyPass = cmdbuf.BeginCopyPass();
-		copyPass.UploadToBuffer(transferBuffer, vertexBuffer, false);
-		copyPass.DownloadFromBuffer(vertexBuffer, transferBuffer, new BufferCopy(0, 0, vertexBuffer.Size));
+		copyPass.UploadToBuffer(uploadBuffer, vertexBuffer, false);
+		copyPass.DownloadFromBuffer(new BufferRegion(vertexBuffer, 0, vertexBuffer.Size), new TransferBufferLocation(downloadBuffer));
 		cmdbuf.EndCopyPass(copyPass);
-		var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
+		fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 		GraphicsDevice.WaitForFence(fence);
 		GraphicsDevice.ReleaseFence(fence);
 
 		// Read the updated buffer
-		transferBuffer.GetData<PositionVertex>(readbackVertices);
+		downloadBuffer.GetData<PositionVertex>(readbackVertices);
 		Logger.LogInfo("=== Change first three vertices ===");
 		for (int i = 0; i < readbackVertices.Length; i += 1)
 		{
@@ -89,24 +99,24 @@ class GetBufferDataExample : Example
 		// Change the last two vertices and upload
 		cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 		var lastTwoSpan = otherVerts.Slice(1, 2);
-		transferBuffer.SetData(lastTwoSpan, false);
+		uploadBuffer.SetData(lastTwoSpan, false);
 		copyPass = cmdbuf.BeginCopyPass();
 		copyPass.UploadToBuffer<PositionVertex>(
-			transferBuffer,
+			uploadBuffer,
 			vertexBuffer,
 			0,
 			(uint)(vertices.Length - 2),
 			2,
 			false
 		);
-		copyPass.DownloadFromBuffer(vertexBuffer, transferBuffer, new BufferCopy(0, 0, vertexBuffer.Size));
+		copyPass.DownloadFromBuffer(new BufferRegion(vertexBuffer, 0, vertexBuffer.Size), new TransferBufferLocation(downloadBuffer));
 		cmdbuf.EndCopyPass(copyPass);
 		fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
 		GraphicsDevice.WaitForFence(fence);
 		GraphicsDevice.ReleaseFence(fence);
 
 		// Read the updated buffer
-		transferBuffer.GetData<PositionVertex>(readbackVertices);
+		downloadBuffer.GetData<PositionVertex>(readbackVertices);
 		Logger.LogInfo("=== Change last two vertices ===");
 		for (int i = 0; i < readbackVertices.Length; i += 1)
 		{
@@ -114,7 +124,8 @@ class GetBufferDataExample : Example
 		}
 
 		vertexBuffer.Dispose();
-		transferBuffer.Dispose();
+		uploadBuffer.Dispose();
+		downloadBuffer.Dispose();
 	}
 
 	public override void Update(System.TimeSpan delta) { }

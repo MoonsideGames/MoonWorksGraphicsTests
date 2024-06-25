@@ -241,16 +241,16 @@ class DepthMSAAExample : Example
 			);
 			renderPass.BindGraphicsPipeline(CubePipelines[index]);
 
+			cmdbuf.PushVertexUniformData(cubeUniforms);
+
 			// Draw the first cube
 			renderPass.BindVertexBuffer(CubeVertexBuffer1);
 			renderPass.BindIndexBuffer(CubeIndexBuffer, IndexElementSize.ThirtyTwo);
-			renderPass.PushVertexUniformData(cubeUniforms);
 			renderPass.DrawIndexedPrimitives(0, 0, 12);
 
 			// Draw the second cube
 			renderPass.BindVertexBuffer(CubeVertexBuffer2);
 			renderPass.BindIndexBuffer(CubeIndexBuffer, IndexElementSize.ThirtyTwo);
-			renderPass.PushVertexUniformData(cubeUniforms);
 			renderPass.DrawIndexedPrimitives(0, 0, 12);
 
 			cmdbuf.EndRenderPass(renderPass);

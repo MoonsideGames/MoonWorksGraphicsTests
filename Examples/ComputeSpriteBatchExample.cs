@@ -223,11 +223,12 @@ class ComputeSpriteBatchExample : Example
 				new ColorAttachmentInfo(swapchainTexture, false, Color.Black)
 			);
 
+			cmdbuf.PushVertexUniformData(cameraMatrix);
+
 			renderPass.BindGraphicsPipeline(RenderPipeline);
 			renderPass.BindVertexBuffer(SpriteVertexBuffer);
 			renderPass.BindIndexBuffer(SpriteIndexBuffer, IndexElementSize.ThirtyTwo);
 			renderPass.BindFragmentSampler(new TextureSamplerBinding(SpriteTexture, Sampler));
-			renderPass.PushVertexUniformData(cameraMatrix);
 			renderPass.DrawIndexedPrimitives(0, 0, MAX_SPRITE_COUNT * 2);
 
 			cmdbuf.EndRenderPass(renderPass);

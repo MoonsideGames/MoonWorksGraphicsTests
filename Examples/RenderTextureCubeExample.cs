@@ -196,7 +196,7 @@ class RenderTextureCubeExample : Example
 			renderPass.BindVertexBuffer(vertexBuffer);
 			renderPass.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
 			renderPass.BindFragmentSampler(new TextureSamplerBinding(cubemap, sampler));
-			renderPass.PushVertexUniformData(vertUniforms);
+			cmdbuf.PushVertexUniformData(vertUniforms);
 			renderPass.DrawIndexedPrimitives(0, 0, 12);
 			cmdbuf.EndRenderPass(renderPass);
 		}

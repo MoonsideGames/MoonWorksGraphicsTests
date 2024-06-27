@@ -491,7 +491,7 @@ namespace MoonWorksGraphicsTests
 					renderPass.BindGraphicsPipeline(depthOnlyEnabled ? CubePipelineDepthOnly : CubePipeline);
 					renderPass.BindVertexBuffer(CubeVertexBuffer);
 					renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.ThirtyTwo);
-					renderPass.PushVertexUniformData(cubeUniforms);
+					cmdbuf.PushVertexUniformData(cubeUniforms);
 					renderPass.DrawIndexedPrimitives(0, 0, 12);
 
 					// Draw skybox
@@ -499,7 +499,7 @@ namespace MoonWorksGraphicsTests
 					renderPass.BindVertexBuffer(skyboxVertexBuffer);
 					renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.ThirtyTwo);
 					renderPass.BindFragmentSampler(new TextureSamplerBinding(SkyboxTexture, SkyboxSampler));
-					renderPass.PushVertexUniformData(skyboxUniforms);
+					cmdbuf.PushVertexUniformData(skyboxUniforms);
 					renderPass.DrawIndexedPrimitives(0, 0, 12);
 
 					cmdbuf.EndRenderPass(renderPass);
@@ -518,7 +518,7 @@ namespace MoonWorksGraphicsTests
 						renderPass.BindGraphicsPipeline(BlitPipeline);
 						renderPass.BindFragmentSampler(new TextureSamplerBinding(DepthTexture, DepthSampler));
 						renderPass.BindVertexBuffer(BlitVertexBuffer);
-						renderPass.PushFragmentUniformData(DepthUniforms);
+						cmdbuf.PushFragmentUniformData(DepthUniforms);
 						renderPass.DrawPrimitives(0, 2);
 
 						cmdbuf.EndRenderPass(renderPass);

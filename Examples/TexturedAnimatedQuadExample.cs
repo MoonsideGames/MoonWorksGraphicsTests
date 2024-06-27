@@ -123,29 +123,29 @@ class TexturedAnimatedQuadExample : Example
 			// Top-left
 			vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(-0.5f, -0.5f, 0)));
 			fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Sin(t) * 0.5f, 1f, 1f));
-			renderPass.PushVertexUniformData(vertUniforms);
-			renderPass.PushFragmentUniformData(fragUniforms);
+			cmdbuf.PushVertexUniformData(vertUniforms);
+			cmdbuf.PushFragmentUniformData(fragUniforms);
 			renderPass.DrawIndexedPrimitives(0, 0, 2);
 
 			// Top-right
 			vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ((2 * System.MathF.PI) - t) * Matrix4x4.CreateTranslation(new Vector3(0.5f, -0.5f, 0)));
 			fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Cos(t) * 0.5f, 1f, 1f));
-			renderPass.PushVertexUniformData(vertUniforms);
-			renderPass.PushFragmentUniformData(fragUniforms);
+			cmdbuf.PushVertexUniformData(vertUniforms);
+			cmdbuf.PushFragmentUniformData(fragUniforms);
 			renderPass.DrawIndexedPrimitives(0, 0, 2);
 
 			// Bottom-left
 			vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(-0.5f, 0.5f, 0)));
 			fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Sin(t) * 0.2f, 1f, 1f));
-			renderPass.PushVertexUniformData(vertUniforms);
-			renderPass.PushFragmentUniformData(fragUniforms);
+			cmdbuf.PushVertexUniformData(vertUniforms);
+			cmdbuf.PushFragmentUniformData(fragUniforms);
 			renderPass.DrawIndexedPrimitives(0, 0, 2);
 
 			// Bottom-right
 			vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(0.5f, 0.5f, 0)));
 			fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Cos(t) * 1f, 1f, 1f));
-			renderPass.PushVertexUniformData(vertUniforms);
-			renderPass.PushFragmentUniformData(fragUniforms);
+			cmdbuf.PushVertexUniformData(vertUniforms);
+			cmdbuf.PushFragmentUniformData(fragUniforms);
 			renderPass.DrawIndexedPrimitives(0, 0, 2);
 
 			cmdbuf.EndRenderPass(renderPass);

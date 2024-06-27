@@ -155,7 +155,7 @@ class TextureMipmapsExample : Example
 			renderPass.BindVertexBuffer(VertexBuffer);
 			renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.Sixteen);
 			renderPass.BindFragmentSampler(new TextureSamplerBinding(Texture, Sampler));
-			renderPass.PushVertexUniformData(vertUniforms);
+			cmdbuf.PushVertexUniformData(vertUniforms);
 			renderPass.DrawIndexedPrimitives(0, 0, 2);
 			cmdbuf.EndRenderPass(renderPass);
 		}

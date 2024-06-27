@@ -222,7 +222,7 @@ class CPUSpriteBatchExample : Example
 			renderPass.BindVertexBuffer(SpriteVertexBuffer);
 			renderPass.BindIndexBuffer(SpriteIndexBuffer, IndexElementSize.ThirtyTwo);
 			renderPass.BindFragmentSampler(new TextureSamplerBinding(SpriteTexture, Sampler));
-			renderPass.PushVertexUniformData(cameraMatrix);
+			cmdbuf.PushVertexUniformData(cameraMatrix);
 			renderPass.DrawIndexedPrimitives(0, 0, SPRITE_COUNT * 2);
 
 			cmdbuf.EndRenderPass(renderPass);

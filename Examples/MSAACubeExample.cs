@@ -261,7 +261,7 @@ class MSAACubeExample : Example
 			renderPass.BindVertexBuffer(VertexBuffer);
 			renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.Sixteen);
 			renderPass.BindFragmentSampler(new TextureSamplerBinding(rt, Sampler));
-			renderPass.PushVertexUniformData(vertUniforms);
+			cmdbuf.PushVertexUniformData(vertUniforms);
 			renderPass.DrawIndexedPrimitives(0, 0, 12);
 			cmdbuf.EndRenderPass(renderPass);
 		}

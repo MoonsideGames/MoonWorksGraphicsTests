@@ -179,7 +179,7 @@ class Texture3DExample : Example
 			renderPass.BindVertexBuffer(VertexBuffer);
 			renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.Sixteen);
 			renderPass.BindFragmentSampler(new TextureSamplerBinding(Texture, Sampler));
-			renderPass.PushFragmentUniformData(fragUniform);
+			cmdbuf.PushFragmentUniformData(fragUniform);
 			renderPass.DrawIndexedPrimitives(0, 0, 2);
 			cmdbuf.EndRenderPass(renderPass);
 		}

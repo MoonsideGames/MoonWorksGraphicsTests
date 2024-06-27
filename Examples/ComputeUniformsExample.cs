@@ -62,8 +62,9 @@ class ComputeUniformsExample : Example
 				Cycle = true
 			});
 
+			cmdbuf.PushComputeUniformData(Uniforms);
+
 			computePass.BindComputePipeline(GradientPipeline);
-			computePass.PushUniformData(Uniforms);
 			computePass.Dispatch(RenderTexture.Width / 8, RenderTexture.Height / 8, 1);
 			cmdbuf.EndComputePass(computePass);
 

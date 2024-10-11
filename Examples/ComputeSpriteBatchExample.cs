@@ -54,27 +54,27 @@ class ComputeSpriteBatchExample : Example
 
 		Window.SetTitle("ComputeSpriteBatch");
 
-		Shader vertShader = new Shader(
+		Shader vertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadColorWithMatrix.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV,
-				UniformBufferCount = 1
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV,
+				NumUniformBuffers = 1
 			}
 		);
 
-		Shader fragShader = new Shader(
+		Shader fragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadColor.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV,
-				SamplerCount = 1
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV,
+				NumSamplers = 1
 			}
 		);
 
@@ -85,29 +85,33 @@ class ComputeSpriteBatchExample : Example
 		);
 		renderPipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureColorVertex>();
 
-		RenderPipeline = new GraphicsPipeline(GraphicsDevice, renderPipelineCreateInfo);
+		RenderPipeline = GraphicsPipeline.Create(GraphicsDevice, renderPipelineCreateInfo);
 
-		ComputePipeline = new ComputePipeline(
+		ComputePipeline = ComputePipeline.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SpriteBatch.comp"),
 			"main",
 			new ComputePipelineCreateInfo
 			{
-				ShaderFormat = ShaderFormat.SPIRV,
-				ReadOnlyStorageBufferCount = 1,
-				ReadWriteStorageBufferCount = 1,
+				Format = ShaderFormat.SPIRV,
+				NumReadonlyStorageBuffers = 1,
+				NumReadWriteStorageBuffers = 1,
 				ThreadCountX = 64,
 				ThreadCountY = 1,
 				ThreadCountZ = 1
 			}
 		);
 
-		Sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
+		Sampler = Sampler.Create(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 		// Create and populate the sprite texture
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-		SpriteTexture = resourceUploader.CreateTexture2DFromCompressed(TestUtils.GetTexturePath("ravioli.png"));
+		SpriteTexture = resourceUploader.CreateTexture2DFromCompressed(
+			TestUtils.GetTexturePath("ravioli.png"),
+			TextureFormat.R8G8B8A8Unorm,
+			TextureUsageFlags.Sampler
+		);
 
 		resourceUploader.Upload();
 		resourceUploader.Dispose();
@@ -142,17 +146,16 @@ class ComputeSpriteBatchExample : Example
 			MAX_SPRITE_COUNT * 6
 		);
 
-		spriteIndexTransferBuffer.Map(false, out byte* mapPointer);
-		uint *indexPointer = (uint*) mapPointer;
+		var indexSpan = spriteIndexTransferBuffer.Map<uint>(false);
 
-		for (uint i = 0, j = 0; i < MAX_SPRITE_COUNT * 6; i += 6, j += 4)
+		for (int i = 0, j = 0; i < MAX_SPRITE_COUNT * 6; i += 6, j += 4)
 		{
-			indexPointer[i]     =  j;
-			indexPointer[i + 1] =  j + 1;
-			indexPointer[i + 2] =  j + 2;
-			indexPointer[i + 3] =  j + 3;
-			indexPointer[i + 4] =  j + 2;
-			indexPointer[i + 5] =  j + 1;
+			indexSpan[i]     =  (uint) j;
+			indexSpan[i + 1] =  (uint) j + 1;
+			indexSpan[i + 2] =  (uint) j + 2;
+			indexSpan[i + 3] =  (uint) j + 3;
+			indexSpan[i + 4] =  (uint) j + 2;
+			indexSpan[i + 5] =  (uint) j + 1;
 		}
 		spriteIndexTransferBuffer.Unmap();
 
@@ -185,18 +188,13 @@ class ComputeSpriteBatchExample : Example
 		if (swapchainTexture != null)
 		{
 			// Build sprite compute transfer
-			SpriteComputeTransferBuffer.Map(true, out byte* mapPointer);
-			ComputeSpriteData *dataPointer = (ComputeSpriteData*) mapPointer;
-
+			var data = SpriteComputeTransferBuffer.Map<ComputeSpriteData>(true);
 			for (var i = 0; i < MAX_SPRITE_COUNT; i += 1)
 			{
-				dataPointer[i] = new ComputeSpriteData
-				{
-					Position = new Vector3(Random.Next(640), Random.Next(480), 0),
-					Rotation = (float) (Random.NextDouble() * System.Math.PI * 2),
-					Size = new Vector2(32, 32),
-					Color = new Vector4(1f, 1f, 1f, 1f)
-				};
+				data[i].Position = new Vector3(Random.Next(640), Random.Next(480), 0);
+				data[i].Rotation = (float) (Random.NextDouble() * System.Math.PI * 2);
+				data[i].Size = new Vector2(32, 32);
+				data[i].Color = new Vector4(1f, 1f, 1f, 1f);
 			}
 			SpriteComputeTransferBuffer.Unmap();
 
@@ -208,7 +206,7 @@ class ComputeSpriteBatchExample : Example
 			// Set up compute pass to build sprite vertex buffer
 			var computePass = cmdbuf.BeginComputePass(new StorageBufferReadWriteBinding
 			{
-				Buffer = SpriteVertexBuffer,
+				Buffer = SpriteVertexBuffer.Handle,
 				Cycle = true
 			});
 
@@ -220,7 +218,12 @@ class ComputeSpriteBatchExample : Example
 
 			// Render sprites using vertex buffer
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(swapchainTexture, false, Color.Black)
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				}
 			);
 
 			cmdbuf.PushVertexUniformData(cameraMatrix);
@@ -229,7 +232,7 @@ class ComputeSpriteBatchExample : Example
 			renderPass.BindVertexBuffer(SpriteVertexBuffer);
 			renderPass.BindIndexBuffer(SpriteIndexBuffer, IndexElementSize.ThirtyTwo);
 			renderPass.BindFragmentSampler(new TextureSamplerBinding(SpriteTexture, Sampler));
-			renderPass.DrawIndexedPrimitives(0, 0, MAX_SPRITE_COUNT * 2);
+			renderPass.DrawIndexedPrimitives(MAX_SPRITE_COUNT * 6, 1, 0, 0, 0);
 
 			cmdbuf.EndRenderPass(renderPass);
 		}

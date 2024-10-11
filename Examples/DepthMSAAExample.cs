@@ -11,6 +11,7 @@ class DepthMSAAExample : Example
 	private GraphicsPipeline[] CubePipelines = new GraphicsPipeline[4];
 	private Texture[] RenderTargets = new Texture[4];
 	private Texture[] DepthRTs = new Texture[4];
+	private Texture ResolveTarget;
 	private Buffer CubeVertexBuffer1;
 	private Buffer CubeVertexBuffer2;
 	private Buffer CubeIndexBuffer;
@@ -39,39 +40,49 @@ class DepthMSAAExample : Example
 		Logger.LogInfo("Setting sample count to: " + currentSampleCount);
 
 		// Create the cube pipelines
-		Shader cubeVertShader = new Shader(
+		Shader cubeVertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("PositionColorWithMatrix.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV,
-				UniformBufferCount = 1
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV,
+				NumUniformBuffers = 1
 			}
 		);
 
-		Shader cubeFragShader = new Shader(
+		Shader cubeFragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
 		GraphicsPipelineCreateInfo pipelineCreateInfo = new GraphicsPipelineCreateInfo
 		{
-			AttachmentInfo = new GraphicsPipelineAttachmentInfo(
-				TextureFormat.D32_SFLOAT,
-				new ColorAttachmentDescription(
-					Window.SwapchainFormat,
-					ColorAttachmentBlendState.Opaque
-				)
-			),
-			DepthStencilState = DepthStencilState.DepthReadWrite,
+			TargetInfo = new GraphicsPipelineTargetInfo
+			{
+				ColorTargetDescriptions = [
+					new ColorTargetDescription
+					{
+						Format = Window.SwapchainFormat,
+						BlendState = ColorTargetBlendState.Opaque
+					}
+				],
+				HasDepthStencilTarget = true,
+				DepthStencilFormat = GraphicsDevice.SupportedDepthFormat
+			},
+			DepthStencilState = new DepthStencilState
+			{
+				EnableDepthTest = true,
+				EnableDepthWrite = true,
+				CompareOp = CompareOp.LessOrEqual
+			},
 			VertexInputState = VertexInputState.CreateSingleBinding<PositionColorVertex>(),
 			PrimitiveType = PrimitiveType.TriangleList,
 			RasterizerState = RasterizerState.CW_CullBack,
@@ -82,33 +93,41 @@ class DepthMSAAExample : Example
 
 		for (int i = 0; i < CubePipelines.Length; i += 1)
 		{
-			pipelineCreateInfo.MultisampleState.MultisampleCount = (SampleCount) i;
-			CubePipelines[i] = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+			pipelineCreateInfo.MultisampleState.SampleCount = (SampleCount) i;
+			CubePipelines[i] = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 		}
 
 		// Create the MSAA render textures and depth textures
 		for (int i = 0; i < RenderTargets.Length; i += 1)
 		{
-			RenderTargets[i] = Texture.CreateTexture2D(
+			RenderTargets[i] = Texture.Create2D(
 				GraphicsDevice,
 				Window.Width,
 				Window.Height,
 				Window.SwapchainFormat,
-				TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler,
+				TextureUsageFlags.ColorTarget,
 				1,
 				(SampleCount) i
 			);
 
-			DepthRTs[i] = Texture.CreateTexture2D(
+			DepthRTs[i] = Texture.Create2D(
 				GraphicsDevice,
 				Window.Width,
 				Window.Height,
-				TextureFormat.D32_SFLOAT,
-				TextureUsageFlags.DepthStencil,
+				GraphicsDevice.SupportedDepthFormat,
+				TextureUsageFlags.DepthStencilTarget,
 				1,
 				(SampleCount) i
 			);
 		}
+
+		ResolveTarget = Texture.Create2D(
+			GraphicsDevice,
+			Window.Width,
+			Window.Height,
+			Window.SwapchainFormat,
+			TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler
+		);
 
 		// Create the buffers
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
@@ -233,11 +252,38 @@ class DepthMSAAExample : Example
 			);
 			TransformVertexUniform cubeUniforms = new TransformVertexUniform(model * view * proj);
 
-			// Begin the MSAA RT pass
 			int index = (int) currentSampleCount;
+
+			var colorTargetInfo = new ColorTargetInfo
+			{
+				Texture = RenderTargets[index].Handle,
+				LoadOp = LoadOp.Clear,
+				ClearColor = Color.White
+			};
+
+			if (currentSampleCount == SampleCount.One)
+			{
+				colorTargetInfo.StoreOp = StoreOp.Store;
+			}
+			else
+			{
+				colorTargetInfo.StoreOp = StoreOp.Resolve;
+				colorTargetInfo.ResolveTexture = ResolveTarget.Handle;
+			}
+
+			// Begin the MSAA RT pass
 			var renderPass = cmdbuf.BeginRenderPass(
-				new DepthStencilAttachmentInfo(DepthRTs[index], true, new DepthStencilValue(1, 0)),
-				new ColorAttachmentInfo(RenderTargets[index], true, Color.Black)
+				colorTargetInfo,
+				new DepthStencilTargetInfo
+				{
+					Texture = DepthRTs[index].Handle,
+					LoadOp = LoadOp.Clear,
+					ClearDepth = 1,
+					StencilLoadOp = LoadOp.DontCare,
+					StoreOp = StoreOp.DontCare,
+					StencilStoreOp = StoreOp.DontCare,
+					Cycle = true
+				}
 			);
 			renderPass.BindGraphicsPipeline(CubePipelines[index]);
 
@@ -246,22 +292,34 @@ class DepthMSAAExample : Example
 			// Draw the first cube
 			renderPass.BindVertexBuffer(CubeVertexBuffer1);
 			renderPass.BindIndexBuffer(CubeIndexBuffer, IndexElementSize.ThirtyTwo);
-			renderPass.DrawIndexedPrimitives(0, 0, 12);
+			renderPass.DrawIndexedPrimitives(36, 1, 0, 0, 0);
 
 			// Draw the second cube
 			renderPass.BindVertexBuffer(CubeVertexBuffer2);
 			renderPass.BindIndexBuffer(CubeIndexBuffer, IndexElementSize.ThirtyTwo);
-			renderPass.DrawIndexedPrimitives(0, 0, 12);
+			renderPass.DrawIndexedPrimitives(36, 1, 0, 0, 0);
 
 			cmdbuf.EndRenderPass(renderPass);
 
 			// Blit the MSAA RT to the backbuffer
-			cmdbuf.Blit(
-				RenderTargets[index],
-				swapchainTexture,
-				Filter.Nearest,
-				false
-			);
+			var blitSourceTexture = (currentSampleCount != SampleCount.One) ? ResolveTarget : RenderTargets[index];
+			cmdbuf.Blit(new BlitInfo
+			{
+				LoadOp = LoadOp.DontCare,
+				Source = new BlitRegion
+				{
+					Texture = blitSourceTexture.Handle,
+					W = blitSourceTexture.Width,
+					H = blitSourceTexture.Height
+				},
+				Destination = new BlitRegion
+				{
+					Texture = swapchainTexture.Handle,
+					W = swapchainTexture.Width,
+					H = swapchainTexture.Height
+				},
+				Filter = Filter.Linear
+			});
 		}
 		GraphicsDevice.Submit(cmdbuf);
 	}
@@ -274,7 +332,7 @@ class DepthMSAAExample : Example
 			RenderTargets[i].Dispose();
 			DepthRTs[i].Dispose();
 		}
-
+		ResolveTarget.Dispose();
 		CubeVertexBuffer1.Dispose();
 		CubeVertexBuffer2.Dispose();
 		CubeIndexBuffer.Dispose();

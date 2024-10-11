@@ -12,12 +12,16 @@ public static class TestUtils
 	) {
 		return new GraphicsPipelineCreateInfo
 		{
-			AttachmentInfo = new GraphicsPipelineAttachmentInfo(
-				new ColorAttachmentDescription(
-					swapchainFormat,
-					ColorAttachmentBlendState.Opaque
-				)
-			),
+			TargetInfo = new GraphicsPipelineTargetInfo
+			{
+				ColorTargetDescriptions = [
+					new ColorTargetDescription
+					{
+						Format = swapchainFormat,
+						BlendState = ColorTargetBlendState.Opaque
+					}
+				]
+			},
 			DepthStencilState = DepthStencilState.Disable,
 			MultisampleState = MultisampleState.None,
 			PrimitiveType = PrimitiveType.TriangleList,
@@ -30,17 +34,17 @@ public static class TestUtils
 
 	public static string GetShaderPath(string shaderName)
 	{
-		return SDL2.SDL.SDL_GetBasePath() + "Content/Shaders/Compiled/" + shaderName + ".spv";
+		return SDL3.SDL.SDL_GetBasePath() + "Content/Shaders/Compiled/" + shaderName + ".spv";
 	}
 
 	public static string GetTexturePath(string textureName)
 	{
-		return SDL2.SDL.SDL_GetBasePath() + "Content/Textures/" + textureName;
+		return SDL3.SDL.SDL_GetBasePath() + "Content/Textures/" + textureName;
 	}
 
 	public static string GetVideoPath(string videoName)
 	{
-		return SDL2.SDL.SDL_GetBasePath() + "Content/Videos/" + videoName;
+		return SDL3.SDL.SDL_GetBasePath() + "Content/Videos/" + videoName;
 	}
 
 	public enum ButtonType

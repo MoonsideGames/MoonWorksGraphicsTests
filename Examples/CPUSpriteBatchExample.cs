@@ -45,27 +45,27 @@ class CPUSpriteBatchExample : Example
 
         Window.SetTitle("CPUSpriteBatch");
 
-        Shader vertShader = new Shader(
+        Shader vertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadColorWithMatrix.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV,
-				UniformBufferCount = 1
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV,
+				NumUniformBuffers = 1
 			}
 		);
 
-		Shader fragShader = new Shader(
+		Shader fragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadColor.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV,
-				SamplerCount = 1
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV,
+				NumSamplers = 1
 			}
 		);
 
@@ -76,14 +76,18 @@ class CPUSpriteBatchExample : Example
 		);
 		renderPipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureColorVertex>();
 
-		RenderPipeline = new GraphicsPipeline(GraphicsDevice, renderPipelineCreateInfo);
+		RenderPipeline = GraphicsPipeline.Create(GraphicsDevice, renderPipelineCreateInfo);
 
-		Sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
+		Sampler = Sampler.Create(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 		// Create and populate the sprite texture
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
 
-		SpriteTexture = resourceUploader.CreateTexture2DFromCompressed(TestUtils.GetTexturePath("ravioli.png"));
+		SpriteTexture = resourceUploader.CreateTexture2DFromCompressed(
+			TestUtils.GetTexturePath("ravioli.png"),
+			TextureFormat.R8G8B8A8Unorm,
+			TextureUsageFlags.Sampler
+		);
 
 		resourceUploader.Upload();
 		resourceUploader.Dispose();
@@ -112,17 +116,15 @@ class CPUSpriteBatchExample : Example
 			SPRITE_COUNT * 6
 		);
 
-        spriteIndexTransferBuffer.Map(false, out byte* mapPointer);
-		uint *indexPointer = (uint*) mapPointer;
-
-		for (uint i = 0, j = 0; i < SPRITE_COUNT * 6; i += 6, j += 4)
+        var indexSpan = spriteIndexTransferBuffer.Map<uint>(false);
+		for (int i = 0, j = 0; i < SPRITE_COUNT * 6; i += 6, j += 4)
 		{
-			indexPointer[i]     =  j;
-			indexPointer[i + 1] =  j + 1;
-			indexPointer[i + 2] =  j + 2;
-			indexPointer[i + 3] =  j + 3;
-			indexPointer[i + 4] =  j + 2;
-			indexPointer[i + 5] =  j + 1;
+			indexSpan[i]     =  (uint) j;
+			indexSpan[i + 1] =  (uint) j + 1;
+			indexSpan[i + 2] =  (uint) j + 2;
+			indexSpan[i + 3] =  (uint) j + 3;
+			indexSpan[i + 4] =  (uint) j + 2;
+			indexSpan[i + 5] =  (uint) j + 1;
 		}
 		spriteIndexTransferBuffer.Unmap();
 
@@ -167,9 +169,7 @@ class CPUSpriteBatchExample : Example
             }
 
             // transform vertex data
-            SpriteVertexTransferBuffer.Map(true, out byte* mapPointer);
-            PositionTextureColorVertex *dataPointer = (PositionTextureColorVertex*) mapPointer;
-
+            var dataSpan = SpriteVertexTransferBuffer.Map<PositionTextureColorVertex>(true);
             for (var i = 0; i < SPRITE_COUNT; i += 1)
             {
                 var transform =
@@ -177,35 +177,34 @@ class CPUSpriteBatchExample : Example
                     Matrix4x4.CreateRotationZ(InstanceData[i].Rotation) *
                     Matrix4x4.CreateTranslation(InstanceData[i].Position);
 
-                dataPointer[i*4] = new PositionTextureColorVertex
+                dataSpan[i*4] = new PositionTextureColorVertex
                 {
                     Position = new Vector4(Vector3.Transform(new Vector3(0, 0, 0), transform), 1),
                     TexCoord = new Vector2(0, 0),
                     Color = InstanceData[i].Color
                 };
 
-                dataPointer[i*4 + 1] = new PositionTextureColorVertex
+                dataSpan[i*4 + 1] = new PositionTextureColorVertex
                 {
                     Position = new Vector4(Vector3.Transform(new Vector3(1, 0, 0), transform), 1),
                     TexCoord = new Vector2(1, 0),
                     Color = InstanceData[i].Color
                 };
 
-                dataPointer[i*4 + 2] = new PositionTextureColorVertex
+                dataSpan[i*4 + 2] = new PositionTextureColorVertex
                 {
                     Position = new Vector4(Vector3.Transform(new Vector3(0, 1, 0), transform), 1),
                     TexCoord = new Vector2(0, 1),
                     Color = InstanceData[i].Color
                 };
 
-                dataPointer[i*4 + 3] = new PositionTextureColorVertex
+                dataSpan[i*4 + 3] = new PositionTextureColorVertex
                 {
                     Position = new Vector4(Vector3.Transform(new Vector3(1, 1, 0), transform), 1),
                     TexCoord = new Vector2(1, 1),
                     Color = InstanceData[i].Color
                 };
             }
-
             SpriteVertexTransferBuffer.Unmap();
 
             // Upload vertex data
@@ -215,7 +214,12 @@ class CPUSpriteBatchExample : Example
 
             // Render sprites using vertex buffer
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(swapchainTexture, false, Color.Black)
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				}
 			);
 
 			renderPass.BindGraphicsPipeline(RenderPipeline);
@@ -223,7 +227,7 @@ class CPUSpriteBatchExample : Example
 			renderPass.BindIndexBuffer(SpriteIndexBuffer, IndexElementSize.ThirtyTwo);
 			renderPass.BindFragmentSampler(new TextureSamplerBinding(SpriteTexture, Sampler));
 			cmdbuf.PushVertexUniformData(cameraMatrix);
-			renderPass.DrawIndexedPrimitives(0, 0, SPRITE_COUNT * 2);
+			renderPass.DrawIndexedPrimitives(SPRITE_COUNT * 6, 1, 0, 0, 0);
 
 			cmdbuf.EndRenderPass(renderPass);
         }

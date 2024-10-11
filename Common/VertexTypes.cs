@@ -16,7 +16,7 @@ public struct PositionVertex : IVertexType
 
 	public static VertexElementFormat[] Formats { get; } =
 	[
-		VertexElementFormat.Vector3
+		VertexElementFormat.Float3
 	];
 
 	public static uint[] Offsets { get; } = [ 0 ];
@@ -41,8 +41,8 @@ public struct PositionColorVertex : IVertexType
 
 	public static VertexElementFormat[] Formats { get; } =
 	[
-		VertexElementFormat.Vector3,
-		VertexElementFormat.Color
+		VertexElementFormat.Float3,
+		VertexElementFormat.Ubyte4Norm
 	];
 
 	public static uint[] Offsets { get; } =
@@ -71,8 +71,8 @@ public struct PositionTextureVertex : IVertexType
 
 	public static VertexElementFormat[] Formats { get; } = new VertexElementFormat[2]
 	{
-		VertexElementFormat.Vector3,
-		VertexElementFormat.Vector2
+		VertexElementFormat.Float3,
+		VertexElementFormat.Float2
 	};
 
 	public static uint[] Offsets { get; } =
@@ -101,9 +101,9 @@ struct PositionTextureColorVertex : IVertexType
 
 	public static VertexElementFormat[] Formats { get; } =
 	[
-		VertexElementFormat.Vector4,
-		VertexElementFormat.Vector2,
-		VertexElementFormat.Vector4
+		VertexElementFormat.Float4,
+		VertexElementFormat.Float2,
+		VertexElementFormat.Float4
 	];
 
 	public static uint[] Offsets { get; } =

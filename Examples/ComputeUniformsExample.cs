@@ -21,26 +21,26 @@ class ComputeUniformsExample : Example
 		Uniforms.Time = 0;
 
 		// Create the compute pipeline that writes texture data
-		GradientPipeline = new ComputePipeline(
+		GradientPipeline = ComputePipeline.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("GradientTexture.comp"),
 			"main",
 			new ComputePipelineCreateInfo
 			{
-				ShaderFormat = ShaderFormat.SPIRV,
-				ReadWriteStorageTextureCount = 1,
-				UniformBufferCount = 1,
+				Format = ShaderFormat.SPIRV,
+				NumReadWriteStorageTextures = 1,
+				NumUniformBuffers = 1,
 				ThreadCountX = 8,
 				ThreadCountY = 8,
 				ThreadCountZ = 1
 			}
 		);
 
-		RenderTexture = Texture.CreateTexture2D(
+		RenderTexture = Texture.Create2D(
 			GraphicsDevice,
 			Window.Width,
 			Window.Height,
-			TextureFormat.R8G8B8A8,
+			TextureFormat.R8G8B8A8Unorm,
 			TextureUsageFlags.ComputeStorageWrite | TextureUsageFlags.Sampler
 		);
 	}
@@ -58,7 +58,7 @@ class ComputeUniformsExample : Example
 		{
 			var computePass = cmdbuf.BeginComputePass(new StorageTextureReadWriteBinding
 			{
-				TextureSlice = RenderTexture,
+				Texture = RenderTexture.Handle,
 				Cycle = true
 			});
 
@@ -68,8 +68,25 @@ class ComputeUniformsExample : Example
 			computePass.Dispatch(RenderTexture.Width / 8, RenderTexture.Height / 8, 1);
 			cmdbuf.EndComputePass(computePass);
 
-			cmdbuf.Blit(RenderTexture, swapchainTexture, Filter.Linear, false);
+			cmdbuf.Blit(new BlitInfo
+			{
+				LoadOp = LoadOp.DontCare,
+				Source = new BlitRegion
+				{
+					Texture = RenderTexture.Handle,
+					W = RenderTexture.Width,
+					H = RenderTexture.Height
+				},
+				Destination = new BlitRegion
+				{
+					Texture = swapchainTexture.Handle,
+					W = swapchainTexture.Width,
+					H = swapchainTexture.Width
+				},
+				Filter = Filter.Linear
+			});
 		}
+
 		GraphicsDevice.Submit(cmdbuf);
 	}
 

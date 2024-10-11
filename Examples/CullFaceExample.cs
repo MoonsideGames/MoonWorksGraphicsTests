@@ -29,25 +29,25 @@ class CullFaceExample : Example
 		Logger.LogInfo("Press Down to toggle the winding order of the triangles (default is counter-clockwise)");
 
 		// Load the shaders
-		Shader vertShader = new Shader(
+		Shader vertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("PositionColor.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
-		Shader fragShader = new Shader(
+		Shader fragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
@@ -60,22 +60,22 @@ class CullFaceExample : Example
 		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionColorVertex>();
 
 		pipelineCreateInfo.RasterizerState = RasterizerState.CW_CullNone;
-		CW_CullNonePipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		CW_CullNonePipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 		pipelineCreateInfo.RasterizerState = RasterizerState.CW_CullFront;
-		CW_CullFrontPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		CW_CullFrontPipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 		pipelineCreateInfo.RasterizerState = RasterizerState.CW_CullBack;
-		CW_CullBackPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		CW_CullBackPipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 		pipelineCreateInfo.RasterizerState = RasterizerState.CCW_CullNone;
-		CCW_CullNonePipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		CCW_CullNonePipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 		pipelineCreateInfo.RasterizerState = RasterizerState.CCW_CullFront;
-		CCW_CullFrontPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		CCW_CullFrontPipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 		pipelineCreateInfo.RasterizerState = RasterizerState.CCW_CullBack;
-		CCW_CullBackPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		CCW_CullBackPipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 		// Create and populate the vertex buffers
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
@@ -118,11 +118,12 @@ class CullFaceExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(
-					swapchainTexture,
-					false,
-					Color.Black
-				)
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				}
 			);
 
 			// Need to bind a pipeline before binding vertex buffers
@@ -137,27 +138,27 @@ class CullFaceExample : Example
 			}
 
 			renderPass.SetViewport(new Viewport(0, 0, 213, 240));
-			renderPass.DrawPrimitives(0, 1);
+			renderPass.DrawPrimitives(3, 1, 0, 0);
 
 			renderPass.SetViewport(new Viewport(213, 0, 213, 240));
 			renderPass.BindGraphicsPipeline(CW_CullFrontPipeline);
-			renderPass.DrawPrimitives(0, 1);
+			renderPass.DrawPrimitives(3, 1, 0, 0);
 
 			renderPass.SetViewport(new Viewport(426, 0, 213, 240));
 			renderPass.BindGraphicsPipeline(CW_CullBackPipeline);
-			renderPass.DrawPrimitives(0, 1);
+			renderPass.DrawPrimitives(3, 1, 0, 0);
 
 			renderPass.SetViewport(new Viewport(0, 240, 213, 240));
 			renderPass.BindGraphicsPipeline(CCW_CullNonePipeline);
-			renderPass.DrawPrimitives(0, 1);
+			renderPass.DrawPrimitives(3, 1, 0, 0);
 
 			renderPass.SetViewport(new Viewport(213, 240, 213, 240));
 			renderPass.BindGraphicsPipeline(CCW_CullFrontPipeline);
-			renderPass.DrawPrimitives(0, 1);
+			renderPass.DrawPrimitives(3, 1, 0, 0);
 
 			renderPass.SetViewport(new Viewport(426, 240, 213, 240));
 			renderPass.BindGraphicsPipeline(CCW_CullBackPipeline);
-			renderPass.DrawPrimitives(0, 1);
+			renderPass.DrawPrimitives(3, 1, 0, 0);
 
 			cmdbuf.EndRenderPass(renderPass);
 		}

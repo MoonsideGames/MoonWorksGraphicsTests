@@ -35,61 +35,61 @@ class MSAACubeExample : Example
 		currentSampleCount = SampleCount.Four;
 
 		// Create the MSAA pipelines
-		Shader triangleVertShader = new Shader(
+		Shader triangleVertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("RawTriangle.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
-		Shader triangleFragShader = new Shader(
+		Shader triangleFragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
 		GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
-			TextureFormat.R8G8B8A8,
+			TextureFormat.R8G8B8A8Unorm,
 			triangleVertShader,
 			triangleFragShader
 		);
 		for (int i = 0; i < MsaaPipelines.Length; i += 1)
 		{
-			pipelineCreateInfo.MultisampleState.MultisampleCount = (SampleCount)i;
-			MsaaPipelines[i] = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+			pipelineCreateInfo.MultisampleState.SampleCount = (SampleCount)i;
+			MsaaPipelines[i] = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 		}
 
 		// Create the cubemap pipeline
-		Shader cubemapVertShader = new Shader(
+		Shader cubemapVertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("Skybox.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV,
-				UniformBufferCount = 1
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV,
+				NumUniformBuffers = 1
 			}
 		);
 
-		Shader cubemapFragShader = new Shader(
+		Shader cubemapFragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("Skybox.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV,
-				SamplerCount = 1
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV,
+				NumSamplers = 1
 			}
 		);
 
@@ -100,28 +100,21 @@ class MSAACubeExample : Example
 		);
 		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionVertex>();
 
-		CubemapPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		CubemapPipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 		// Create the MSAA render targets
 		for (int i = 0; i < RenderTargets.Length; i++)
 		{
-			TextureCreateInfo cubeCreateInfo = new TextureCreateInfo
-			{
-				Width = 16,
-				Height = 16,
-				Format = TextureFormat.R8G8B8A8,
-				Depth = 1,
-				LevelCount = 1,
-				SampleCount = (SampleCount)i,
-				UsageFlags = TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler,
-				IsCube = true,
-				LayerCount = 6
-			};
-			RenderTargets[i] = new Texture(GraphicsDevice, cubeCreateInfo);
+			RenderTargets[i] = Texture.CreateCube(
+				GraphicsDevice,
+				16,
+				TextureFormat.R8G8B8A8Unorm,
+				TextureUsageFlags.ColorTarget
+			);
 		}
 
 		// Create samplers
-		Sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
+		Sampler = Sampler.Create(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 		// Create and populate the GPU resources
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
@@ -231,38 +224,41 @@ class MSAACubeExample : Example
 			// Get a reference to the RT for the given sample count
 			int rtIndex = (int) currentSampleCount;
 			Texture rt = RenderTargets[rtIndex];
-			ColorAttachmentInfo rtAttachmentInfo = new ColorAttachmentInfo(
-				rt,
-				true,
-				Color.Black
-			);
+			var rtAttachmentInfo = new ColorTargetInfo
+			{
+				Texture = rt.Handle,
+				LoadOp = LoadOp.Clear,
+				ClearColor = Color.Black,
+				Cycle = true
+			};
 
 			RenderPass renderPass;
 
 			// Render a triangle to each slice of the cubemap
 			for (uint i = 0; i < 6; i += 1)
 			{
-				rtAttachmentInfo.TextureSlice.Layer = i;
+				rtAttachmentInfo.LayerOrDepthPlane = i;
 
 				renderPass = cmdbuf.BeginRenderPass(rtAttachmentInfo);
 				renderPass.BindGraphicsPipeline(MsaaPipelines[rtIndex]);
-				renderPass.DrawPrimitives(0, 1);
+				renderPass.DrawPrimitives(3, 1, 0, 0);
 				cmdbuf.EndRenderPass(renderPass);
 			}
 
 			renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(
-					swapchainTexture,
-					false,
-					Color.Black
-				)
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				}
 			);
 			renderPass.BindGraphicsPipeline(CubemapPipeline);
 			renderPass.BindVertexBuffer(VertexBuffer);
 			renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.Sixteen);
 			renderPass.BindFragmentSampler(new TextureSamplerBinding(rt, Sampler));
 			cmdbuf.PushVertexUniformData(vertUniforms);
-			renderPass.DrawIndexedPrimitives(0, 0, 12);
+			renderPass.DrawIndexedPrimitives(36, 1, 0, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 		}
 		GraphicsDevice.Submit(cmdbuf);

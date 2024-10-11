@@ -26,25 +26,25 @@ class BasicTriangleExample : Example
 
 		Logger.LogInfo("Press Left to toggle wireframe mode\nPress Down to toggle small viewport\nPress Right to toggle scissor rect");
 
-		Shader vertShaderModule = new Shader(
+		Shader vertShaderModule = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("RawTriangle.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
-		Shader fragShaderModule = new Shader(
+		Shader fragShaderModule = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
@@ -53,10 +53,10 @@ class BasicTriangleExample : Example
 			vertShaderModule,
 			fragShaderModule
 		);
-		FillPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		FillPipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 		pipelineCreateInfo.RasterizerState.FillMode = FillMode.Line;
-		LinePipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		LinePipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 	}
 
 	public override void Update(System.TimeSpan delta)
@@ -87,7 +87,12 @@ class BasicTriangleExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(swapchainTexture, false, Color.Black)
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				}
 			);
 
 			renderPass.BindGraphicsPipeline(UseWireframeMode ? LinePipeline : FillPipeline);
@@ -101,7 +106,7 @@ class BasicTriangleExample : Example
 				renderPass.SetScissor(ScissorRect);
 			}
 
-			renderPass.DrawPrimitives(0, 1);
+			renderPass.DrawPrimitives(3, 1, 0, 0);
 
 			cmdbuf.EndRenderPass(renderPass);
 		}

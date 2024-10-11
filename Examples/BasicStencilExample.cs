@@ -20,24 +20,24 @@ namespace MoonWorksGraphicsTests
 			Window.SetTitle("BasicStencil");
 
 			// Load the shaders
-			Shader vertShaderModule = new Shader(
+			Shader vertShaderModule = Shader.CreateFromFile(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("PositionColor.vert"),
 				"main",
 				new ShaderCreateInfo
 				{
-					ShaderStage = ShaderStage.Vertex,
-					ShaderFormat = ShaderFormat.SPIRV
+					Stage = ShaderStage.Vertex,
+					Format = ShaderFormat.SPIRV
 				}
 			);
-			Shader fragShaderModule = new Shader(
+			Shader fragShaderModule = Shader.CreateFromFile(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("SolidColor.frag"),
 				"main",
 				new ShaderCreateInfo
 				{
-					ShaderStage = ShaderStage.Fragment,
-					ShaderFormat = ShaderFormat.SPIRV
+					Stage = ShaderStage.Fragment,
+					Format = ShaderFormat.SPIRV
 				}
 			);
 
@@ -47,42 +47,40 @@ namespace MoonWorksGraphicsTests
 				vertShaderModule,
 				fragShaderModule
 			);
-			pipelineCreateInfo.AttachmentInfo.HasDepthStencilAttachment = true;
-			pipelineCreateInfo.AttachmentInfo.DepthStencilFormat = TextureFormat.D24_UNORM_S8_UINT;
-			pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionColorVertex>();
+			pipelineCreateInfo.TargetInfo.HasDepthStencilTarget = true;
+			pipelineCreateInfo.TargetInfo.DepthStencilFormat = GraphicsDevice.SupportedDepthStencilFormat;
+			pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionColorVertex>(0);
 			pipelineCreateInfo.DepthStencilState = new DepthStencilState
 			{
-				StencilTestEnable = true,
+				EnableStencilTest = true,
 				FrontStencilState = new StencilOpState
 				{
 					CompareOp = CompareOp.Never,
 					FailOp = StencilOp.Replace,
 				},
-				Reference = 1,
 				WriteMask = 0xFF
 			};
-			MaskerPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+			MaskerPipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 			pipelineCreateInfo.DepthStencilState = new DepthStencilState
 			{
-				StencilTestEnable = true,
+				EnableStencilTest = true,
 				FrontStencilState = new StencilOpState
 				{
 					CompareOp = CompareOp.Equal,
 				},
-				Reference = 0,
 				CompareMask = 0xFF,
 				WriteMask = 0
 			};
-			MaskeePipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+			MaskeePipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 			// Create and populate the GPU resources
-			DepthStencilTexture = Texture.CreateTexture2D(
+			DepthStencilTexture = Texture.Create2D(
 				GraphicsDevice,
 				Window.Width,
 				Window.Height,
-				TextureFormat.D24_UNORM_S8_UINT,
-				TextureUsageFlags.DepthStencil
+				GraphicsDevice.SupportedDepthStencilFormat,
+				TextureUsageFlags.DepthStencilTarget
 			);
 
 			var resourceUploader = new ResourceUploader(GraphicsDevice);
@@ -113,14 +111,30 @@ namespace MoonWorksGraphicsTests
 			if (swapchainTexture != null)
 			{
 				var renderPass = cmdbuf.BeginRenderPass(
-					new DepthStencilAttachmentInfo(DepthStencilTexture, true, new DepthStencilValue(0, 0), StoreOp.DontCare, StoreOp.DontCare),
-					new ColorAttachmentInfo(swapchainTexture, false, Color.Black)
+					new ColorTargetInfo
+					{
+						Texture = swapchainTexture.Handle,
+						LoadOp = LoadOp.Clear,
+						ClearColor = Color.Black
+					},
+					new DepthStencilTargetInfo
+					{
+						Texture = DepthStencilTexture.Handle,
+						LoadOp = LoadOp.Clear,
+						ClearDepth = 0,
+						StencilLoadOp = LoadOp.DontCare,
+						StoreOp = StoreOp.DontCare,
+						StencilStoreOp = StoreOp.DontCare,
+						Cycle = true
+					}
 				);
 				renderPass.BindGraphicsPipeline(MaskerPipeline);
+				renderPass.SetStencilReference(1);
 				renderPass.BindVertexBuffer(VertexBuffer);
-				renderPass.DrawPrimitives(0, 1);
+				renderPass.DrawPrimitives(3, 1, 0, 0);
 				renderPass.BindGraphicsPipeline(MaskeePipeline);
-				renderPass.DrawPrimitives(3, 1);
+				renderPass.SetStencilReference(0);
+				renderPass.DrawPrimitives(3, 1, 0, 0);
 				cmdbuf.EndRenderPass(renderPass);
 			}
 			GraphicsDevice.Submit(cmdbuf);

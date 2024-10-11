@@ -47,15 +47,13 @@ class Program : Game
     public Program(
 		WindowCreateInfo windowCreateInfo,
 		FrameLimiterSettings frameLimiterSettings,
-		BackendFlags preferredBackends,
+		ShaderFormat availableShaderFormats,
 		int targetTimestep = 60,
 		bool debugMode = false
 	) : base(
 		windowCreateInfo,
-		SwapchainComposition.SDR,
-		PresentMode.VSync,
 		frameLimiterSettings,
-		preferredBackends,
+		availableShaderFormats,
 		targetTimestep,
 		debugMode
 	) {
@@ -124,7 +122,7 @@ class Program : Game
 		var game = new Program(
 			windowCreateInfo,
 			frameLimiterSettings,
-			BackendFlags.Vulkan | BackendFlags.D3D11 | BackendFlags.Metal,
+			ShaderFormat.SPIRV,
 			60,
 			debugMode
 		);

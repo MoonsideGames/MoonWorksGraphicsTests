@@ -23,7 +23,9 @@ namespace MoonWorksGraphicsTests
 			var resourceUploader = new ResourceUploader(GraphicsDevice);
 
 			OriginalTexture = resourceUploader.CreateTexture2DFromCompressed(
-				TestUtils.GetTexturePath("ravioli.png")
+				TestUtils.GetTexturePath("ravioli.png"),
+				TextureFormat.R8G8B8A8Unorm,
+				TextureUsageFlags.Sampler
 			);
 
 			resourceUploader.Upload();
@@ -41,22 +43,21 @@ namespace MoonWorksGraphicsTests
 
 			var textureCreateInfo = new TextureCreateInfo
 			{
+				Type = OriginalTexture.Type,
+				Format = OriginalTexture.Format,
+				Usage = OriginalTexture.UsageFlags,
 				Width = OriginalTexture.Width,
 				Height = OriginalTexture.Height,
-				Depth = OriginalTexture.Depth,
-				IsCube = OriginalTexture.IsCube,
-				LayerCount = OriginalTexture.LayerCount,
-				LevelCount = OriginalTexture.LevelCount,
-				SampleCount = OriginalTexture.SampleCount,
-				Format = OriginalTexture.Format,
-				UsageFlags = OriginalTexture.UsageFlags
+				LayerCountOrDepth = OriginalTexture.LayerCountOrDepth,
+				NumLevels = OriginalTexture.LevelCount,
+				SampleCount = OriginalTexture.SampleCount
 			};
 
 			// Create a 1:1 copy of the texture
-			TextureCopy = new Texture(GraphicsDevice, textureCreateInfo);
+			TextureCopy = Texture.Create(GraphicsDevice, textureCreateInfo);
 
 			// Create a download transfer buffer
-			TransferBuffer compareBuffer = new TransferBuffer(
+			TransferBuffer compareBuffer = TransferBuffer.Create<byte>(
 				GraphicsDevice,
 				TransferBufferUsage.Download,
 				byteCount
@@ -64,11 +65,17 @@ namespace MoonWorksGraphicsTests
 
 			var copyPass = cmdbuf.BeginCopyPass();
 			copyPass.CopyTextureToTexture(
-				new TextureLocation(OriginalTexture),
-				new TextureLocation(TextureCopy),
+				new TextureLocation
+				{
+					Texture = OriginalTexture.Handle
+				},
+				new TextureLocation
+				{
+					Texture = TextureCopy.Handle
+				},
 				OriginalTexture.Width,
 				OriginalTexture.Height,
-				OriginalTexture.Depth,
+				1,
 				false
 			);
 			cmdbuf.EndCopyPass(copyPass);
@@ -76,17 +83,42 @@ namespace MoonWorksGraphicsTests
 			// Create a half-sized copy of this texture
 			textureCreateInfo.Width /= 2;
 			textureCreateInfo.Height /= 2;
-			textureCreateInfo.UsageFlags |= TextureUsageFlags.ColorTarget;
-			TextureSmall = new Texture(GraphicsDevice, textureCreateInfo);
+			textureCreateInfo.Usage |= TextureUsageFlags.ColorTarget;
+			TextureSmall = Texture.Create(GraphicsDevice, textureCreateInfo);
 
 			// Render the half-size copy
-			cmdbuf.Blit(OriginalTexture, TextureSmall, Filter.Linear, false);
+			cmdbuf.Blit(new BlitInfo
+			{
+				LoadOp = LoadOp.DontCare,
+				Source = new BlitRegion
+				{
+					Texture = OriginalTexture.Handle,
+					W = OriginalTexture.Width,
+					H = OriginalTexture.Height
+				},
+				Destination = new BlitRegion
+				{
+					Texture = TextureSmall.Handle,
+					W = TextureSmall.Width,
+					H = TextureSmall.Height
+				},
+				Filter = Filter.Linear
+			});
 
 			// Copy the texture to a transfer buffer
 			copyPass = cmdbuf.BeginCopyPass();
 			copyPass.DownloadFromTexture(
-				new TextureRegion(TextureCopy),
-				new TextureTransferInfo(compareBuffer)
+				new TextureRegion
+				{
+					Texture = TextureCopy.Handle,
+					W = TextureCopy.Width,
+					H = TextureCopy.Height,
+					D = 1,
+				},
+				new TextureTransferInfo
+				{
+					TransferBuffer = compareBuffer.Handle
+				}
 			);
 			cmdbuf.EndCopyPass(copyPass);
 
@@ -95,10 +127,7 @@ namespace MoonWorksGraphicsTests
 			GraphicsDevice.ReleaseFence(fence);
 
 			// Compare the original bytes to the copied bytes.
-			var copiedBytes = NativeMemory.Alloc(byteCount);
-			var copiedSpan = new System.Span<byte>(copiedBytes, (int) byteCount);
-			compareBuffer.GetData(copiedSpan);
-
+			var copiedSpan = compareBuffer.Map<byte>(false);
 			var originalSpan = new System.Span<byte>(pixels, (int)byteCount);
 
 			if (System.MemoryExtensions.SequenceEqual(originalSpan, copiedSpan))
@@ -110,9 +139,9 @@ namespace MoonWorksGraphicsTests
 			{
 				Logger.LogError("FAIL! Original texture bytes do not match downloaded bytes!");
 			}
+			compareBuffer.Unmap();
 
-			RefreshCS.Refresh.Refresh_Image_Free(pixels);
-			NativeMemory.Free(copiedBytes);
+			ImageUtils.FreePixelData(pixels);
 		}
 
 		public override void Update(System.TimeSpan delta) { }
@@ -124,52 +153,68 @@ namespace MoonWorksGraphicsTests
 			if (swapchainTexture != null)
 			{
 				var clearPass = cmdbuf.BeginRenderPass(
-					new ColorAttachmentInfo(swapchainTexture, false, Color.Black)
+					new ColorTargetInfo
+					{
+						Texture = swapchainTexture.Handle,
+						LoadOp = LoadOp.Clear,
+						ClearColor = Color.Black
+					}
 				);
 				cmdbuf.EndRenderPass(clearPass);
 
-				cmdbuf.Blit(
-					OriginalTexture,
-					new TextureRegion
+				cmdbuf.Blit(new BlitInfo
+				{
+					Source = new BlitRegion
 					{
-						TextureSlice = swapchainTexture,
-						Width = swapchainTexture.Width / 2,
-						Height = swapchainTexture.Height / 2,
-						Depth = 1
+						Texture = OriginalTexture.Handle,
+						W = OriginalTexture.Width,
+						H = OriginalTexture.Height
 					},
-					Filter.Nearest,
-					false
-				);
-
-				cmdbuf.Blit(
-					TextureCopy,
-					new TextureRegion
+					Destination = new BlitRegion
 					{
-						TextureSlice = swapchainTexture,
+						Texture = swapchainTexture.Handle,
+						W = swapchainTexture.Width / 2,
+						H = swapchainTexture.Height / 2
+					},
+					Filter = Filter.Nearest
+				});
+
+				cmdbuf.Blit(new BlitInfo
+				{
+					Source = new BlitRegion
+					{
+						Texture = TextureCopy.Handle,
+						W = TextureCopy.Width,
+						H = TextureCopy.Height
+					},
+					Destination = new BlitRegion
+					{
+						Texture = swapchainTexture.Handle,
 						X = swapchainTexture.Width / 2,
-						Y = 0,
-						Width = swapchainTexture.Width / 2,
-						Height = swapchainTexture.Height / 2,
-						Depth = 1
+						W = swapchainTexture.Width / 2,
+						H = swapchainTexture.Height / 2,
 					},
-					Filter.Nearest,
-					false
-				);
+					Filter = Filter.Nearest
+				});
 
-				cmdbuf.Blit(
-					TextureSmall,
-					new TextureRegion
+				cmdbuf.Blit(new BlitInfo
+				{
+					Source = new BlitRegion
 					{
-						TextureSlice = swapchainTexture,
+						Texture = TextureSmall.Handle,
+						W = TextureSmall.Width,
+						H = TextureSmall.Height
+					},
+					Destination = new BlitRegion
+					{
+						Texture = swapchainTexture.Handle,
 						X = swapchainTexture.Width / 4,
 						Y = swapchainTexture.Height / 2,
-						Width = swapchainTexture.Width / 2,
-						Height = swapchainTexture.Height / 2,
-						Depth = 1
+						W = swapchainTexture.Width / 2,
+						H = swapchainTexture.Height / 2
 					},
-					Filter.Nearest,
-					false
-				);
+					Filter = Filter.Nearest
+				});
 			}
 
 			GraphicsDevice.Submit(cmdbuf);

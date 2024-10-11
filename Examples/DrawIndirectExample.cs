@@ -20,25 +20,25 @@ class DrawIndirectExample : Example
 		Window.SetTitle("DrawIndirect");
 
 		// Load the shaders
-		Shader vertShader = new Shader(
+		Shader vertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("PositionColor.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
-		Shader fragShader = new Shader(
+		Shader fragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
@@ -49,7 +49,7 @@ class DrawIndirectExample : Example
 			fragShader
 		);
 		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionColorVertex>();
-		GraphicsPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		GraphicsPipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 		// Create and populate the vertex buffer
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
@@ -69,8 +69,17 @@ class DrawIndirectExample : Example
 
 		DrawBuffer = resourceUploader.CreateBuffer(
 			[
-				new IndirectDrawCommand(3, 1, 3, 0),
-				new IndirectDrawCommand(3, 1, 0, 0),
+				new IndirectDrawCommand
+				{
+					NumVertices = 3,
+					NumInstances = 1,
+					FirstVertex = 3
+				},
+				new IndirectDrawCommand
+				{
+					NumVertices = 3,
+					NumInstances = 1
+				}
 			],
 			BufferUsageFlags.Indirect
 		);
@@ -88,15 +97,16 @@ class DrawIndirectExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(
-					swapchainTexture,
-					false,
-					Color.Black
-				)
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				}
 			);
 			renderPass.BindGraphicsPipeline(GraphicsPipeline);
 			renderPass.BindVertexBuffer(VertexBuffer);
-			renderPass.DrawPrimitivesIndirect(DrawBuffer, 0, 2, (uint) Marshal.SizeOf<IndirectDrawCommand>());
+			renderPass.DrawPrimitivesIndirect(DrawBuffer, 0, 2);
 			cmdbuf.EndRenderPass(renderPass);
 		}
 		GraphicsDevice.Submit(cmdbuf);

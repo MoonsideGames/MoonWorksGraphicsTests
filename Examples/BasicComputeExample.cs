@@ -20,14 +20,14 @@ class BasicComputeExample : Example
 		Window.SetTitle("BasicCompute");
 
         // Create the compute pipeline that writes texture data
-        ComputePipeline fillTextureComputePipeline = new ComputePipeline(
+        ComputePipeline fillTextureComputePipeline = ComputePipeline.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("FillTexture.comp"),
 			"main",
 			new ComputePipelineCreateInfo
 			{
-				ShaderFormat = ShaderFormat.SPIRV,
-				ReadWriteStorageTextureCount = 1,
+				Format = ShaderFormat.SPIRV,
+				NumReadWriteStorageTextures = 1,
 				ThreadCountX = 8,
 				ThreadCountY = 8,
 				ThreadCountZ = 1
@@ -35,14 +35,14 @@ class BasicComputeExample : Example
 		);
 
         // Create the compute pipeline that calculates squares of numbers
-        ComputePipeline calculateSquaresComputePipeline = new ComputePipeline(
+        ComputePipeline calculateSquaresComputePipeline = ComputePipeline.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("CalculateSquares.comp"),
 			"main",
 			new ComputePipelineCreateInfo
 			{
-				ShaderFormat = ShaderFormat.SPIRV,
-				ReadWriteStorageBufferCount = 1,
+				Format = ShaderFormat.SPIRV,
+				NumReadWriteStorageBuffers = 1,
 				ThreadCountX = 8,
 				ThreadCountY = 1,
 				ThreadCountZ = 1
@@ -50,26 +50,26 @@ class BasicComputeExample : Example
 		);
 
 		// Create the graphics pipeline
-		Shader vertShader = new Shader(
+		Shader vertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
-		Shader fragShader = new Shader(
+		Shader fragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV,
-				SamplerCount = 1
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV,
+				NumSamplers = 1
 			}
 		);
 
@@ -78,9 +78,9 @@ class BasicComputeExample : Example
 			vertShader,
 			fragShader
 		);
-		drawPipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
+		drawPipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>(0);
 
-		DrawPipeline = new GraphicsPipeline(
+		DrawPipeline = GraphicsPipeline.Create(
 			GraphicsDevice,
 			drawPipelineCreateInfo
 		);
@@ -93,21 +93,21 @@ class BasicComputeExample : Example
 			(uint) squares.Length
 		);
 
-		TransferBuffer transferBuffer = new TransferBuffer(
+		TransferBuffer transferBuffer = TransferBuffer.Create<byte>(
 			GraphicsDevice,
 			TransferBufferUsage.Download,
 			squaresBuffer.Size
 		);
 
-		Texture = Texture.CreateTexture2D(
+		Texture = Texture.Create2D(
 			GraphicsDevice,
 			Window.Width,
 			Window.Height,
-			TextureFormat.R8G8B8A8,
+			TextureFormat.R8G8B8A8Unorm,
 			TextureUsageFlags.ComputeStorageWrite | TextureUsageFlags.Sampler
 		);
 
-		Sampler = new Sampler(GraphicsDevice, new SamplerCreateInfo());
+		Sampler = Sampler.Create(GraphicsDevice, new SamplerCreateInfo());
 
 		// Upload GPU resources and dispatch compute work
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
@@ -131,7 +131,7 @@ class BasicComputeExample : Example
 		// This should result in a bright yellow texture!
 		var computePass = cmdbuf.BeginComputePass(new StorageTextureReadWriteBinding
 		{
-			TextureSlice = Texture,
+			Texture = Texture.Handle,
 			Cycle = false
 		});
 
@@ -143,7 +143,7 @@ class BasicComputeExample : Example
 		// This calculates the squares of the first N integers!
 		computePass = cmdbuf.BeginComputePass(new StorageBufferReadWriteBinding
 		{
-			Buffer = squaresBuffer,
+			Buffer = squaresBuffer.Handle,
 			Cycle = false
 		});
 
@@ -155,8 +155,15 @@ class BasicComputeExample : Example
 		var copyPass = cmdbuf.BeginCopyPass();
 
 		copyPass.DownloadFromBuffer(
-			new BufferRegion(squaresBuffer, 0, squaresBuffer.Size),
-			new TransferBufferLocation(transferBuffer)
+			new BufferRegion
+			{
+				Buffer = squaresBuffer.Handle,
+				Size = squaresBuffer.Size
+			},
+			new TransferBufferLocation
+			{
+				TransferBuffer = transferBuffer.Handle
+			}
 		);
 
 		cmdbuf.EndCopyPass(copyPass);
@@ -166,7 +173,8 @@ class BasicComputeExample : Example
 		GraphicsDevice.ReleaseFence(fence);
 
 		// Print the squares!
-		transferBuffer.GetData<uint>(squares, 0);
+		var transferSpan = transferBuffer.Map<uint>(false);
+		transferSpan.CopyTo(squares);
 		Logger.LogInfo("Squares of the first " + squares.Length + " integers: " + string.Join(", ", squares));
 	}
 
@@ -178,11 +186,16 @@ class BasicComputeExample : Example
 		Texture swapchainTexture = cmdbuf.AcquireSwapchainTexture(Window);
 		if (swapchainTexture != null)
 		{
-			var renderPass = cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchainTexture, false, Color.CornflowerBlue));
+			var renderPass = cmdbuf.BeginRenderPass(new ColorTargetInfo
+			{
+				Texture = swapchainTexture.Handle,
+				LoadOp = LoadOp.Clear,
+				ClearColor = Color.CornflowerBlue
+			});
 			renderPass.BindGraphicsPipeline(DrawPipeline);
 			renderPass.BindFragmentSampler(new TextureSamplerBinding(Texture, Sampler));
 			renderPass.BindVertexBuffer(VertexBuffer);
-			renderPass.DrawPrimitives(0, 2);
+			renderPass.DrawPrimitives(6, 1, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 		}
 		GraphicsDevice.Submit(cmdbuf);

@@ -1,6 +1,7 @@
 ﻿using MoonWorks;
 using MoonWorks.Graphics;
 using MoonWorks.Input;
+using SDL3;
 
 namespace MoonWorksGraphicsTests
 {
@@ -14,18 +15,17 @@ namespace MoonWorksGraphicsTests
 			GraphicsDevice = graphicsDevice;
 
 			Window.SetTitle("ClearScreen");
-			Window.SetPosition(SDL2.SDL.SDL_WINDOWPOS_CENTERED, SDL2.SDL.SDL_WINDOWPOS_CENTERED);
 			var (windowX, windowY) = Window.Position;
 			Window.SetPosition(windowX - 360, windowY);
 
 			SecondaryWindow = new Window(
 				new WindowCreateInfo("Secondary Window", 640, 480, ScreenMode.Windowed, false, false),
-				SDL2.SDL.SDL_WindowFlags.SDL_WINDOW_VULKAN
+				0
 			);
 			(windowX, windowY) = SecondaryWindow.Position;
 			SecondaryWindow.SetPosition(windowX + 360, windowY);
 
-			GraphicsDevice.ClaimWindow(SecondaryWindow, SwapchainComposition.SDR, PresentMode.VSync);
+			GraphicsDevice.ClaimWindow(SecondaryWindow);
 		}
 
 		public override void Update(System.TimeSpan delta) { }
@@ -42,7 +42,12 @@ namespace MoonWorksGraphicsTests
 				if (swapchainTexture != null)
 				{
 					var renderPass = cmdbuf.BeginRenderPass(
-						new ColorAttachmentInfo(swapchainTexture, false, Color.CornflowerBlue)
+						new ColorTargetInfo
+						{
+							Texture = swapchainTexture.Handle,
+							LoadOp = LoadOp.Clear,
+							ClearColor = Color.CornflowerBlue
+						}
 					);
 					cmdbuf.EndRenderPass(renderPass);
 				}
@@ -56,7 +61,12 @@ namespace MoonWorksGraphicsTests
 				if (swapchainTexture != null)
 				{
 					var renderPass = cmdbuf.BeginRenderPass(
-						new ColorAttachmentInfo(swapchainTexture, false, Color.Aquamarine)
+						new ColorTargetInfo
+						{
+							Texture = swapchainTexture.Handle,
+							LoadOp = LoadOp.Clear,
+							ClearColor = Color.Aquamarine
+						}
 					);
 					cmdbuf.EndRenderPass(renderPass);
 				}
@@ -69,7 +79,7 @@ namespace MoonWorksGraphicsTests
 			GraphicsDevice.UnclaimWindow(SecondaryWindow);
 			SecondaryWindow.Dispose();
 
-			Window.SetPosition(SDL2.SDL.SDL_WINDOWPOS_CENTERED, SDL2.SDL.SDL_WINDOWPOS_CENTERED);
+			Window.SetPositionCentered();
         }
     }
 }

@@ -24,12 +24,12 @@ class RenderTexture2DArrayExample : Example
 
 		Window.SetTitle("RenderTexture2DArray");
 
-		RenderTarget = Texture.CreateTexture2DArray(
+		RenderTarget = Texture.Create2DArray(
 			GraphicsDevice,
 			16,
 			16,
 			(uint) colors.Length,
-			TextureFormat.R8G8B8A8,
+			TextureFormat.R8G8B8A8Unorm,
 			TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler
 		);
 
@@ -38,20 +38,14 @@ class RenderTexture2DArrayExample : Example
 		// Clear each depth slice of the RT to a different color
 		for (uint i = 0; i < colors.Length; i += 1)
 		{
-			ColorAttachmentInfo attachmentInfo = new ColorAttachmentInfo
-			{
-				TextureSlice = new TextureSlice
-				{
-					Texture = RenderTarget,
-					Layer = i,
-					MipLevel = 0
-				},
-				ClearColor = colors[i],
-				LoadOp = LoadOp.Clear,
-				StoreOp = StoreOp.Store
-			};
-
-			var renderPass = cmdbuf.BeginRenderPass(attachmentInfo);
+            var renderPass = cmdbuf.BeginRenderPass(new ColorTargetInfo
+            {
+                Texture = RenderTarget.Handle,
+                LayerOrDepthPlane = i,
+                LoadOp = LoadOp.Clear,
+                ClearColor = colors[i],
+                StoreOp = StoreOp.Store
+            });
 			cmdbuf.EndRenderPass(renderPass);
 		}
 
@@ -70,20 +64,23 @@ class RenderTexture2DArrayExample : Example
 		Texture swapchainTexture = cmdbuf.AcquireSwapchainTexture(Window);
 		if (swapchainTexture != null)
 		{
-			cmdbuf.Blit(
-				new TextureRegion
+			cmdbuf.Blit(new BlitInfo
+			{
+				Source = new BlitRegion
 				{
-					TextureSlice = new TextureSlice
-					{
-						Texture = RenderTarget,
-						Layer = (uint) MathF.Floor(t)
-					},
-					Depth = 1
+					Texture = RenderTarget.Handle,
+					LayerOrDepthPlane = (uint) Math.Floor(t),
+					W = RenderTarget.Width,
+					H = RenderTarget.Height
 				},
-				swapchainTexture,
-				Filter.Nearest,
-				false
-			);
+				Destination = new BlitRegion
+				{
+					Texture = swapchainTexture.Handle,
+					W = swapchainTexture.Width,
+					H = swapchainTexture.Height
+				},
+				Filter = Filter.Nearest
+			});
 		}
 		GraphicsDevice.Submit(cmdbuf);
 	}

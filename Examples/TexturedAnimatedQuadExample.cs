@@ -35,28 +35,28 @@ class TexturedAnimatedQuadExample : Example
 		Window.SetTitle("TexturedAnimatedQuad");
 
 		// Load the shaders
-		Shader vertShader = new Shader(
+		Shader vertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadWithMatrix.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV,
-				UniformBufferCount = 1
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV,
+				NumUniformBuffers = 1
 			}
 		);
 
-		Shader fragShader = new Shader(
+		Shader fragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadWithMultiplyColor.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV,
-				SamplerCount = 1,
-				UniformBufferCount = 1
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV,
+				NumSamplers = 1,
+				NumUniformBuffers = 1
 			}
 		);
 
@@ -66,12 +66,12 @@ class TexturedAnimatedQuadExample : Example
 			vertShader,
 			fragShader
 		);
-		pipelineCreateInfo.AttachmentInfo.ColorAttachmentDescriptions[0].BlendState = ColorAttachmentBlendState.AlphaBlend;
+		pipelineCreateInfo.TargetInfo.ColorTargetDescriptions[0].BlendState = ColorTargetBlendState.PremultipliedAlphaBlend;
 		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
 
-		Pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		Pipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
-		Sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
+		Sampler = Sampler.Create(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 		// Create and populate the GPU resources
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
@@ -94,7 +94,7 @@ class TexturedAnimatedQuadExample : Example
 			BufferUsageFlags.Index
 		);
 
-		Texture = resourceUploader.CreateTexture2DFromCompressed(TestUtils.GetTexturePath("ravioli.png"));
+		Texture = resourceUploader.CreateTexture2DFromCompressed(TestUtils.GetTexturePath("ravioli.png"), TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler);
 
 		resourceUploader.Upload();
 		resourceUploader.Dispose();
@@ -114,7 +114,14 @@ class TexturedAnimatedQuadExample : Example
 		Texture swapchainTexture = cmdbuf.AcquireSwapchainTexture(Window);
 		if (swapchainTexture != null)
 		{
-			var renderPass = cmdbuf.BeginRenderPass(new ColorAttachmentInfo(swapchainTexture, false, Color.Black));
+			var renderPass = cmdbuf.BeginRenderPass(
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				}
+			);
 			renderPass.BindGraphicsPipeline(Pipeline);
 			renderPass.BindVertexBuffer(VertexBuffer);
 			renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.Sixteen);
@@ -125,28 +132,28 @@ class TexturedAnimatedQuadExample : Example
 			fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Sin(t) * 0.5f, 1f, 1f));
 			cmdbuf.PushVertexUniformData(vertUniforms);
 			cmdbuf.PushFragmentUniformData(fragUniforms);
-			renderPass.DrawIndexedPrimitives(0, 0, 2);
+			renderPass.DrawIndexedPrimitives(6, 1, 0, 0, 0);
 
 			// Top-right
 			vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ((2 * System.MathF.PI) - t) * Matrix4x4.CreateTranslation(new Vector3(0.5f, -0.5f, 0)));
 			fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Cos(t) * 0.5f, 1f, 1f));
 			cmdbuf.PushVertexUniformData(vertUniforms);
 			cmdbuf.PushFragmentUniformData(fragUniforms);
-			renderPass.DrawIndexedPrimitives(0, 0, 2);
+			renderPass.DrawIndexedPrimitives(6, 1, 0, 0, 0);
 
 			// Bottom-left
 			vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(-0.5f, 0.5f, 0)));
 			fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Sin(t) * 0.2f, 1f, 1f));
 			cmdbuf.PushVertexUniformData(vertUniforms);
 			cmdbuf.PushFragmentUniformData(fragUniforms);
-			renderPass.DrawIndexedPrimitives(0, 0, 2);
+			renderPass.DrawIndexedPrimitives(6, 1, 0, 0, 0);
 
 			// Bottom-right
 			vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(0.5f, 0.5f, 0)));
 			fragUniforms = new FragmentUniforms(new Vector4(1f, 0.5f + System.MathF.Cos(t) * 1f, 1f, 1f));
 			cmdbuf.PushVertexUniformData(vertUniforms);
 			cmdbuf.PushFragmentUniformData(fragUniforms);
-			renderPass.DrawIndexedPrimitives(0, 0, 2);
+			renderPass.DrawIndexedPrimitives(6, 1, 0, 0, 0);
 
 			cmdbuf.EndRenderPass(renderPass);
 		}

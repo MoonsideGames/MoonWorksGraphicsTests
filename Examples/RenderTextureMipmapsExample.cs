@@ -56,27 +56,27 @@ class RenderTextureMipmapsExample : Example
 		Logger.LogInfo(GetSamplerString(currentSamplerIndex));
 
 		// Load the shaders
-		Shader vertShaderModule = new Shader(
+		Shader vertShaderModule = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadWithMatrix.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV,
-				UniformBufferCount = 1
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV,
+				NumUniformBuffers = 1
 			}
 		);
 
-		Shader fragShaderModule = new Shader(
+		Shader fragShaderModule = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV,
-				SamplerCount = 1
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV,
+				NumSamplers = 1
 			}
 		);
 
@@ -88,26 +88,26 @@ class RenderTextureMipmapsExample : Example
 		);
 		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
 
-		Pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		Pipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 		// Create samplers
 		SamplerCreateInfo samplerCreateInfo = SamplerCreateInfo.PointClamp;
-		Samplers[0] = new Sampler(GraphicsDevice, samplerCreateInfo);
+		Samplers[0] = Sampler.Create(GraphicsDevice, samplerCreateInfo);
 
 		samplerCreateInfo = SamplerCreateInfo.LinearClamp;
-		Samplers[1] = new Sampler(GraphicsDevice, samplerCreateInfo);
+		Samplers[1] = Sampler.Create(GraphicsDevice, samplerCreateInfo);
 
 		samplerCreateInfo = SamplerCreateInfo.PointClamp;
 		samplerCreateInfo.MipLodBias = 0.25f;
-		Samplers[2] = new Sampler(GraphicsDevice, samplerCreateInfo);
+		Samplers[2] = Sampler.Create(GraphicsDevice, samplerCreateInfo);
 
 		samplerCreateInfo = SamplerCreateInfo.PointClamp;
 		samplerCreateInfo.MinLod = 1;
-		Samplers[3] = new Sampler(GraphicsDevice, samplerCreateInfo);
+		Samplers[3] = Sampler.Create(GraphicsDevice, samplerCreateInfo);
 
 		samplerCreateInfo = SamplerCreateInfo.PointClamp;
 		samplerCreateInfo.MaxLod = 1;
-		Samplers[4] = new Sampler(GraphicsDevice, samplerCreateInfo);
+		Samplers[4] = Sampler.Create(GraphicsDevice, samplerCreateInfo);
 
 		// Create and populate the GPU resources
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
@@ -133,11 +133,11 @@ class RenderTextureMipmapsExample : Example
 		resourceUploader.Upload();
 		resourceUploader.Dispose();
 
-		Texture = Texture.CreateTexture2D(
+		Texture = Texture.Create2D(
 			GraphicsDevice,
 			Window.Width,
 			Window.Height,
-			TextureFormat.R8G8B8A8,
+			TextureFormat.R8G8B8A8Unorm,
 			TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler,
 			4
 		);
@@ -147,20 +147,14 @@ class RenderTextureMipmapsExample : Example
 		// Clear each mip level to a different color
 		for (uint i = 0; i < Texture.LevelCount; i += 1)
 		{
-			ColorAttachmentInfo attachmentInfo = new ColorAttachmentInfo
-			{
-				TextureSlice = new TextureSlice
-				{
-					Texture = Texture,
-					Layer = 0,
-					MipLevel = i
-				},
-				ClearColor = colors[i],
-				LoadOp = LoadOp.Clear,
-				StoreOp = StoreOp.Store,
-				Cycle = false
-			};
-			var renderPass = cmdbuf.BeginRenderPass(attachmentInfo);
+            var renderPass = cmdbuf.BeginRenderPass(new ColorTargetInfo
+            {
+                Texture = Texture.Handle,
+                MipLevel = i,
+                LoadOp = LoadOp.Clear,
+                ClearColor = colors[i],
+                StoreOp = StoreOp.Store
+            });
 			cmdbuf.EndRenderPass(renderPass);
 		}
 
@@ -195,18 +189,19 @@ class RenderTextureMipmapsExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(
-					swapchainTexture,
-					false,
-					Color.Black
-				)
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				}
 			);
 			renderPass.BindGraphicsPipeline(Pipeline);
 			renderPass.BindVertexBuffer(VertexBuffer);
 			renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.Sixteen);
 			renderPass.BindFragmentSampler(new TextureSamplerBinding(Texture, Samplers[currentSamplerIndex]));
 			cmdbuf.PushVertexUniformData(vertUniforms);
-			renderPass.DrawIndexedPrimitives(0, 0, 2);
+			renderPass.DrawIndexedPrimitives(6, 1, 0, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 		}
 

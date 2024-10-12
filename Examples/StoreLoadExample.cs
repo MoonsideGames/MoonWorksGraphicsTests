@@ -16,25 +16,25 @@ class StoreLoadExample : Example
 
 		Window.SetTitle("StoreLoad");
 
-		Shader vertShader = new Shader(
+		Shader vertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("RawTriangle.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
-		Shader fragShader = new Shader(
+		Shader fragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
@@ -43,7 +43,7 @@ class StoreLoadExample : Example
 			vertShader,
 			fragShader
 		);
-		FillPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		FillPipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 	}
 
 	public override void Update(TimeSpan delta)
@@ -58,23 +58,24 @@ class StoreLoadExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(
-					swapchainTexture,
-					false,
-					Color.Blue
-				)
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Blue
+				}
 			);
 			renderPass.BindGraphicsPipeline(FillPipeline);
-			renderPass.DrawPrimitives(0, 1);
+			renderPass.DrawPrimitives(3, 1, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 
 			renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(
-					swapchainTexture,
-					false,
-					LoadOp.Load,
-					StoreOp.Store
-				)
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Load,
+					StoreOp = StoreOp.Store
+				}
 			);
 			cmdbuf.EndRenderPass(renderPass);
 		}

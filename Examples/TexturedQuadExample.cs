@@ -13,26 +13,26 @@ class TexturedQuadExample : Example
 	private Buffer vertexBuffer;
 	private Buffer indexBuffer;
 	private Sampler[] samplers = new Sampler[6];
-	private string[] samplerNames = new string[]
-	{
-		"PointClamp",
+	private string[] samplerNames =
+    [
+        "PointClamp",
 		"PointWrap",
 		"LinearClamp",
 		"LinearWrap",
 		"AnisotropicClamp",
 		"AnisotropicWrap"
-	};
+	];
 
 	private int currentSamplerIndex;
 
 	private Texture[] textures = new Texture[4];
-	private string[] imageLoadFormatNames = new string[]
-	{
-		"PNG from file",
+	private string[] imageLoadFormatNames =
+    [
+        "PNG from file",
 		"PNG from memory",
 		"QOI from file",
 		"QOI from memory"
-	};
+	];
 
 	private int currentTextureIndex;
 
@@ -59,26 +59,26 @@ class TexturedQuadExample : Example
 		Logger.LogInfo(qoiBytes.Length.ToString());
 
 		// Load the shaders
-		Shader vertShader = new Shader(
+		Shader vertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
-		Shader fragShader = new Shader(
+		Shader fragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV,
-				SamplerCount = 1
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV,
+				NumSamplers = 1
 			}
 		);
 
@@ -90,15 +90,15 @@ class TexturedQuadExample : Example
 		);
 		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
 
-		pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		pipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 		// Create samplers
-		samplers[0] = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
-		samplers[1] = new Sampler(GraphicsDevice, SamplerCreateInfo.PointWrap);
-		samplers[2] = new Sampler(GraphicsDevice, SamplerCreateInfo.LinearClamp);
-		samplers[3] = new Sampler(GraphicsDevice, SamplerCreateInfo.LinearWrap);
-		samplers[4] = new Sampler(GraphicsDevice, SamplerCreateInfo.AnisotropicClamp);
-		samplers[5] = new Sampler(GraphicsDevice, SamplerCreateInfo.AnisotropicWrap);
+		samplers[0] = Sampler.Create(GraphicsDevice, SamplerCreateInfo.PointClamp);
+		samplers[1] = Sampler.Create(GraphicsDevice, SamplerCreateInfo.PointWrap);
+		samplers[2] = Sampler.Create(GraphicsDevice, SamplerCreateInfo.LinearClamp);
+		samplers[3] = Sampler.Create(GraphicsDevice, SamplerCreateInfo.LinearWrap);
+		samplers[4] = Sampler.Create(GraphicsDevice, SamplerCreateInfo.AnisotropicClamp);
+		samplers[5] = Sampler.Create(GraphicsDevice, SamplerCreateInfo.AnisotropicWrap);
 
 		var vertexData = new Span<PositionTextureVertex>([
 			new PositionTextureVertex(new Vector3(-1,  1, 0), new Vector2(0, 0)),
@@ -119,10 +119,10 @@ class TexturedQuadExample : Example
 		vertexBuffer = resourceUploader.CreateBuffer(vertexData, BufferUsageFlags.Vertex);
 		indexBuffer = resourceUploader.CreateBuffer(indexData, BufferUsageFlags.Index);
 
-		textures[0] = resourceUploader.CreateTexture2DFromCompressed(TestUtils.GetTexturePath("ravioli.png"));
-		textures[1] = resourceUploader.CreateTexture2DFromCompressed(pngBytes);
-		textures[2] = resourceUploader.CreateTexture2DFromCompressed(TestUtils.GetTexturePath("ravioli.qoi"));
-		textures[3] = resourceUploader.CreateTexture2DFromCompressed(qoiBytes);
+		textures[0] = resourceUploader.CreateTexture2DFromCompressed(TestUtils.GetTexturePath("ravioli.png"), TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler);
+		textures[1] = resourceUploader.CreateTexture2DFromCompressed(pngBytes, TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler);
+		textures[2] = resourceUploader.CreateTexture2DFromCompressed(TestUtils.GetTexturePath("ravioli.qoi"), TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler);
+		textures[3] = resourceUploader.CreateTexture2DFromCompressed(qoiBytes, TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler);
 
 		resourceUploader.Upload();
 		resourceUploader.Dispose();
@@ -175,17 +175,18 @@ class TexturedQuadExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(
-					swapchainTexture,
-					false,
-					Color.Black
-				)
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				}
 			);
 			renderPass.BindGraphicsPipeline(pipeline);
 			renderPass.BindVertexBuffer(vertexBuffer);
 			renderPass.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
 			renderPass.BindFragmentSampler(new TextureSamplerBinding(textures[currentTextureIndex], samplers[currentSamplerIndex]));
-			renderPass.DrawIndexedPrimitives(0, 0, 2);
+			renderPass.DrawIndexedPrimitives(6, 1, 0, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 		}
 		GraphicsDevice.Submit(cmdbuf);

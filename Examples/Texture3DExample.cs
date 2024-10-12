@@ -36,27 +36,27 @@ class Texture3DExample : Example
 		Logger.LogInfo("Press Left and Right to cycle between depth slices");
 
 		// Load the shaders
-		Shader vertShader = new Shader(
+		Shader vertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
-		Shader fragShader = new Shader(
+		Shader fragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad3D.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV,
-				SamplerCount = 1,
-				UniformBufferCount = 1
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV,
+				NumSamplers = 1,
+				NumUniformBuffers = 1
 			}
 		);
 
@@ -68,10 +68,10 @@ class Texture3DExample : Example
 		);
 		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
 
-		Pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		Pipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 		// Create samplers
-		Sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
+		Sampler = Sampler.Create(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 		// Create and populate the GPU resources
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
@@ -94,32 +94,25 @@ class Texture3DExample : Example
 			BufferUsageFlags.Index
 		);
 
-		Texture = Texture.CreateTexture3D(
+		Texture = Texture.Create3D(
 			GraphicsDevice,
 			16,
 			16,
 			7,
-			TextureFormat.R8G8B8A8,
+			TextureFormat.R8G8B8A8Unorm,
 			TextureUsageFlags.Sampler
 		);
 
 		// Load each depth subimage of the 3D texture
-		for (uint i = 0; i < Texture.Depth; i += 1)
+		for (uint i = 0; i < Texture.LayerCountOrDepth; i += 1)
 		{
 			var region = new TextureRegion
 			{
-				TextureSlice = new TextureSlice
-				{
-					Texture = Texture,
-					MipLevel = 0,
-					Layer = 0
-				},
-				X = 0,
-				Y = 0,
+				Texture = Texture.Handle,
 				Z = i,
-				Width = Texture.Width,
-				Height = Texture.Height,
-				Depth = 1
+				W = Texture.Width,
+				H = Texture.Height,
+				D = 1
 			};
 
 			resourceUploader.SetTextureDataFromCompressed(
@@ -141,14 +134,14 @@ class Texture3DExample : Example
 			currentDepth -= 1;
 			if (currentDepth < 0)
 			{
-				currentDepth = (int) Texture.Depth - 1;
+				currentDepth = (int) Texture.LayerCountOrDepth - 1;
 			}
 		}
 
 		if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Right))
 		{
 			currentDepth += 1;
-			if (currentDepth >= Texture.Depth)
+			if (currentDepth >= Texture.LayerCountOrDepth)
 			{
 				currentDepth = 0;
 			}
@@ -162,25 +155,26 @@ class Texture3DExample : Example
 
 	public override void Draw(double alpha)
 	{
-		FragUniform fragUniform = new FragUniform((float)currentDepth / Texture.Depth + 0.01f);
+		FragUniform fragUniform = new FragUniform((float)currentDepth / Texture.LayerCountOrDepth + 0.01f);
 
 		CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 		Texture swapchainTexture = cmdbuf.AcquireSwapchainTexture(Window);
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(
-					swapchainTexture,
-					false,
-					Color.Black
-				)
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				}
 			);
 			renderPass.BindGraphicsPipeline(Pipeline);
 			renderPass.BindVertexBuffer(VertexBuffer);
 			renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.Sixteen);
 			renderPass.BindFragmentSampler(new TextureSamplerBinding(Texture, Sampler));
 			cmdbuf.PushFragmentUniformData(fragUniform);
-			renderPass.DrawIndexedPrimitives(0, 0, 2);
+			renderPass.DrawIndexedPrimitives(6, 1, 0, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 		}
 

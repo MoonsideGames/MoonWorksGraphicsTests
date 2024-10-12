@@ -57,6 +57,7 @@ class Program : Game
 		targetTimestep,
 		debugMode
 	) {
+		SDL3.SDL.SDL_SetHint(SDL3.SDL.SDL_HINT_LOGGING, "Debug");
 		Logger.LogInfo("Welcome to the MoonWorks Graphics Tests program! Press Q and E to cycle through examples!");
 		Examples[ExampleIndex].Init(MainWindow, GraphicsDevice, Inputs);
     }

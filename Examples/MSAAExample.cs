@@ -26,70 +26,55 @@ class MSAAExample : Example
 		Logger.LogInfo("Setting sample count to: " + currentSampleCount);
 
 		// Create the MSAA pipelines
-		Shader triangleVertShader = new Shader(
+		Shader triangleVertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("RawTriangle.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
-		Shader triangleFragShader = new Shader(
+		Shader triangleFragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
 		GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
-			TextureFormat.R8G8B8A8,
+			Window.SwapchainFormat,
 			triangleVertShader,
 			triangleFragShader
 		);
 		for (int i = 0; i < MsaaPipelines.Length; i += 1)
 		{
-			pipelineCreateInfo.MultisampleState.MultisampleCount = (SampleCount) i;
-			MsaaPipelines[i] = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+			pipelineCreateInfo.MultisampleState.SampleCount = (SampleCount) i;
+			MsaaPipelines[i] = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 		}
-
-		// Create the blit pipeline
-		/*
-		ShaderModule blitVertShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuad.vert"));
-		ShaderModule blitFragShaderModule = new ShaderModule(GraphicsDevice, TestUtils.GetShaderPath("TexturedQuad.frag"));
-
-		pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
-			MainWindow.SwapchainFormat,
-			blitVertShaderModule,
-			blitFragShaderModule
-		);
-		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
-		pipelineCreateInfo.FragmentShaderInfo.SamplerBindingCount = 1;
-		blitPipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
-		*/
 
 		// Create the MSAA render textures
 		for (int i = 0; i < RenderTargets.Length; i += 1)
 		{
-			RenderTargets[i] = Texture.CreateTexture2D(
+			RenderTargets[i] = Texture.Create2D(
 				GraphicsDevice,
 				Window.Width,
 				Window.Height,
-				TextureFormat.R8G8B8A8,
-				TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler,
+				Window.SwapchainFormat,
+				TextureUsageFlags.ColorTarget,
 				1,
 				(SampleCount) i
 			);
 		}
 
 		// Create the sampler
-		RTSampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
+		RTSampler = Sampler.Create(GraphicsDevice, SamplerCreateInfo.PointClamp);
 	}
 
 	public override void Update(System.TimeSpan delta)
@@ -128,17 +113,20 @@ class MSAAExample : Example
 			Texture rt = RenderTargets[(int) currentSampleCount];
 
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(
-					rt,
-					true,
-					Color.Black
-				)
+				new ColorTargetInfo
+				{
+					Texture = rt.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black,
+					ResolveTexture = swapchainTexture.Handle,
+					StoreOp = StoreOp.Resolve,
+					Cycle = true,
+					CycleResolveTexture = true
+				}
 			);
 			renderPass.BindGraphicsPipeline(MsaaPipelines[(int) currentSampleCount]);
-			renderPass.DrawPrimitives(0, 1);
+			renderPass.DrawPrimitives(3, 1, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
-
-			cmdbuf.Blit(rt, swapchainTexture, Filter.Nearest, false);
 		}
 		GraphicsDevice.Submit(cmdbuf);
 	}

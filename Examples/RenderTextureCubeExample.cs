@@ -37,27 +37,27 @@ class RenderTextureCubeExample : Example
 		Logger.LogInfo("Press Down to view the other side of the cubemap");
 
 		// Load the shaders
-		Shader vertShader = new Shader(
+		Shader vertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("Skybox.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV,
-				UniformBufferCount = 1
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV,
+				NumUniformBuffers = 1
 			}
 		);
 
-		Shader fragShader = new Shader(
+		Shader fragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("Skybox.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV,
-				SamplerCount = 1
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV,
+				NumSamplers = 1
 			}
 		);
 
@@ -69,10 +69,10 @@ class RenderTextureCubeExample : Example
 		);
 		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionVertex>();
 
-		pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		pipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 		// Create samplers
-		sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
+		sampler = Sampler.Create(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 		// Create and populate the GPU resources
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
@@ -127,10 +127,10 @@ class RenderTextureCubeExample : Example
 		resourceUploader.Upload();
 		resourceUploader.Dispose();
 
-		cubemap = Texture.CreateTextureCube(
+		cubemap = Texture.CreateCube(
 			GraphicsDevice,
 			16,
-			TextureFormat.R8G8B8A8,
+			TextureFormat.R8G8B8A8Unorm,
 			TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler
 		);
 
@@ -139,19 +139,14 @@ class RenderTextureCubeExample : Example
 		// Clear each slice of the cubemap to a different color
 		for (uint i = 0; i < 6; i += 1)
 		{
-			ColorAttachmentInfo attachmentInfo = new ColorAttachmentInfo
-			{
-				TextureSlice = new TextureSlice
-				{
-					Texture = cubemap,
-					Layer = i,
-					MipLevel = 0
-				},
-				ClearColor = colors[i],
-				LoadOp = LoadOp.Clear,
-				StoreOp = StoreOp.Store
-			};
-			var renderPass = cmdbuf.BeginRenderPass(attachmentInfo);
+            var renderPass = cmdbuf.BeginRenderPass(new ColorTargetInfo
+            {
+                Texture = cubemap.Handle,
+                LayerOrDepthPlane = i,
+                LoadOp = LoadOp.Clear,
+                ClearColor = colors[i],
+                StoreOp = StoreOp.Store
+            });
 			cmdbuf.EndRenderPass(renderPass);
 		}
 
@@ -186,18 +181,19 @@ class RenderTextureCubeExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(
-					swapchainTexture,
-					false,
-					Color.Black
-				)
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				}
 			);
 			renderPass.BindGraphicsPipeline(pipeline);
 			renderPass.BindVertexBuffer(vertexBuffer);
 			renderPass.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
 			renderPass.BindFragmentSampler(new TextureSamplerBinding(cubemap, sampler));
 			cmdbuf.PushVertexUniformData(vertUniforms);
-			renderPass.DrawIndexedPrimitives(0, 0, 12);
+			renderPass.DrawIndexedPrimitives(36, 1, 0, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 		}
 		GraphicsDevice.Submit(cmdbuf);

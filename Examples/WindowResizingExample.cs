@@ -31,25 +31,25 @@ class WindowResizingExample : Example
 
 		Logger.LogInfo("Press left and right to resize the window!");
 
-		Shader vertShader = new Shader(
+		Shader vertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("RawTriangle.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
-		Shader fragShader = new Shader(
+		Shader fragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
@@ -58,7 +58,7 @@ class WindowResizingExample : Example
 			vertShader,
 			fragShader
 		);
-		pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		pipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 	}
 
 	public override void Update(System.TimeSpan delta)
@@ -97,14 +97,15 @@ class WindowResizingExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(
-					swapchainTexture,
-					false,
-					Color.Black
-				)
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				}
 			);
 			renderPass.BindGraphicsPipeline(pipeline);
-			renderPass.DrawPrimitives(0, 1);
+			renderPass.DrawPrimitives(3, 1, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 		}
 		GraphicsDevice.Submit(cmdbuf);

@@ -26,27 +26,27 @@ class TextureMipmapsExample : Example
 		Logger.LogInfo("Press Left and Right to shrink/expand the scale of the quad");
 
 		// Load the shaders
-		Shader vertShaderModule = new Shader(
+		Shader vertShaderModule = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadWithMatrix.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV,
-				UniformBufferCount = 1
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV,
+				NumUniformBuffers = 1
 			}
 		);
 
-		Shader fragShaderModule = new Shader(
+		Shader fragShaderModule = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV,
-				SamplerCount = 1
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV,
+				NumSamplers = 1
 			}
 		);
 
@@ -58,16 +58,16 @@ class TextureMipmapsExample : Example
 		);
 		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
 
-		Pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		Pipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
-		Sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
+		Sampler = Sampler.Create(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 		// Create and populate the GPU resources
-		Texture = Texture.CreateTexture2D(
+		Texture = Texture.Create2D(
 			GraphicsDevice,
 			256,
 			256,
-			TextureFormat.R8G8B8A8,
+			TextureFormat.R8G8B8A8Unorm,
 			TextureUsageFlags.Sampler,
 			4
 		);
@@ -99,18 +99,11 @@ class TextureMipmapsExample : Example
 			var h = Texture.Height >> (int) i;
 			var region = new TextureRegion
 			{
-				TextureSlice = new TextureSlice
-				{
-					Texture = Texture,
-					Layer = 0,
-					MipLevel = i
-				},
-				X = 0,
-				Y = 0,
-				Z = 0,
-				Width = w,
-				Height = h,
-				Depth = 1
+				Texture = Texture.Handle,
+				MipLevel = i,
+				W = w,
+				H = h,
+				D = 1
 			};
 
 			resourceUploader.SetTextureDataFromCompressed(
@@ -145,18 +138,19 @@ class TextureMipmapsExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(
-					swapchainTexture,
-					false,
-					Color.Black
-				)
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				}
 			);
 			renderPass.BindGraphicsPipeline(Pipeline);
 			renderPass.BindVertexBuffer(VertexBuffer);
 			renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.Sixteen);
 			renderPass.BindFragmentSampler(new TextureSamplerBinding(Texture, Sampler));
 			cmdbuf.PushVertexUniformData(vertUniforms);
-			renderPass.DrawIndexedPrimitives(0, 0, 2);
+			renderPass.DrawIndexedPrimitives(6, 1, 0, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 		}
 

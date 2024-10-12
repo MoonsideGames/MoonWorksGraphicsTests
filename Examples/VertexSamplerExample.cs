@@ -22,26 +22,26 @@ class VertexSamplerExample : Example
 		Window.SetTitle("VertexSampler");
 
 		// Load the shaders
-		Shader vertShader = new Shader(
+		Shader vertShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("PositionSampler.vert"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Vertex,
-				ShaderFormat = ShaderFormat.SPIRV,
-				SamplerCount = 1
+				Stage = ShaderStage.Vertex,
+				Format = ShaderFormat.SPIRV,
+				NumSamplers = 1
 			}
 		);
 
-		Shader fragShader = new Shader(
+		Shader fragShader = Shader.CreateFromFile(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
 			new ShaderCreateInfo
 			{
-				ShaderStage = ShaderStage.Fragment,
-				ShaderFormat = ShaderFormat.SPIRV
+				Stage = ShaderStage.Fragment,
+				Format = ShaderFormat.SPIRV
 			}
 		);
 
@@ -53,10 +53,10 @@ class VertexSamplerExample : Example
 		);
 		pipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
 
-		Pipeline = new GraphicsPipeline(GraphicsDevice, pipelineCreateInfo);
+		Pipeline = GraphicsPipeline.Create(GraphicsDevice, pipelineCreateInfo);
 
 		// Create and populate the GPU resources
-		Sampler = new Sampler(GraphicsDevice, SamplerCreateInfo.PointClamp);
+		Sampler = Sampler.Create(GraphicsDevice, SamplerCreateInfo.PointClamp);
 
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
 
@@ -71,6 +71,8 @@ class VertexSamplerExample : Example
 
 		Texture = resourceUploader.CreateTexture2D(
 			new Span<Color>([Color.Yellow, Color.Indigo, Color.HotPink]),
+			TextureFormat.R8G8B8A8Unorm,
+			TextureUsageFlags.Sampler,
 			3,
 			1
 		);
@@ -88,16 +90,17 @@ class VertexSamplerExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorAttachmentInfo(
-					swapchainTexture,
-					false,
-					Color.Black
-				)
+				new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				}
 			);
 			renderPass.BindGraphicsPipeline(Pipeline);
 			renderPass.BindVertexBuffer(VertexBuffer);
 			renderPass.BindVertexSampler(new TextureSamplerBinding(Texture, Sampler));
-			renderPass.DrawPrimitives(0, 1);
+			renderPass.DrawPrimitives(3, 1, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 		}
 		GraphicsDevice.Submit(cmdbuf);

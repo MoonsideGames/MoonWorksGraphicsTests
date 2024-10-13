@@ -112,18 +112,32 @@ class MSAAExample : Example
 		{
 			Texture rt = RenderTargets[(int) currentSampleCount];
 
-			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
+			ColorTargetInfo colorTargetInfo;
+
+			if (currentSampleCount == SampleCount.One)
+			{
+				colorTargetInfo = new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				};
+			}
+			else
+			{
+				colorTargetInfo = new ColorTargetInfo
 				{
 					Texture = rt.Handle,
 					LoadOp = LoadOp.Clear,
 					ClearColor = Color.Black,
-					ResolveTexture = swapchainTexture.Handle,
-					StoreOp = StoreOp.Resolve,
 					Cycle = true,
-					CycleResolveTexture = true
-				}
-			);
+					CycleResolveTexture = true,
+					ResolveTexture = swapchainTexture.Handle,
+					StoreOp = StoreOp.Resolve
+				};
+			}
+
+			var renderPass = cmdbuf.BeginRenderPass(colorTargetInfo);
 			renderPass.BindGraphicsPipeline(MsaaPipelines[(int) currentSampleCount]);
 			renderPass.DrawPrimitives(3, 1, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);

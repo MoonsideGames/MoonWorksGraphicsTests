@@ -22,7 +22,6 @@ class Program : Game
 		new DrawIndirectExample(),
 		new GetBufferDataExample(),
 		new InstancingAndOffsetsExample(),
-		new MSAACubeExample(),
 		new MSAAExample(),
 		new RenderTexture2DArrayExample(),
 		new RenderTexture2DExample(),

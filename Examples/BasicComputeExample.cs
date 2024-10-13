@@ -93,10 +93,10 @@ class BasicComputeExample : Example
 			(uint) squares.Length
 		);
 
-		TransferBuffer transferBuffer = TransferBuffer.Create<byte>(
+		TransferBuffer transferBuffer = TransferBuffer.Create<uint>(
 			GraphicsDevice,
 			TransferBufferUsage.Download,
-			squaresBuffer.Size
+			(uint) squares.Length
 		);
 
 		Texture = Texture.Create2D(

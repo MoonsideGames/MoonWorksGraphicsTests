@@ -57,6 +57,15 @@ namespace MoonWorksGraphicsTests
 				{
 					CompareOp = CompareOp.Never,
 					FailOp = StencilOp.Replace,
+					PassOp = StencilOp.Keep,
+					DepthFailOp = StencilOp.Keep
+				},
+				BackStencilState = new StencilOpState
+				{
+					CompareOp = CompareOp.Never,
+					FailOp = StencilOp.Replace,
+					PassOp = StencilOp.Keep,
+					DepthFailOp = StencilOp.Keep
 				},
 				WriteMask = 0xFF
 			};
@@ -68,6 +77,16 @@ namespace MoonWorksGraphicsTests
 				FrontStencilState = new StencilOpState
 				{
 					CompareOp = CompareOp.Equal,
+					FailOp = StencilOp.Keep,
+					PassOp = StencilOp.Keep,
+					DepthFailOp = StencilOp.Keep
+				},
+				BackStencilState = new StencilOpState
+				{
+					CompareOp = CompareOp.Equal,
+					FailOp = StencilOp.Keep,
+					PassOp = StencilOp.Keep,
+					DepthFailOp = StencilOp.Keep
 				},
 				CompareMask = 0xFF,
 				WriteMask = 0
@@ -122,19 +141,20 @@ namespace MoonWorksGraphicsTests
 						Texture = DepthStencilTexture.Handle,
 						LoadOp = LoadOp.Clear,
 						ClearDepth = 0,
-						StencilLoadOp = LoadOp.DontCare,
+						StencilLoadOp = LoadOp.Clear,
+						ClearStencil = 0,
 						StoreOp = StoreOp.DontCare,
 						StencilStoreOp = StoreOp.DontCare,
 						Cycle = true
 					}
 				);
-				renderPass.BindGraphicsPipeline(MaskerPipeline);
-				renderPass.SetStencilReference(1);
 				renderPass.BindVertexBuffer(VertexBuffer);
+				renderPass.SetStencilReference(1);
+				renderPass.BindGraphicsPipeline(MaskerPipeline);
 				renderPass.DrawPrimitives(3, 1, 0, 0);
-				renderPass.BindGraphicsPipeline(MaskeePipeline);
 				renderPass.SetStencilReference(0);
-				renderPass.DrawPrimitives(3, 1, 0, 0);
+				renderPass.BindGraphicsPipeline(MaskeePipeline);
+				renderPass.DrawPrimitives(3, 1, 3, 0);
 				cmdbuf.EndRenderPass(renderPass);
 			}
 			GraphicsDevice.Submit(cmdbuf);

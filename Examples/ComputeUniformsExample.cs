@@ -81,7 +81,7 @@ class ComputeUniformsExample : Example
 				{
 					Texture = swapchainTexture.Handle,
 					W = swapchainTexture.Width,
-					H = swapchainTexture.Width
+					H = swapchainTexture.Height
 				},
 				Filter = Filter.Linear
 			});

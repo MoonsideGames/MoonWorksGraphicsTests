@@ -73,6 +73,8 @@ class Program : Game
 				ExampleIndex = Examples.Length - 1;
 			}
 
+			MainWindow.SetSize(640, 480);
+			MainWindow.SetPositionCentered();
 			Examples[ExampleIndex].Init(MainWindow, GraphicsDevice, Inputs);
 		}
 		else if (Inputs.Keyboard.IsPressed(MoonWorks.Input.KeyCode.E))
@@ -81,6 +83,8 @@ class Program : Game
 
 			ExampleIndex = (ExampleIndex + 1) % Examples.Length;
 
+			MainWindow.SetSize(640, 480);
+			MainWindow.SetPositionCentered();
 			Examples[ExampleIndex].Init(MainWindow, GraphicsDevice, Inputs);
 		}
 		else

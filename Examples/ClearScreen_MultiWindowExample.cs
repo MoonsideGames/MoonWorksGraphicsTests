@@ -78,8 +78,6 @@ namespace MoonWorksGraphicsTests
         {
 			GraphicsDevice.UnclaimWindow(SecondaryWindow);
 			SecondaryWindow.Dispose();
-
-			Window.SetPositionCentered();
         }
     }
 }

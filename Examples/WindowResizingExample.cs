@@ -114,6 +114,5 @@ class WindowResizingExample : Example
     public override void Destroy()
     {
 		pipeline.Dispose();
-		Window.SetSize(640, 480);
     }
 }

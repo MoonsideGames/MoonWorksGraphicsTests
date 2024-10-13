@@ -142,7 +142,7 @@ class Texture3DCopyExample : Example
 				new TextureLocation
 				{
 					Texture = RenderTexture.Handle,
-					Z = (uint) i
+					Layer = (uint) i
 				},
 				new TextureLocation
 				{

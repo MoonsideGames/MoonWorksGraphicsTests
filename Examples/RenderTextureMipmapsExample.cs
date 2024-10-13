@@ -56,7 +56,7 @@ class RenderTextureMipmapsExample : Example
 		Logger.LogInfo(GetSamplerString(currentSamplerIndex));
 
 		// Load the shaders
-		Shader vertShaderModule = Shader.CreateFromFile(
+		Shader vertShaderModule = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadWithMatrix.vert"),
 			"main",
@@ -68,7 +68,7 @@ class RenderTextureMipmapsExample : Example
 			}
 		);
 
-		Shader fragShaderModule = Shader.CreateFromFile(
+		Shader fragShaderModule = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.frag"),
 			"main",

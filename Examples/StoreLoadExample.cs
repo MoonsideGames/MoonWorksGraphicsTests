@@ -16,7 +16,7 @@ class StoreLoadExample : Example
 
 		Window.SetTitle("StoreLoad");
 
-		Shader vertShader = Shader.CreateFromFile(
+		Shader vertShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("RawTriangle.vert"),
 			"main",
@@ -27,7 +27,7 @@ class StoreLoadExample : Example
 			}
 		);
 
-		Shader fragShader = Shader.CreateFromFile(
+		Shader fragShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",

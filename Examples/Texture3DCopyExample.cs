@@ -40,7 +40,7 @@ class Texture3DCopyExample : Example
 		Window.SetTitle("Texture3DCopy");
 
 		// Load the shaders
-		Shader vertShader = Shader.CreateFromFile(
+		Shader vertShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.vert"),
 			"main",
@@ -50,7 +50,7 @@ class Texture3DCopyExample : Example
 				Format = ShaderFormat.SPIRV
 			}
 		);
-		Shader fragShader = Shader.CreateFromFile(
+		Shader fragShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad3D.frag"),
 			"main",

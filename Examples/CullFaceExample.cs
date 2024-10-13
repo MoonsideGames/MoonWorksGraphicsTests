@@ -29,7 +29,7 @@ class CullFaceExample : Example
 		Logger.LogInfo("Press Down to toggle the winding order of the triangles (default is counter-clockwise)");
 
 		// Load the shaders
-		Shader vertShader = Shader.CreateFromFile(
+		Shader vertShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("PositionColor.vert"),
 			"main",
@@ -40,7 +40,7 @@ class CullFaceExample : Example
 			}
 		);
 
-		Shader fragShader = Shader.CreateFromFile(
+		Shader fragShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",

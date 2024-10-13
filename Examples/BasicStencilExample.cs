@@ -20,7 +20,7 @@ namespace MoonWorksGraphicsTests
 			Window.SetTitle("BasicStencil");
 
 			// Load the shaders
-			Shader vertShaderModule = Shader.CreateFromFile(
+			Shader vertShaderModule = Shader.Create(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("PositionColor.vert"),
 				"main",
@@ -30,7 +30,7 @@ namespace MoonWorksGraphicsTests
 					Format = ShaderFormat.SPIRV
 				}
 			);
-			Shader fragShaderModule = Shader.CreateFromFile(
+			Shader fragShaderModule = Shader.Create(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("SolidColor.frag"),
 				"main",

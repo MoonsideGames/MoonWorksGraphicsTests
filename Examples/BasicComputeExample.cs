@@ -50,7 +50,7 @@ class BasicComputeExample : Example
 		);
 
 		// Create the graphics pipeline
-		Shader vertShader = Shader.CreateFromFile(
+		Shader vertShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.vert"),
 			"main",
@@ -61,7 +61,7 @@ class BasicComputeExample : Example
 			}
 		);
 
-		Shader fragShader = Shader.CreateFromFile(
+		Shader fragShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.frag"),
 			"main",

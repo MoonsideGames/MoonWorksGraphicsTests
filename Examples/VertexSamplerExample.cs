@@ -22,7 +22,7 @@ class VertexSamplerExample : Example
 		Window.SetTitle("VertexSampler");
 
 		// Load the shaders
-		Shader vertShader = Shader.CreateFromFile(
+		Shader vertShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("PositionSampler.vert"),
 			"main",
@@ -34,7 +34,7 @@ class VertexSamplerExample : Example
 			}
 		);
 
-		Shader fragShader = Shader.CreateFromFile(
+		Shader fragShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",

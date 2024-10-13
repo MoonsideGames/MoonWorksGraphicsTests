@@ -40,7 +40,7 @@ class DepthMSAAExample : Example
 		Logger.LogInfo("Setting sample count to: " + currentSampleCount);
 
 		// Create the cube pipelines
-		Shader cubeVertShader = Shader.CreateFromFile(
+		Shader cubeVertShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("PositionColorWithMatrix.vert"),
 			"main",
@@ -52,7 +52,7 @@ class DepthMSAAExample : Example
 			}
 		);
 
-		Shader cubeFragShader = Shader.CreateFromFile(
+		Shader cubeFragShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",

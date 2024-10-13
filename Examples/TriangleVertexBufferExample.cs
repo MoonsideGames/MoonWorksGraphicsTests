@@ -18,7 +18,7 @@ class TriangleVertexBufferExample : Example
 		Window.SetTitle("TriangleVertexBuffer");
 
 		// Load the shaders
-		Shader vertShader = Shader.CreateFromFile(
+		Shader vertShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("PositionColor.vert"),
 			"main",
@@ -28,7 +28,7 @@ class TriangleVertexBufferExample : Example
 				Format = ShaderFormat.SPIRV
 			}
 		);
-		Shader fragShader = Shader.CreateFromFile(
+		Shader fragShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",

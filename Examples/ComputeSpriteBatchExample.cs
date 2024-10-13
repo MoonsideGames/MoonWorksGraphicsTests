@@ -54,7 +54,7 @@ class ComputeSpriteBatchExample : Example
 
 		Window.SetTitle("ComputeSpriteBatch");
 
-		Shader vertShader = Shader.CreateFromFile(
+		Shader vertShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadColorWithMatrix.vert"),
 			"main",
@@ -66,7 +66,7 @@ class ComputeSpriteBatchExample : Example
 			}
 		);
 
-		Shader fragShader = Shader.CreateFromFile(
+		Shader fragShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadColor.frag"),
 			"main",

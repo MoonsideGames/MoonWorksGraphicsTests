@@ -35,7 +35,7 @@ class TexturedAnimatedQuadExample : Example
 		Window.SetTitle("TexturedAnimatedQuad");
 
 		// Load the shaders
-		Shader vertShader = Shader.CreateFromFile(
+		Shader vertShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadWithMatrix.vert"),
 			"main",
@@ -47,7 +47,7 @@ class TexturedAnimatedQuadExample : Example
 			}
 		);
 
-		Shader fragShader = Shader.CreateFromFile(
+		Shader fragShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadWithMultiplyColor.frag"),
 			"main",

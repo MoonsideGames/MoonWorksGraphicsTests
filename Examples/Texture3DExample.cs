@@ -36,7 +36,7 @@ class Texture3DExample : Example
 		Logger.LogInfo("Press Left and Right to cycle between depth slices");
 
 		// Load the shaders
-		Shader vertShader = Shader.CreateFromFile(
+		Shader vertShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.vert"),
 			"main",
@@ -47,7 +47,7 @@ class Texture3DExample : Example
 			}
 		);
 
-		Shader fragShader = Shader.CreateFromFile(
+		Shader fragShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad3D.frag"),
 			"main",

@@ -20,7 +20,7 @@ class DrawIndirectExample : Example
 		Window.SetTitle("DrawIndirect");
 
 		// Load the shaders
-		Shader vertShader = Shader.CreateFromFile(
+		Shader vertShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("PositionColor.vert"),
 			"main",
@@ -31,7 +31,7 @@ class DrawIndirectExample : Example
 			}
 		);
 
-		Shader fragShader = Shader.CreateFromFile(
+		Shader fragShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",

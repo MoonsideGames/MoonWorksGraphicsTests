@@ -26,7 +26,7 @@ class BasicTriangleExample : Example
 
 		Logger.LogInfo("Press Left to toggle wireframe mode\nPress Down to toggle small viewport\nPress Right to toggle scissor rect");
 
-		Shader vertShaderModule = Shader.CreateFromFile(
+		Shader vertShaderModule = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("RawTriangle.vert"),
 			"main",
@@ -37,7 +37,7 @@ class BasicTriangleExample : Example
 			}
 		);
 
-		Shader fragShaderModule = Shader.CreateFromFile(
+		Shader fragShaderModule = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",

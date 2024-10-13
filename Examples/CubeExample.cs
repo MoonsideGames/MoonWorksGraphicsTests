@@ -99,7 +99,7 @@ namespace MoonWorksGraphicsTests
 			depthOnlyEnabled = false;
 			camPos = new Vector3(0, 1.5f, 4);
 
-			Shader cubeVertShader = Shader.CreateFromFile(
+			Shader cubeVertShader = Shader.Create(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("PositionColorWithMatrix.vert"),
 				"main",
@@ -111,7 +111,7 @@ namespace MoonWorksGraphicsTests
 				}
 			);
 
-			Shader cubeFragShader = Shader.CreateFromFile(
+			Shader cubeFragShader = Shader.Create(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("SolidColor.frag"),
 				"main",
@@ -122,7 +122,7 @@ namespace MoonWorksGraphicsTests
 				}
 			);
 
-			Shader skyboxVertShader = Shader.CreateFromFile(
+			Shader skyboxVertShader = Shader.Create(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("Skybox.vert"),
 				"main",
@@ -134,7 +134,7 @@ namespace MoonWorksGraphicsTests
 				}
 			);
 
-			Shader skyboxFragShader = Shader.CreateFromFile(
+			Shader skyboxFragShader = Shader.Create(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("Skybox.frag"),
 				"main",
@@ -146,7 +146,7 @@ namespace MoonWorksGraphicsTests
 				}
 			);
 
-			Shader blitVertShader = Shader.CreateFromFile(
+			Shader blitVertShader = Shader.Create(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("TexturedQuad.vert"),
 				"main",
@@ -157,7 +157,7 @@ namespace MoonWorksGraphicsTests
 				}
 			);
 
-			Shader blitFragShader = Shader.CreateFromFile(
+			Shader blitFragShader = Shader.Create(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("TexturedDepthQuad.frag"),
 				"main",

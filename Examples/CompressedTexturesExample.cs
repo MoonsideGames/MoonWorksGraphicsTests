@@ -34,7 +34,7 @@ class CompressedTexturesExample : Example
 		Logger.LogInfo("Setting texture to: " + TextureNames[0]);
 
 		// Load the shaders
-		Shader vertShaderModule = Shader.CreateFromFile(
+		Shader vertShaderModule = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.vert"),
 			"main",
@@ -45,7 +45,7 @@ class CompressedTexturesExample : Example
 			}
 		);
 
-		Shader fragShaderModule = Shader.CreateFromFile(
+		Shader fragShaderModule = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.frag"),
 			"main",

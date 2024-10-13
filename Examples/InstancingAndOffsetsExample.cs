@@ -25,7 +25,7 @@ class InstancingAndOffsetsExample : Example
 		Logger.LogInfo("Press Left to toggle vertex offset\nPress Right to toggle index offset");
 
 		// Load the shaders
-		Shader vertShader = Shader.CreateFromFile(
+		Shader vertShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("PositionColorInstanced.vert"),
 			"main",
@@ -36,7 +36,7 @@ class InstancingAndOffsetsExample : Example
 			}
 		);
 
-		Shader fragShader = Shader.CreateFromFile(
+		Shader fragShader = Shader.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",

@@ -254,21 +254,27 @@ class DepthMSAAExample : Example
 
 			int index = (int) currentSampleCount;
 
-			var colorTargetInfo = new ColorTargetInfo
-			{
-				Texture = RenderTargets[index].Handle,
-				LoadOp = LoadOp.Clear,
-				ClearColor = Color.White
-			};
+			ColorTargetInfo colorTargetInfo;
 
 			if (currentSampleCount == SampleCount.One)
 			{
-				colorTargetInfo.StoreOp = StoreOp.Store;
+				colorTargetInfo = new ColorTargetInfo
+				{
+					Texture = swapchainTexture.Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black
+				};
 			}
 			else
 			{
-				colorTargetInfo.StoreOp = StoreOp.Resolve;
-				colorTargetInfo.ResolveTexture = ResolveTarget.Handle;
+				colorTargetInfo = new ColorTargetInfo
+				{
+					Texture = RenderTargets[index].Handle,
+					LoadOp = LoadOp.Clear,
+					ClearColor = Color.Black,
+					StoreOp = StoreOp.Resolve,
+					ResolveTexture = swapchainTexture.Handle
+				};
 			}
 
 			// Begin the MSAA RT pass
@@ -300,26 +306,6 @@ class DepthMSAAExample : Example
 			renderPass.DrawIndexedPrimitives(36, 1, 0, 0, 0);
 
 			cmdbuf.EndRenderPass(renderPass);
-
-			// Blit the MSAA RT to the backbuffer
-			var blitSourceTexture = (currentSampleCount != SampleCount.One) ? ResolveTarget : RenderTargets[index];
-			cmdbuf.Blit(new BlitInfo
-			{
-				LoadOp = LoadOp.DontCare,
-				Source = new BlitRegion
-				{
-					Texture = blitSourceTexture.Handle,
-					W = blitSourceTexture.Width,
-					H = blitSourceTexture.Height
-				},
-				Destination = new BlitRegion
-				{
-					Texture = swapchainTexture.Handle,
-					W = swapchainTexture.Width,
-					H = swapchainTexture.Height
-				},
-				Filter = Filter.Linear
-			});
 		}
 		GraphicsDevice.Submit(cmdbuf);
 	}

@@ -38,22 +38,7 @@ class VideoPlayerExample : Example
 		Texture swapchainTexture = cmdbuf.AcquireSwapchainTexture(Window);
 		if (swapchainTexture != null)
 		{
-			cmdbuf.Blit(new BlitInfo
-			{
-				Source = new BlitRegion
-				{
-					Texture = VideoPlayer.RenderTexture.Handle,
-					W = VideoPlayer.RenderTexture.Width,
-					H = VideoPlayer.RenderTexture.Height
-				},
-				Destination = new BlitRegion
-				{
-					Texture = swapchainTexture.Handle,
-					W = swapchainTexture.Width,
-					H = swapchainTexture.Height
-				},
-				Filter = Filter.Linear
-			});
+			cmdbuf.Blit(VideoPlayer.RenderTexture, swapchainTexture, Filter.Linear);
 		}
 		GraphicsDevice.Submit(cmdbuf);
 	}

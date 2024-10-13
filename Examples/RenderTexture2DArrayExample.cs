@@ -79,7 +79,8 @@ class RenderTexture2DArrayExample : Example
 					W = swapchainTexture.Width,
 					H = swapchainTexture.Height
 				},
-				Filter = Filter.Nearest
+				Filter = Filter.Nearest,
+				LoadOp = LoadOp.DontCare
 			});
 		}
 		GraphicsDevice.Submit(cmdbuf);

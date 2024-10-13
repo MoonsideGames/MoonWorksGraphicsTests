@@ -71,7 +71,7 @@ class RenderTexture2DExample : Example
 				{
 					Texture = textures[3].Handle,
 					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Green
+					ClearColor = Color.Black
 				}
 			);
 			cmdbuf.EndRenderPass(renderPass);

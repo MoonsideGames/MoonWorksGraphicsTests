@@ -68,23 +68,7 @@ class ComputeUniformsExample : Example
 			computePass.Dispatch(RenderTexture.Width / 8, RenderTexture.Height / 8, 1);
 			cmdbuf.EndComputePass(computePass);
 
-			cmdbuf.Blit(new BlitInfo
-			{
-				LoadOp = LoadOp.DontCare,
-				Source = new BlitRegion
-				{
-					Texture = RenderTexture.Handle,
-					W = RenderTexture.Width,
-					H = RenderTexture.Height
-				},
-				Destination = new BlitRegion
-				{
-					Texture = swapchainTexture.Handle,
-					W = swapchainTexture.Width,
-					H = swapchainTexture.Height
-				},
-				Filter = Filter.Linear
-			});
+			cmdbuf.Blit(RenderTexture, swapchainTexture, Filter.Linear);
 		}
 
 		GraphicsDevice.Submit(cmdbuf);

@@ -87,23 +87,7 @@ namespace MoonWorksGraphicsTests
 			TextureSmall = Texture.Create(GraphicsDevice, textureCreateInfo);
 
 			// Render the half-size copy
-			cmdbuf.Blit(new BlitInfo
-			{
-				LoadOp = LoadOp.DontCare,
-				Source = new BlitRegion
-				{
-					Texture = OriginalTexture.Handle,
-					W = OriginalTexture.Width,
-					H = OriginalTexture.Height
-				},
-				Destination = new BlitRegion
-				{
-					Texture = TextureSmall.Handle,
-					W = TextureSmall.Width,
-					H = TextureSmall.Height
-				},
-				Filter = Filter.Linear
-			});
+			cmdbuf.Blit(OriginalTexture, TextureSmall, Filter.Linear);
 
 			// Copy the texture to a transfer buffer
 			copyPass = cmdbuf.BeginCopyPass();

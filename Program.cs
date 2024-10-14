@@ -62,7 +62,7 @@ class Program : Game
 
     protected override void Update(TimeSpan delta)
     {
-		if (Inputs.Keyboard.IsPressed(MoonWorks.Input.KeyCode.Q))
+		if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Previous))
 		{
 			Examples[ExampleIndex].Destroy();
 
@@ -76,7 +76,7 @@ class Program : Game
 			MainWindow.SetPositionCentered();
 			Examples[ExampleIndex].Init(MainWindow, GraphicsDevice, Inputs);
 		}
-		else if (Inputs.Keyboard.IsPressed(MoonWorks.Input.KeyCode.E))
+		else if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Next))
 		{
 			Examples[ExampleIndex].Destroy();
 

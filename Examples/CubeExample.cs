@@ -57,10 +57,20 @@ namespace MoonWorksGraphicsTests
 		private bool depthOnlyEnabled;
 		private Vector3 camPos;
 
+		private Task LoadingTask;
+
 		// Upload cubemap layers one at a time to minimize transfer size
 		unsafe void LoadCubemap(string[] imagePaths)
 		{
-			var cubemapUploader = new ResourceUploader(GraphicsDevice);
+			var cubemapUploader = new ResourceUploader(
+				GraphicsDevice,
+				Texture.CalculateSize(
+					TextureFormat.R8G8B8A8Unorm,
+					SkyboxTexture.Width,
+					SkyboxTexture.Height,
+					1
+				)
+			);
 
 			for (uint i = 0; i < imagePaths.Length; i++)
 			{
@@ -206,7 +216,7 @@ namespace MoonWorksGraphicsTests
 			);
 			ScreenshotTexture.Name = "Screenshot";
 
-			Task loadingTask = Task.Run(() => UploadGPUAssets());
+			LoadingTask = Task.Run(() => UploadGPUAssets());
 
 			// Create the cube pipelines
 
@@ -382,7 +392,7 @@ namespace MoonWorksGraphicsTests
 				new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
 			]);
 
-			var resourceUploader = new ResourceUploader(GraphicsDevice);
+			var resourceUploader = new ResourceUploader(GraphicsDevice, 1024 * 1024);
 
 			CubeVertexBuffer = resourceUploader.CreateBuffer(cubeVertexData, BufferUsageFlags.Vertex);
 			skyboxVertexBuffer = resourceUploader.CreateBuffer(skyboxVertexData, BufferUsageFlags.Vertex);
@@ -397,15 +407,15 @@ namespace MoonWorksGraphicsTests
 			resourceUploader.Upload();
 			resourceUploader.Dispose();
 
-			LoadCubemap(new string[]
-			{
-				TestUtils.GetTexturePath("right.png"),
+			LoadCubemap(
+            [
+                TestUtils.GetTexturePath("right.png"),
 				TestUtils.GetTexturePath("left.png"),
 				TestUtils.GetTexturePath("top.png"),
 				TestUtils.GetTexturePath("bottom.png"),
 				TestUtils.GetTexturePath("front.png"),
 				TestUtils.GetTexturePath("back.png")
-			});
+			]);
 
 			finishedLoading = true;
 			Logger.LogInfo("Finished loading!");
@@ -629,6 +639,8 @@ namespace MoonWorksGraphicsTests
 
         public override void Destroy()
         {
+			LoadingTask.Wait();
+
             CubePipeline.Dispose();
 			CubePipelineDepthOnly.Dispose();
 			SkyboxPipeline.Dispose();

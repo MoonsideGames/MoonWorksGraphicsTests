@@ -100,17 +100,17 @@ class TexturedQuadExample : Example
 		samplers[4] = Sampler.Create(GraphicsDevice, SamplerCreateInfo.AnisotropicClamp);
 		samplers[5] = Sampler.Create(GraphicsDevice, SamplerCreateInfo.AnisotropicWrap);
 
-		var vertexData = new Span<PositionTextureVertex>([
+        Span<PositionTextureVertex> vertexData = [
 			new PositionTextureVertex(new Vector3(-1,  1, 0), new Vector2(0, 0)),
 			new PositionTextureVertex(new Vector3( 1,  1, 0), new Vector2(4, 0)),
 			new PositionTextureVertex(new Vector3( 1, -1, 0), new Vector2(4, 4)),
 			new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 4)),
-		]);
+		];
 
-		var indexData = new Span<ushort>([
+        Span<ushort> indexData = [
 			0, 1, 2,
 			0, 2, 3,
-		]);
+		];
 
 		// Create and populate the GPU resources
 
@@ -175,12 +175,7 @@ class TexturedQuadExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = swapchainTexture.Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Black
-				}
+				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 			renderPass.BindGraphicsPipeline(pipeline);
 			renderPass.BindVertexBuffer(vertexBuffer);

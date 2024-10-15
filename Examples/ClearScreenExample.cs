@@ -23,12 +23,7 @@ class ClearScreenExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = swapchainTexture.Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.CornflowerBlue
-				}
+				new ColorTargetInfo(swapchainTexture, Color.CornflowerBlue)
 			);
 			cmdbuf.EndRenderPass(renderPass);
 		}

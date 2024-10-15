@@ -130,23 +130,8 @@ namespace MoonWorksGraphicsTests
 			if (swapchainTexture != null)
 			{
 				var renderPass = cmdbuf.BeginRenderPass(
-					new ColorTargetInfo
-					{
-						Texture = swapchainTexture.Handle,
-						LoadOp = LoadOp.Clear,
-						ClearColor = Color.Black
-					},
-					new DepthStencilTargetInfo
-					{
-						Texture = DepthStencilTexture.Handle,
-						LoadOp = LoadOp.Clear,
-						ClearDepth = 0,
-						StencilLoadOp = LoadOp.Clear,
-						ClearStencil = 0,
-						StoreOp = StoreOp.DontCare,
-						StencilStoreOp = StoreOp.DontCare,
-						Cycle = true
-					}
+					new ColorTargetInfo(swapchainTexture, Color.Black),
+					new DepthStencilTargetInfo(DepthStencilTexture, 0, 0, true)
 				);
 				renderPass.BindVertexBuffer(VertexBuffer);
 				renderPass.SetStencilReference(1);

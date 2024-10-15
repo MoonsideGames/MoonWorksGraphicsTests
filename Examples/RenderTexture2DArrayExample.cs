@@ -73,12 +73,7 @@ class RenderTexture2DArrayExample : Example
 					W = RenderTarget.Width,
 					H = RenderTarget.Height
 				},
-				Destination = new BlitRegion
-				{
-					Texture = swapchainTexture.Handle,
-					W = swapchainTexture.Width,
-					H = swapchainTexture.Height
-				},
+				Destination = new BlitRegion(swapchainTexture),
 				Filter = Filter.Nearest,
 				LoadOp = LoadOp.DontCare
 			});

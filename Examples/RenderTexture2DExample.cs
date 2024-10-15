@@ -37,53 +37,28 @@ class RenderTexture2DExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = textures[0].Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Red
-				}
+				new ColorTargetInfo(textures[0], Color.Red)
 			);
 			cmdbuf.EndRenderPass(renderPass);
 
 			renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = textures[1].Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Blue
-				}
+				new ColorTargetInfo(textures[1], Color.DodgerBlue)
 			);
 			cmdbuf.EndRenderPass(renderPass);
 
 			renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = textures[2].Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Green
-				}
+				new ColorTargetInfo(textures[2], Color.Green)
 			);
 			cmdbuf.EndRenderPass(renderPass);
 
 			renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = textures[3].Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Black
-				}
+				new ColorTargetInfo(textures[3], Color.DarkGoldenrod)
 			);
 			cmdbuf.EndRenderPass(renderPass);
 
 			cmdbuf.Blit(new BlitInfo
 			{
-				Source = new BlitRegion
-				{
-					Texture = textures[0].Handle,
-					W = textures[0].Width,
-					H = textures[0].Height
-				},
+				Source = new BlitRegion(textures[0]),
 				Destination = new BlitRegion
 				{
 					Texture = swapchainTexture.Handle,
@@ -95,12 +70,7 @@ class RenderTexture2DExample : Example
 
 			cmdbuf.Blit(new BlitInfo
 			{
-				Source = new BlitRegion
-				{
-					Texture = textures[1].Handle,
-					W = textures[1].Width,
-					H = textures[1].Height
-				},
+				Source = new BlitRegion(textures[1]),
 				Destination = new BlitRegion
 				{
 					Texture = swapchainTexture.Handle,
@@ -113,12 +83,7 @@ class RenderTexture2DExample : Example
 
 			cmdbuf.Blit(new BlitInfo
 			{
-				Source = new BlitRegion
-				{
-					Texture = textures[2].Handle,
-					W = textures[2].Width,
-					H = textures[2].Height
-				},
+				Source = new BlitRegion(textures[2]),
 				Destination = new BlitRegion
 				{
 					Texture = swapchainTexture.Handle,
@@ -131,12 +96,7 @@ class RenderTexture2DExample : Example
 
 			cmdbuf.Blit(new BlitInfo
 			{
-				Source = new BlitRegion
-				{
-					Texture = textures[3].Handle,
-					W = textures[3].Width,
-					H = textures[3].Height
-				},
+				Source = new BlitRegion(textures[3]),
 				Destination = new BlitRegion
 				{
 					Texture = swapchainTexture.Handle,

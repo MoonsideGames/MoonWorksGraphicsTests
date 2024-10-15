@@ -15,15 +15,7 @@ class Texture3DExample : Example
 
 	private int currentDepth = 0;
 
-	struct FragUniform
-	{
-		public float Depth;
-
-		public FragUniform(float depth)
-		{
-			Depth = depth;
-		}
-	}
+	readonly record struct FragUniform(float Depth);
 
     public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
     {
@@ -162,12 +154,7 @@ class Texture3DExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = swapchainTexture.Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Black
-				}
+				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 			renderPass.BindGraphicsPipeline(Pipeline);
 			renderPass.BindVertexBuffer(VertexBuffer);

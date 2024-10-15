@@ -129,43 +129,19 @@ class BasicComputeExample : Example
 		CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 
 		// This should result in a bright yellow texture!
-		var computePass = cmdbuf.BeginComputePass(new StorageTextureReadWriteBinding
-		{
-			Texture = Texture.Handle,
-			Cycle = false
-		});
-
+		var computePass = cmdbuf.BeginComputePass(new StorageTextureReadWriteBinding(Texture));
 		computePass.BindComputePipeline(fillTextureComputePipeline);
 		computePass.Dispatch(Texture.Width / 8, Texture.Height / 8, 1);
-
 		cmdbuf.EndComputePass(computePass);
 
 		// This calculates the squares of the first N integers!
-		computePass = cmdbuf.BeginComputePass(new StorageBufferReadWriteBinding
-		{
-			Buffer = squaresBuffer.Handle,
-			Cycle = false
-		});
-
+		computePass = cmdbuf.BeginComputePass(new StorageBufferReadWriteBinding(squaresBuffer));
 		computePass.BindComputePipeline(calculateSquaresComputePipeline);
 		computePass.Dispatch((uint) squares.Length / 8, 1, 1);
-
 		cmdbuf.EndComputePass(computePass);
 
 		var copyPass = cmdbuf.BeginCopyPass();
-
-		copyPass.DownloadFromBuffer(
-			new BufferRegion
-			{
-				Buffer = squaresBuffer.Handle,
-				Size = squaresBuffer.Size
-			},
-			new TransferBufferLocation
-			{
-				TransferBuffer = transferBuffer.Handle
-			}
-		);
-
+		copyPass.DownloadFromBuffer(squaresBuffer, transferBuffer);
 		cmdbuf.EndCopyPass(copyPass);
 
 		var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
@@ -175,6 +151,7 @@ class BasicComputeExample : Example
 		// Print the squares!
 		var transferSpan = transferBuffer.Map<uint>(false);
 		transferSpan.CopyTo(squares);
+		transferBuffer.Unmap();
 		Logger.LogInfo("Squares of the first " + squares.Length + " integers: " + string.Join(", ", squares));
 	}
 
@@ -188,7 +165,7 @@ class BasicComputeExample : Example
 		{
 			var renderPass = cmdbuf.BeginRenderPass(new ColorTargetInfo
 			{
-				Texture = swapchainTexture.Handle,
+				Texture = swapchainTexture,
 				LoadOp = LoadOp.Clear,
 				ClearColor = Color.CornflowerBlue
 			});

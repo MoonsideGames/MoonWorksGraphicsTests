@@ -42,12 +42,7 @@ namespace MoonWorksGraphicsTests
 				if (swapchainTexture != null)
 				{
 					var renderPass = cmdbuf.BeginRenderPass(
-						new ColorTargetInfo
-						{
-							Texture = swapchainTexture.Handle,
-							LoadOp = LoadOp.Clear,
-							ClearColor = Color.CornflowerBlue
-						}
+						new ColorTargetInfo(swapchainTexture, Color.CornflowerBlue)
 					);
 					cmdbuf.EndRenderPass(renderPass);
 				}
@@ -61,12 +56,7 @@ namespace MoonWorksGraphicsTests
 				if (swapchainTexture != null)
 				{
 					var renderPass = cmdbuf.BeginRenderPass(
-						new ColorTargetInfo
-						{
-							Texture = swapchainTexture.Handle,
-							LoadOp = LoadOp.Clear,
-							ClearColor = Color.Aquamarine
-						}
+						new ColorTargetInfo(swapchainTexture, Color.Aquamarine)
 					);
 					cmdbuf.EndRenderPass(renderPass);
 				}

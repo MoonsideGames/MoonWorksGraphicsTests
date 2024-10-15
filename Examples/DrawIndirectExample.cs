@@ -97,12 +97,7 @@ class DrawIndirectExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = swapchainTexture.Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Black
-				}
+				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 			renderPass.BindGraphicsPipeline(GraphicsPipeline);
 			renderPass.BindVertexBuffer(VertexBuffer);

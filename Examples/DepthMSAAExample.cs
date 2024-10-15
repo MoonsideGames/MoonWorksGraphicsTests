@@ -258,12 +258,7 @@ class DepthMSAAExample : Example
 
 			if (currentSampleCount == SampleCount.One)
 			{
-				colorTargetInfo = new ColorTargetInfo
-				{
-					Texture = swapchainTexture.Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Black
-				};
+				colorTargetInfo = new ColorTargetInfo(swapchainTexture, Color.Black);
 			}
 			else
 			{
@@ -280,16 +275,7 @@ class DepthMSAAExample : Example
 			// Begin the MSAA RT pass
 			var renderPass = cmdbuf.BeginRenderPass(
 				colorTargetInfo,
-				new DepthStencilTargetInfo
-				{
-					Texture = DepthRTs[index].Handle,
-					LoadOp = LoadOp.Clear,
-					ClearDepth = 1,
-					StencilLoadOp = LoadOp.DontCare,
-					StoreOp = StoreOp.DontCare,
-					StencilStoreOp = StoreOp.DontCare,
-					Cycle = true
-				}
+				new DepthStencilTargetInfo(DepthRTs[index], 1, true)
 			);
 			renderPass.BindGraphicsPipeline(CubePipelines[index]);
 

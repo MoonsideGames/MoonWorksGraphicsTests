@@ -70,7 +70,7 @@ class VertexSamplerExample : Example
 		);
 
 		Texture = resourceUploader.CreateTexture2D(
-			new Span<Color>([Color.Yellow, Color.Indigo, Color.HotPink]),
+			[Color.Yellow, Color.Indigo, Color.HotPink],
 			TextureFormat.R8G8B8A8Unorm,
 			TextureUsageFlags.Sampler,
 			3,
@@ -90,12 +90,7 @@ class VertexSamplerExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = swapchainTexture.Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Black
-				}
+				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 			renderPass.BindGraphicsPipeline(Pipeline);
 			renderPass.BindVertexBuffer(VertexBuffer);

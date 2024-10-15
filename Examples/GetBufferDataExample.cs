@@ -57,15 +57,8 @@ class GetBufferDataExample : Example
 		var cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 		var copyPass = cmdbuf.BeginCopyPass();
 		copyPass.DownloadFromBuffer(
-			new BufferRegion
-			{
-				Buffer = vertexBuffer.Handle,
-				Size = vertexBuffer.Size
-			},
-			new TransferBufferLocation
-			{
-				TransferBuffer = downloadBuffer.Handle
-			}
+			vertexBuffer,
+			downloadBuffer
 		);
 		cmdbuf.EndCopyPass(copyPass);
 		var fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
@@ -89,15 +82,8 @@ class GetBufferDataExample : Example
 		copyPass = cmdbuf.BeginCopyPass();
 		copyPass.UploadToBuffer(uploadBuffer, vertexBuffer, false);
 		copyPass.DownloadFromBuffer(
-			new BufferRegion
-			{
-				Buffer = vertexBuffer.Handle,
-				Size = vertexBuffer.Size
-			},
-			new TransferBufferLocation
-			{
-				TransferBuffer = downloadBuffer.Handle
-			}
+			vertexBuffer,
+			downloadBuffer
 		);
 		cmdbuf.EndCopyPass(copyPass);
 		fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
@@ -130,15 +116,8 @@ class GetBufferDataExample : Example
 			false
 		);
 		copyPass.DownloadFromBuffer(
-			new BufferRegion
-			{
-				Buffer = vertexBuffer.Handle,
-				Size = vertexBuffer.Size
-			},
-			new TransferBufferLocation
-			{
-				TransferBuffer = downloadBuffer.Handle
-			}
+			vertexBuffer,
+			downloadBuffer
 		);
 		cmdbuf.EndCopyPass(copyPass);
 		fence = GraphicsDevice.SubmitAndAcquireFence(cmdbuf);
@@ -167,12 +146,7 @@ class GetBufferDataExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = swapchainTexture.Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Black
-				}
+				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 			cmdbuf.EndRenderPass(renderPass);
 		}

@@ -87,6 +87,7 @@ class WindowResizingExample : Example
 		{
 			Logger.LogInfo("Setting resolution to: " + resolutions[currentResolutionIndex]);
 			Window.SetSize(resolutions[currentResolutionIndex].Width, resolutions[currentResolutionIndex].Height);
+			Window.SetPositionCentered();
 		}
 	}
 
@@ -97,12 +98,7 @@ class WindowResizingExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = swapchainTexture.Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Black
-				}
+				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 			renderPass.BindGraphicsPipeline(pipeline);
 			renderPass.DrawPrimitives(3, 1, 0, 0);

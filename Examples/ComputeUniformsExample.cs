@@ -56,11 +56,9 @@ class ComputeUniformsExample : Example
 		Texture swapchainTexture = cmdbuf.AcquireSwapchainTexture(Window);
 		if (swapchainTexture != null)
 		{
-			var computePass = cmdbuf.BeginComputePass(new StorageTextureReadWriteBinding
-			{
-				Texture = RenderTexture.Handle,
-				Cycle = true
-			});
+			var computePass = cmdbuf.BeginComputePass(
+				new StorageTextureReadWriteBinding(RenderTexture, true)
+			);
 
 			cmdbuf.PushComputeUniformData(Uniforms);
 

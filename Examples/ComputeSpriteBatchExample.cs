@@ -204,11 +204,9 @@ class ComputeSpriteBatchExample : Example
 			cmdbuf.EndCopyPass(copyPass);
 
 			// Set up compute pass to build sprite vertex buffer
-			var computePass = cmdbuf.BeginComputePass(new StorageBufferReadWriteBinding
-			{
-				Buffer = SpriteVertexBuffer.Handle,
-				Cycle = true
-			});
+			var computePass = cmdbuf.BeginComputePass(
+				new StorageBufferReadWriteBinding(SpriteVertexBuffer, true)
+			);
 
 			computePass.BindComputePipeline(ComputePipeline);
 			computePass.BindStorageBuffer(SpriteComputeBuffer);
@@ -218,12 +216,7 @@ class ComputeSpriteBatchExample : Example
 
 			// Render sprites using vertex buffer
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = swapchainTexture.Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Black
-				}
+				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 
 			cmdbuf.PushVertexUniformData(cameraMatrix);

@@ -214,12 +214,7 @@ class CPUSpriteBatchExample : Example
 
             // Render sprites using vertex buffer
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = swapchainTexture.Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Black
-				}
+				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 
 			renderPass.BindGraphicsPipeline(RenderPipeline);

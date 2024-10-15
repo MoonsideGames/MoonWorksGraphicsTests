@@ -58,24 +58,14 @@ class StoreLoadExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = swapchainTexture.Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Blue
-				}
+				new ColorTargetInfo(swapchainTexture, Color.Blue)
 			);
 			renderPass.BindGraphicsPipeline(FillPipeline);
 			renderPass.DrawPrimitives(3, 1, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 
 			renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = swapchainTexture.Handle,
-					LoadOp = LoadOp.Load,
-					StoreOp = StoreOp.Store
-				}
+				new ColorTargetInfo(swapchainTexture, LoadOp.Load)
 			);
 			cmdbuf.EndRenderPass(renderPass);
 		}

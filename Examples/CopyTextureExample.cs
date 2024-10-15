@@ -65,14 +65,8 @@ namespace MoonWorksGraphicsTests
 
 			var copyPass = cmdbuf.BeginCopyPass();
 			copyPass.CopyTextureToTexture(
-				new TextureLocation
-				{
-					Texture = OriginalTexture.Handle
-				},
-				new TextureLocation
-				{
-					Texture = TextureCopy.Handle
-				},
+				new TextureLocation(OriginalTexture),
+				new TextureLocation(TextureCopy),
 				OriginalTexture.Width,
 				OriginalTexture.Height,
 				1,
@@ -92,17 +86,8 @@ namespace MoonWorksGraphicsTests
 			// Copy the texture to a transfer buffer
 			copyPass = cmdbuf.BeginCopyPass();
 			copyPass.DownloadFromTexture(
-				new TextureRegion
-				{
-					Texture = TextureCopy.Handle,
-					W = TextureCopy.Width,
-					H = TextureCopy.Height,
-					D = 1,
-				},
-				new TextureTransferInfo
-				{
-					TransferBuffer = compareBuffer.Handle
-				}
+				new TextureRegion(TextureCopy),
+				new TextureTransferInfo(compareBuffer)
 			);
 			cmdbuf.EndCopyPass(copyPass);
 
@@ -137,23 +122,13 @@ namespace MoonWorksGraphicsTests
 			if (swapchainTexture != null)
 			{
 				var clearPass = cmdbuf.BeginRenderPass(
-					new ColorTargetInfo
-					{
-						Texture = swapchainTexture.Handle,
-						LoadOp = LoadOp.Clear,
-						ClearColor = Color.Black
-					}
+					new ColorTargetInfo(swapchainTexture, Color.Black)
 				);
 				cmdbuf.EndRenderPass(clearPass);
 
 				cmdbuf.Blit(new BlitInfo
 				{
-					Source = new BlitRegion
-					{
-						Texture = OriginalTexture.Handle,
-						W = OriginalTexture.Width,
-						H = OriginalTexture.Height
-					},
+					Source = new BlitRegion(OriginalTexture),
 					Destination = new BlitRegion
 					{
 						Texture = swapchainTexture.Handle,
@@ -165,12 +140,7 @@ namespace MoonWorksGraphicsTests
 
 				cmdbuf.Blit(new BlitInfo
 				{
-					Source = new BlitRegion
-					{
-						Texture = TextureCopy.Handle,
-						W = TextureCopy.Width,
-						H = TextureCopy.Height
-					},
+					Source = new BlitRegion(TextureCopy),
 					Destination = new BlitRegion
 					{
 						Texture = swapchainTexture.Handle,
@@ -183,12 +153,7 @@ namespace MoonWorksGraphicsTests
 
 				cmdbuf.Blit(new BlitInfo
 				{
-					Source = new BlitRegion
-					{
-						Texture = TextureSmall.Handle,
-						W = TextureSmall.Width,
-						H = TextureSmall.Height
-					},
+					Source = new BlitRegion(TextureSmall),
 					Destination = new BlitRegion
 					{
 						Texture = swapchainTexture.Handle,

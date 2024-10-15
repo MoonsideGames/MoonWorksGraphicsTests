@@ -10,17 +10,7 @@ using Buffer = MoonWorks.Graphics.Buffer;
 
 namespace MoonWorksGraphicsTests
 {
-	struct DepthUniforms
-	{
-		public float ZNear;
-		public float ZFar;
-
-		public DepthUniforms(float zNear, float zFar)
-		{
-			ZNear = zNear;
-			ZFar = zFar;
-		}
-	}
+	readonly record struct DepthUniforms(float ZNear, float ZFar);
 
 	class CubeExample : Example
 	{
@@ -39,8 +29,8 @@ namespace MoonWorksGraphicsTests
 		private Buffer BlitVertexBuffer;
 		private Buffer IndexBuffer;
 
+		private Texture RenderTexture;
 		private TransferBuffer ScreenshotTransferBuffer;
-		private Texture ScreenshotTexture;
 		private Fence ScreenshotFence;
 
 		private Texture SkyboxTexture;
@@ -207,14 +197,14 @@ namespace MoonWorksGraphicsTests
 				TransferBufferUsage.Download,
 				Window.Width * Window.Height
 			);
-			ScreenshotTexture = Texture.Create2D(
+			RenderTexture = Texture.Create2D(
 				GraphicsDevice,
 				Window.Width,
 				Window.Height,
 				Window.SwapchainFormat,
-				TextureUsageFlags.Sampler
+				TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler
 			);
-			ScreenshotTexture.Name = "Screenshot";
+			RenderTexture.Name = "Render Texture";
 
 			LoadingTask = Task.Run(() => UploadGPUAssets());
 
@@ -310,7 +300,7 @@ namespace MoonWorksGraphicsTests
 		{
 			Logger.LogInfo("Loading...");
 
-			var cubeVertexData = new Span<PositionColorVertex>([
+            Span<PositionColorVertex> cubeVertexData = [
 				new PositionColorVertex(new Vector3(-1, -1, -1), new Color(1f, 0f, 0f)),
 				new PositionColorVertex(new Vector3(1, -1, -1), new Color(1f, 0f, 0f)),
 				new PositionColorVertex(new Vector3(1, 1, -1), new Color(1f, 0f, 0f)),
@@ -340,9 +330,9 @@ namespace MoonWorksGraphicsTests
 				new PositionColorVertex(new Vector3(-1, 1, 1), new Color(0f, 0.5f, 0f)),
 				new PositionColorVertex(new Vector3(1, 1, 1), new Color(0f, 0.5f, 0f)),
 				new PositionColorVertex(new Vector3(1, 1, -1), new Color(0f, 0.5f, 0f))
-			]);
+			];
 
-			var skyboxVertexData = new Span<PositionVertex>([
+            Span<PositionVertex> skyboxVertexData = [
 				new PositionVertex(new Vector3(-10, -10, -10)),
 				new PositionVertex(new Vector3(10, -10, -10)),
 				new PositionVertex(new Vector3(10, 10, -10)),
@@ -372,25 +362,25 @@ namespace MoonWorksGraphicsTests
 				new PositionVertex(new Vector3(-10, 10, 10)),
 				new PositionVertex(new Vector3(10, 10, 10)),
 				new PositionVertex(new Vector3(10, 10, -10))
-			]);
+			];
 
-			var indexData = new Span<uint>([
+            Span<uint> indexData = [
 				0, 1, 2,    0, 2, 3,
 				6, 5, 4,    7, 6, 4,
 				8, 9, 10,   8, 10, 11,
 				14, 13, 12, 15, 14, 12,
 				16, 17, 18, 16, 18, 19,
 				22, 21, 20, 23, 22, 20
-			]);
+			];
 
-			var blitVertexData = new Span<PositionTextureVertex>([
-				new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
-				new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 0)),
-				new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-				new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 0)),
-				new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 1)),
-				new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 1)),
-			]);
+            Span<PositionTextureVertex> blitVertexData = [
+				new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 1)),
+				new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 1)),
+				new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 0)),
+				new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 1)),
+				new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 0)),
+				new PositionTextureVertex(new Vector3(-1, 1, 0), new Vector2(0, 0)),
+			];
 
 			var resourceUploader = new ResourceUploader(GraphicsDevice, 1024 * 1024);
 
@@ -492,12 +482,7 @@ namespace MoonWorksGraphicsTests
 
 					// Just show a clear screen.
 					var renderPass = cmdbuf.BeginRenderPass(
-						new ColorTargetInfo
-						{
-							Texture = swapchainTexture.Handle,
-							LoadOp = LoadOp.Clear,
-							ClearColor = clearColor
-						}
+						new ColorTargetInfo(swapchainTexture, clearColor)
 					);
 					cmdbuf.EndRenderPass(renderPass);
 				}
@@ -508,36 +493,17 @@ namespace MoonWorksGraphicsTests
                     if (depthOnlyEnabled)
                     {
                         renderPass = cmdbuf.BeginRenderPass(
-                            new DepthStencilTargetInfo
-                            {
-                                Texture = DepthTexture.Handle,
-                                LoadOp = LoadOp.Clear,
-                                ClearDepth = 1,
-                                StencilLoadOp = LoadOp.DontCare,
-                                StoreOp = StoreOp.Store,
-                                StencilStoreOp = StoreOp.DontCare,
-                                Cycle = true
-                            }
+                            new DepthStencilTargetInfo(DepthTexture, 1f, true)
+							{
+								StoreOp = StoreOp.Store
+							}
                         );
                     }
                     else
                     {
                         renderPass = cmdbuf.BeginRenderPass(
-                            new ColorTargetInfo
-                            {
-                                Texture = swapchainTexture.Handle,
-                                LoadOp = LoadOp.DontCare
-                            },
-                            new DepthStencilTargetInfo
-                            {
-                                Texture = DepthTexture.Handle,
-                                LoadOp = LoadOp.Clear,
-                                ClearDepth = 1,
-                                StencilLoadOp = LoadOp.DontCare,
-                                StoreOp = StoreOp.DontCare,
-                                StencilStoreOp = StoreOp.DontCare,
-                                Cycle = true
-                            }
+                            new ColorTargetInfo(RenderTexture, LoadOp.DontCare, true),
+                            new DepthStencilTargetInfo(DepthTexture, 1f, true)
                         );
                     }
 
@@ -562,11 +528,7 @@ namespace MoonWorksGraphicsTests
 					{
 						// Draw the depth buffer as a grayscale image
 						renderPass = cmdbuf.BeginRenderPass(
-							new ColorTargetInfo
-							{
-								Texture = swapchainTexture.Handle,
-								LoadOp = LoadOp.Load
-							}
+							new ColorTargetInfo(RenderTexture, LoadOp.Load)
 						);
 
 						renderPass.BindGraphicsPipeline(BlitPipeline);
@@ -578,20 +540,14 @@ namespace MoonWorksGraphicsTests
 						cmdbuf.EndRenderPass(renderPass);
 					}
 
+					cmdbuf.Blit(RenderTexture, swapchainTexture, Filter.Nearest);
+
 					if (takeScreenshot)
 					{
 						var copyPass = cmdbuf.BeginCopyPass();
 						copyPass.DownloadFromTexture(
-							new TextureRegion
-							{
-								Texture = swapchainTexture.Handle,
-								W = swapchainTexture.Width,
-								H = swapchainTexture.Height
-							},
-							new TextureTransferInfo
-							{
-								TransferBuffer = ScreenshotTransferBuffer.Handle
-							}
+							new TextureRegion(RenderTexture),
+							new TextureTransferInfo(ScreenshotTransferBuffer)
 						);
 						cmdbuf.EndCopyPass(copyPass);
 
@@ -623,11 +579,10 @@ namespace MoonWorksGraphicsTests
 			var screenshotSpan = ScreenshotTransferBuffer.Map<Color>(false);
 			ImageUtils.SavePNG(
 				Path.Combine(System.AppContext.BaseDirectory, "screenshot.png"),
-				ScreenshotTransferBuffer,
-				0,
-				ScreenshotTexture.Width,
-				ScreenshotTexture.Height,
-				ScreenshotTexture.Format == TextureFormat.B8G8R8A8Unorm
+				screenshotSpan,
+				RenderTexture.Width,
+				RenderTexture.Height,
+				RenderTexture.Format == TextureFormat.B8G8R8A8Unorm
 			);
 			ScreenshotTransferBuffer.Unmap();
 
@@ -656,7 +611,7 @@ namespace MoonWorksGraphicsTests
 			IndexBuffer.Dispose();
 
 			ScreenshotTransferBuffer.Dispose();
-			ScreenshotTexture.Dispose();
+			RenderTexture.Dispose();
 
 			SkyboxTexture.Dispose();
 			SkyboxSampler.Dispose();

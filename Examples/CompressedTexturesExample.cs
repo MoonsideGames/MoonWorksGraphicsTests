@@ -96,7 +96,6 @@ class CompressedTexturesExample : Example
 
 		for (int i = 0; i < TextureNames.Length; i += 1)
 		{
-			Logger.LogInfo(TextureNames[i]);
 			Textures[i] = resourceUploader.CreateTextureFromDDS(TestUtils.GetTexturePath(TextureNames[i] + ".dds"));
 		}
 
@@ -139,12 +138,7 @@ class CompressedTexturesExample : Example
 		if (swapchainTexture != null)
 		{
 			var renderPass = cmdbuf.BeginRenderPass(
-				new ColorTargetInfo
-				{
-					Texture = swapchainTexture.Handle,
-					LoadOp = LoadOp.Clear,
-					ClearColor = Color.Black
-				}
+				new ColorTargetInfo(swapchainTexture, LoadOp.DontCare)
 			);
 			renderPass.BindGraphicsPipeline(Pipeline);
 			renderPass.BindVertexBuffer(VertexBuffer);

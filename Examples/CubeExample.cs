@@ -1,5 +1,6 @@
 ﻿using MoonWorks;
 using MoonWorks.Graphics;
+using MoonWorks.Graphics.Font;
 using MoonWorks.Input;
 using MoonWorks.Math;
 using MoonWorks.Math.Float;
@@ -19,6 +20,7 @@ namespace MoonWorksGraphicsTests
 		private GraphicsPipeline SkyboxPipeline;
 		private GraphicsPipeline SkyboxPipelineDepthOnly;
 		private GraphicsPipeline BlitPipeline;
+		private GraphicsPipeline FontPipeline;
 
 		private Texture DepthTexture;
 		private Sampler DepthSampler;
@@ -35,6 +37,9 @@ namespace MoonWorksGraphicsTests
 
 		private Texture SkyboxTexture;
 		private Sampler SkyboxSampler;
+
+		private Font SofiaSans;
+		private TextBatch TextBatch;
 
 		private bool takeScreenshot;
 		private bool screenshotInProgress;
@@ -294,6 +299,32 @@ namespace MoonWorksGraphicsTests
 			blitPipelineCreateInfo.VertexInputState = VertexInputState.CreateSingleBinding<PositionTextureVertex>();
 
 			BlitPipeline = GraphicsPipeline.Create(GraphicsDevice, blitPipelineCreateInfo);
+
+			SofiaSans = Font.Load(GraphicsDevice, TestUtils.GetFontPath("SofiaSans.ttf"));
+			TextBatch = new TextBatch(GraphicsDevice);
+
+			var fontPipelineCreateInfo = new GraphicsPipelineCreateInfo
+			{
+				VertexShader = GraphicsDevice.TextVertexShader,
+				FragmentShader = GraphicsDevice.TextFragmentShader,
+				VertexInputState = GraphicsDevice.TextVertexInputState,
+				PrimitiveType = PrimitiveType.TriangleList,
+				RasterizerState = RasterizerState.CCW_CullNone,
+				MultisampleState = MultisampleState.None,
+				DepthStencilState = DepthStencilState.Disable,
+				TargetInfo = new GraphicsPipelineTargetInfo
+				{
+					ColorTargetDescriptions = [
+						new ColorTargetDescription
+						{
+							Format = Window.SwapchainFormat,
+							BlendState = ColorTargetBlendState.PremultipliedAlphaBlend
+						}
+					]
+				}
+			};
+
+			FontPipeline = GraphicsPipeline.Create(GraphicsDevice, fontPipelineCreateInfo);
 		}
 
 		private void UploadGPUAssets()
@@ -477,13 +508,36 @@ namespace MoonWorksGraphicsTests
 			{
 				if (!finishedLoading)
 				{
+					Matrix4x4 fontProj = Matrix4x4.CreateOrthographicOffCenter(
+						0,
+						640,
+						480,
+						0,
+						0,
+						-1
+					);
+					Matrix4x4 fontModel =
+						Matrix4x4.CreateTranslation(635, 480, 0);
+
+					TextBatch.Start(SofiaSans);
+					TextBatch.Add(
+						"LOADING...",
+						48,
+						Color.Black,
+						HorizontalAlignment.Right,
+						VerticalAlignment.Bottom
+					);
+					TextBatch.UploadBufferData(cmdbuf);
+
 					float sine = System.MathF.Abs(System.MathF.Sin(cubeTimer));
 					Color clearColor = new Color(sine, sine, sine);
 
-					// Just show a clear screen.
+					// Clear screen and draw Loading text
 					var renderPass = cmdbuf.BeginRenderPass(
 						new ColorTargetInfo(swapchainTexture, clearColor)
 					);
+					renderPass.BindGraphicsPipeline(FontPipeline);
+					TextBatch.Render(cmdbuf, renderPass, fontModel * fontProj);
 					cmdbuf.EndRenderPass(renderPass);
 				}
 				else
@@ -615,6 +669,9 @@ namespace MoonWorksGraphicsTests
 
 			SkyboxTexture.Dispose();
 			SkyboxSampler.Dispose();
+
+			TextBatch.Dispose();
+			SofiaSans.Dispose();
         }
 	}
 }

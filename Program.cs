@@ -13,10 +13,10 @@ class Program : Game
 		new BasicStencilExample(),
 		new BasicTriangleExample(),
 		new CompressedTexturesExample(),
+		new FontExample(),
 		new BasicComputeExample(),
 		new ComputeUniformsExample(),
 		new CopyTextureExample(),
-		new CubeExample(),
 		new CullFaceExample(),
 		new DrawIndirectExample(),
 		new GetBufferDataExample(),
@@ -38,7 +38,8 @@ class Program : Game
 		new VideoPlayerExample(),
 		new WindowResizingExample(),
 		new CPUSpriteBatchExample(),
-		new ComputeSpriteBatchExample()
+		new ComputeSpriteBatchExample(),
+		new CubeExample()
 	];
 
 	int ExampleIndex = 0;

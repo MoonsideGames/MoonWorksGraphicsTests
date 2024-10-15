@@ -47,6 +47,11 @@ public static class TestUtils
 		return SDL3.SDL.SDL_GetBasePath() + "Content/Videos/" + videoName;
 	}
 
+	public static string GetFontPath(string fontName)
+	{
+		return SDL3.SDL.SDL_GetBasePath() + "Content/Fonts/" + fontName;
+	}
+
 	public enum ButtonType
 	{
 		Left,	  // A/left arrow on keyboard, left d-pad on gamepad

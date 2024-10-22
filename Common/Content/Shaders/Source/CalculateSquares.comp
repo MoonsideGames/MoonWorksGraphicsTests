@@ -1,0 +1,13 @@
+#version 450
+
+layout (local_size_x = 8) in;
+layout (set = 1, binding = 0) writeonly buffer outBuffer
+{
+	uint squares[];
+};
+
+void main()
+{
+	uint n = gl_GlobalInvocationID.x;
+	squares[n] = n * n;
+}

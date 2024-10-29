@@ -20,13 +20,13 @@ class BasicComputeExample : Example
 		Window.SetTitle("BasicCompute");
 
         // Create the compute pipeline that writes texture data
-        ComputePipeline fillTextureComputePipeline = ComputePipeline.Create(
+        ComputePipeline fillTextureComputePipeline = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("FillTexture.comp"),
 			"main",
-			new ComputePipelineCreateInfo
+			new ShaderCross.ComputePipelineCreateInfo
 			{
-				Format = ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.SPIRV,
 				NumReadWriteStorageTextures = 1,
 				ThreadCountX = 8,
 				ThreadCountY = 8,
@@ -35,13 +35,13 @@ class BasicComputeExample : Example
 		);
 
         // Create the compute pipeline that calculates squares of numbers
-        ComputePipeline calculateSquaresComputePipeline = ComputePipeline.Create(
+        ComputePipeline calculateSquaresComputePipeline = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("CalculateSquares.comp"),
 			"main",
-			new ComputePipelineCreateInfo
+			new ShaderCross.ComputePipelineCreateInfo
 			{
-				Format = ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.SPIRV,
 				NumReadWriteStorageBuffers = 1,
 				ThreadCountX = 8,
 				ThreadCountY = 1,
@@ -50,25 +50,25 @@ class BasicComputeExample : Example
 		);
 
 		// Create the graphics pipeline
-		Shader vertShader = Shader.Create(
+		Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.vert"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
-				Stage = ShaderStage.Vertex,
-				Format = ShaderFormat.SPIRV
+				Format = ShaderCross.ShaderFormat.SPIRV,
+				Stage = ShaderStage.Vertex
 			}
 		);
 
-		Shader fragShader = Shader.Create(
+		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.frag"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
+				Format = ShaderCross.ShaderFormat.SPIRV,
 				Stage = ShaderStage.Fragment,
-				Format = ShaderFormat.SPIRV,
 				NumSamplers = 1
 			}
 		);

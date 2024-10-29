@@ -26,25 +26,25 @@ class BasicTriangleExample : Example
 
 		Logger.LogInfo("Press Left to toggle wireframe mode\nPress Down to toggle small viewport\nPress Right to toggle scissor rect");
 
-		Shader vertShaderModule = Shader.Create(
+		Shader vertShaderModule = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("RawTriangle.vert"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
-				Stage = ShaderStage.Vertex,
-				Format = ShaderFormat.SPIRV
+				Format = ShaderCross.ShaderFormat.SPIRV,
+				Stage = ShaderStage.Vertex
 			}
 		);
 
-		Shader fragShaderModule = Shader.Create(
+		Shader fragShaderModule = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
-				Stage = ShaderStage.Fragment,
-				Format = ShaderFormat.SPIRV
+				Format = ShaderCross.ShaderFormat.SPIRV,
+				Stage = ShaderStage.Fragment
 			}
 		);
 

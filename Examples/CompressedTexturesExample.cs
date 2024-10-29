@@ -34,25 +34,25 @@ class CompressedTexturesExample : Example
 		Logger.LogInfo("Setting texture to: " + TextureNames[0]);
 
 		// Load the shaders
-		Shader vertShaderModule = Shader.Create(
+		Shader vertShaderModule = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.vert"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
+				Format = ShaderCross.ShaderFormat.SPIRV,
 				Stage = ShaderStage.Vertex,
-				Format = ShaderFormat.SPIRV
 			}
 		);
 
-		Shader fragShaderModule = Shader.Create(
+		Shader fragShaderModule = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.frag"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
+				Format = ShaderCross.ShaderFormat.SPIRV,
 				Stage = ShaderStage.Fragment,
-				Format = ShaderFormat.SPIRV,
 				NumSamplers = 1
 			}
 		);

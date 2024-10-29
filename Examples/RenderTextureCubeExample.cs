@@ -37,26 +37,26 @@ class RenderTextureCubeExample : Example
 		Logger.LogInfo("Press Down to view the other side of the cubemap");
 
 		// Load the shaders
-		Shader vertShader = Shader.Create(
+		Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("Skybox.vert"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
+				Format = ShaderCross.ShaderFormat.SPIRV,
 				Stage = ShaderStage.Vertex,
-				Format = ShaderFormat.SPIRV,
 				NumUniformBuffers = 1
 			}
 		);
 
-		Shader fragShader = Shader.Create(
+		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("Skybox.frag"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
+				Format = ShaderCross.ShaderFormat.SPIRV,
 				Stage = ShaderStage.Fragment,
-				Format = ShaderFormat.SPIRV,
 				NumSamplers = 1
 			}
 		);

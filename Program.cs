@@ -58,6 +58,7 @@ class Program : Game
 		debugMode
 	) {
 		Logger.LogInfo("Welcome to the MoonWorks Graphics Tests program! Press Q and E to cycle through examples!");
+		ShaderCross.Initialize();
 		Examples[ExampleIndex].Init(MainWindow, GraphicsDevice, Inputs);
     }
 
@@ -126,7 +127,7 @@ class Program : Game
 		var game = new Program(
 			windowCreateInfo,
 			frameLimiterSettings,
-			ShaderFormat.SPIRV,
+			ShaderCross.SPIRVDestinationFormats,
 			60,
 			debugMode
 		);

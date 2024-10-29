@@ -54,26 +54,26 @@ class ComputeSpriteBatchExample : Example
 
 		Window.SetTitle("ComputeSpriteBatch");
 
-		Shader vertShader = Shader.Create(
+		Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadColorWithMatrix.vert"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
+				Format = ShaderCross.ShaderFormat.SPIRV,
 				Stage = ShaderStage.Vertex,
-				Format = ShaderFormat.SPIRV,
 				NumUniformBuffers = 1
 			}
 		);
 
-		Shader fragShader = Shader.Create(
+		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadColor.frag"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
+				Format = ShaderCross.ShaderFormat.SPIRV,
 				Stage = ShaderStage.Fragment,
-				Format = ShaderFormat.SPIRV,
 				NumSamplers = 1
 			}
 		);
@@ -87,13 +87,13 @@ class ComputeSpriteBatchExample : Example
 
 		RenderPipeline = GraphicsPipeline.Create(GraphicsDevice, renderPipelineCreateInfo);
 
-		ComputePipeline = ComputePipeline.Create(
+		ComputePipeline = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SpriteBatch.comp"),
 			"main",
-			new ComputePipelineCreateInfo
+			new ShaderCross.ComputePipelineCreateInfo
 			{
-				Format = ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.SPIRV,
 				NumReadonlyStorageBuffers = 1,
 				NumReadWriteStorageBuffers = 1,
 				ThreadCountX = 64,

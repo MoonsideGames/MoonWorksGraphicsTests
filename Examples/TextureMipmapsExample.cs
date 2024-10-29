@@ -26,26 +26,26 @@ class TextureMipmapsExample : Example
 		Logger.LogInfo("Press Left and Right to shrink/expand the scale of the quad");
 
 		// Load the shaders
-		Shader vertShaderModule = Shader.Create(
+		Shader vertShaderModule = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuadWithMatrix.vert"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
+				Format = ShaderCross.ShaderFormat.SPIRV,
 				Stage = ShaderStage.Vertex,
-				Format = ShaderFormat.SPIRV,
 				NumUniformBuffers = 1
 			}
 		);
 
-		Shader fragShaderModule = Shader.Create(
+		Shader fragShaderModule = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("TexturedQuad.frag"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
+				Format = ShaderCross.ShaderFormat.SPIRV,
 				Stage = ShaderStage.Fragment,
-				Format = ShaderFormat.SPIRV,
 				NumSamplers = 1
 			}
 		);

@@ -16,25 +16,25 @@ class StoreLoadExample : Example
 
 		Window.SetTitle("StoreLoad");
 
-		Shader vertShader = Shader.Create(
+		Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("RawTriangle.vert"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
-				Stage = ShaderStage.Vertex,
-				Format = ShaderFormat.SPIRV
+				Format = ShaderCross.ShaderFormat.SPIRV,
+				Stage = ShaderStage.Vertex
 			}
 		);
 
-		Shader fragShader = Shader.Create(
+		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
-				Stage = ShaderStage.Fragment,
-				Format = ShaderFormat.SPIRV
+				Format = ShaderCross.ShaderFormat.SPIRV,
+				Stage = ShaderStage.Fragment
 			}
 		);
 

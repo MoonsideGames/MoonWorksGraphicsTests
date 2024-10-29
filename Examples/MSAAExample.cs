@@ -26,25 +26,25 @@ class MSAAExample : Example
 		Logger.LogInfo("Setting sample count to: " + currentSampleCount);
 
 		// Create the MSAA pipelines
-		Shader triangleVertShader = Shader.Create(
+		Shader triangleVertShader = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("RawTriangle.vert"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
-				Stage = ShaderStage.Vertex,
-				Format = ShaderFormat.SPIRV
+				Format = ShaderCross.ShaderFormat.SPIRV,
+				Stage = ShaderStage.Vertex
 			}
 		);
 
-		Shader triangleFragShader = Shader.Create(
+		Shader triangleFragShader = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
-				Stage = ShaderStage.Fragment,
-				Format = ShaderFormat.SPIRV
+				Format = ShaderCross.ShaderFormat.SPIRV,
+				Stage = ShaderStage.Fragment
 			}
 		);
 

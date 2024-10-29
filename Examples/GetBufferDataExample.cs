@@ -131,6 +131,7 @@ class GetBufferDataExample : Example
 		{
 			Logger.LogInfo(readbackVertices[i].ToString());
 		}
+		downloadBuffer.Unmap();
 
 		vertexBuffer.Dispose();
 		uploadBuffer.Dispose();

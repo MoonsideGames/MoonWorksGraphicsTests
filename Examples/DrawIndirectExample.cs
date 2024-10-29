@@ -20,25 +20,25 @@ class DrawIndirectExample : Example
 		Window.SetTitle("DrawIndirect");
 
 		// Load the shaders
-		Shader vertShader = Shader.Create(
+		Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("PositionColor.vert"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
-				Stage = ShaderStage.Vertex,
-				Format = ShaderFormat.SPIRV
+				Format = ShaderCross.ShaderFormat.SPIRV,
+				Stage = ShaderStage.Vertex
 			}
 		);
 
-		Shader fragShader = Shader.Create(
+		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetShaderPath("SolidColor.frag"),
 			"main",
-			new ShaderCreateInfo
+			new ShaderCross.ShaderCreateInfo
 			{
-				Stage = ShaderStage.Fragment,
-				Format = ShaderFormat.SPIRV
+				Format = ShaderCross.ShaderFormat.SPIRV,
+				Stage = ShaderStage.Fragment
 			}
 		);
 
@@ -66,6 +66,7 @@ class DrawIndirectExample : Example
 			],
 			BufferUsageFlags.Vertex
 		);
+		VertexBuffer.Name = "VertexBuffer";
 
 		DrawBuffer = resourceUploader.CreateBuffer(
 			[
@@ -83,6 +84,7 @@ class DrawIndirectExample : Example
 			],
 			BufferUsageFlags.Indirect
 		);
+		DrawBuffer.Name = "DrawBuffer";
 
 		resourceUploader.Upload();
 		resourceUploader.Dispose();

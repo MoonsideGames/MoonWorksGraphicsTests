@@ -104,72 +104,72 @@ namespace MoonWorksGraphicsTests
 			depthOnlyEnabled = false;
 			camPos = new Vector3(0, 1.5f, 4);
 
-			Shader cubeVertShader = Shader.Create(
+			Shader cubeVertShader = ShaderCross.Create(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("PositionColorWithMatrix.vert"),
 				"main",
-				new ShaderCreateInfo
+				new ShaderCross.ShaderCreateInfo
 				{
+					Format = ShaderCross.ShaderFormat.SPIRV,
 					Stage = ShaderStage.Vertex,
-					Format = ShaderFormat.SPIRV,
 					NumUniformBuffers = 1
 				}
 			);
 
-			Shader cubeFragShader = Shader.Create(
+			Shader cubeFragShader = ShaderCross.Create(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("SolidColor.frag"),
 				"main",
-				new ShaderCreateInfo
+				new ShaderCross.ShaderCreateInfo
 				{
-					Stage = ShaderStage.Fragment,
-					Format = ShaderFormat.SPIRV
+					Format = ShaderCross.ShaderFormat.SPIRV,
+					Stage = ShaderStage.Fragment
 				}
 			);
 
-			Shader skyboxVertShader = Shader.Create(
+			Shader skyboxVertShader = ShaderCross.Create(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("Skybox.vert"),
 				"main",
-				new ShaderCreateInfo
+				new ShaderCross.ShaderCreateInfo
 				{
+					Format = ShaderCross.ShaderFormat.SPIRV,
 					Stage = ShaderStage.Vertex,
-					Format = ShaderFormat.SPIRV,
 					NumUniformBuffers = 1
 				}
 			);
 
-			Shader skyboxFragShader = Shader.Create(
+			Shader skyboxFragShader = ShaderCross.Create(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("Skybox.frag"),
 				"main",
-				new ShaderCreateInfo
+				new ShaderCross.ShaderCreateInfo
 				{
+					Format = ShaderCross.ShaderFormat.SPIRV,
 					Stage = ShaderStage.Fragment,
-					Format = ShaderFormat.SPIRV,
 					NumSamplers = 1
 				}
 			);
 
-			Shader blitVertShader = Shader.Create(
+			Shader blitVertShader = ShaderCross.Create(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("TexturedQuad.vert"),
 				"main",
-				new ShaderCreateInfo
+				new ShaderCross.ShaderCreateInfo
 				{
-					Stage = ShaderStage.Vertex,
-					Format = ShaderFormat.SPIRV
+					Format = ShaderCross.ShaderFormat.SPIRV,
+					Stage = ShaderStage.Vertex
 				}
 			);
 
-			Shader blitFragShader = Shader.Create(
+			Shader blitFragShader = ShaderCross.Create(
 				GraphicsDevice,
 				TestUtils.GetShaderPath("TexturedDepthQuad.frag"),
 				"main",
-				new ShaderCreateInfo
+				new ShaderCross.ShaderCreateInfo
 				{
+					Format = ShaderCross.ShaderFormat.SPIRV,
 					Stage = ShaderStage.Fragment,
-					Format = ShaderFormat.SPIRV,
 					NumSamplers = 1,
 					NumUniformBuffers = 1
 				}

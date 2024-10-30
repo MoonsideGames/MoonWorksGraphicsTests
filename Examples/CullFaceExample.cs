@@ -36,7 +36,6 @@ class CullFaceExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Vertex
 			}
 		);
@@ -48,7 +47,6 @@ class CullFaceExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Fragment
 			}
 		);

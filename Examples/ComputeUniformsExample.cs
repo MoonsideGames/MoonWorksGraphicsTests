@@ -28,7 +28,6 @@ class ComputeUniformsExample : Example
 			new ShaderCross.ComputePipelineCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				NumReadWriteStorageTextures = 1,
 				NumUniformBuffers = 1,
 				ThreadCountX = 8,

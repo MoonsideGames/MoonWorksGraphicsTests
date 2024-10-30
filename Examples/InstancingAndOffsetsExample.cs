@@ -32,7 +32,6 @@ class InstancingAndOffsetsExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Vertex
 			}
 		);
@@ -44,7 +43,6 @@ class InstancingAndOffsetsExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Fragment
 			}
 		);

@@ -66,7 +66,6 @@ class TexturedQuadExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Vertex
 			}
 		);
@@ -78,7 +77,6 @@ class TexturedQuadExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Fragment,
 				NumSamplers = 1
 			}

@@ -111,7 +111,6 @@ namespace MoonWorksGraphicsTests
 				new ShaderCross.ShaderCreateInfo
 				{
 					Format = ShaderCross.ShaderFormat.HLSL,
-					HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 					Stage = ShaderStage.Vertex,
 					NumUniformBuffers = 1
 				}
@@ -124,7 +123,6 @@ namespace MoonWorksGraphicsTests
 				new ShaderCross.ShaderCreateInfo
 				{
 					Format = ShaderCross.ShaderFormat.HLSL,
-					HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 					Stage = ShaderStage.Fragment
 				}
 			);
@@ -136,7 +134,6 @@ namespace MoonWorksGraphicsTests
 				new ShaderCross.ShaderCreateInfo
 				{
 					Format = ShaderCross.ShaderFormat.HLSL,
-					HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 					Stage = ShaderStage.Vertex,
 					NumUniformBuffers = 1
 				}
@@ -149,7 +146,6 @@ namespace MoonWorksGraphicsTests
 				new ShaderCross.ShaderCreateInfo
 				{
 					Format = ShaderCross.ShaderFormat.HLSL,
-					HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 					Stage = ShaderStage.Fragment,
 					NumSamplers = 1
 				}
@@ -162,7 +158,6 @@ namespace MoonWorksGraphicsTests
 				new ShaderCross.ShaderCreateInfo
 				{
 					Format = ShaderCross.ShaderFormat.HLSL,
-					HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 					Stage = ShaderStage.Vertex
 				}
 			);
@@ -174,7 +169,6 @@ namespace MoonWorksGraphicsTests
 				new ShaderCross.ShaderCreateInfo
 				{
 					Format = ShaderCross.ShaderFormat.HLSL,
-					HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 					Stage = ShaderStage.Fragment,
 					NumSamplers = 1,
 					NumUniformBuffers = 1

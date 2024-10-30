@@ -41,7 +41,6 @@ class CompressedTexturesExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Vertex,
 			}
 		);
@@ -53,7 +52,6 @@ class CompressedTexturesExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Fragment,
 				NumSamplers = 1
 			}

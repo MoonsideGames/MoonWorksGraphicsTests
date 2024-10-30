@@ -47,7 +47,6 @@ class DepthMSAAExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Vertex,
 				NumUniformBuffers = 1
 			}
@@ -60,7 +59,6 @@ class DepthMSAAExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Fragment
 			}
 		);

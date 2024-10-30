@@ -63,7 +63,6 @@ class RenderTextureMipmapsExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Vertex,
 				NumUniformBuffers = 1
 			}
@@ -76,7 +75,6 @@ class RenderTextureMipmapsExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Fragment,
 				NumSamplers = 1
 			}

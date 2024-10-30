@@ -42,7 +42,6 @@ class TexturedAnimatedQuadExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Vertex,
 				NumUniformBuffers = 1
 			}
@@ -55,7 +54,6 @@ class TexturedAnimatedQuadExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Fragment,
 				NumSamplers = 1,
 				NumUniformBuffers = 1

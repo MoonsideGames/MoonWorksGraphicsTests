@@ -10,8 +10,8 @@ struct Input
 
 struct Output
 {
-    float4 Position : SV_Position;
     float3 vPos : TEXCOORD0;
+    float4 Position : SV_Position;
 };
 
 Output main(Input input)

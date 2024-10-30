@@ -27,7 +27,6 @@ namespace MoonWorksGraphicsTests
 				new ShaderCross.ShaderCreateInfo
 				{
 					Format = ShaderCross.ShaderFormat.HLSL,
-					HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 					Stage = ShaderStage.Vertex
 				}
 			);
@@ -38,7 +37,6 @@ namespace MoonWorksGraphicsTests
 				new ShaderCross.ShaderCreateInfo
 				{
 					Format = ShaderCross.ShaderFormat.HLSL,
-					HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 					Stage = ShaderStage.Fragment,
 				}
 			);

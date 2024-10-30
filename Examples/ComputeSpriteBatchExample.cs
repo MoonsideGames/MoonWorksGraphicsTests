@@ -61,7 +61,6 @@ class ComputeSpriteBatchExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Vertex,
 				NumUniformBuffers = 1
 			}
@@ -74,7 +73,6 @@ class ComputeSpriteBatchExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Fragment,
 				NumSamplers = 1
 			}
@@ -96,7 +94,6 @@ class ComputeSpriteBatchExample : Example
 			new ShaderCross.ComputePipelineCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				NumReadonlyStorageBuffers = 1,
 				NumReadWriteStorageBuffers = 1,
 				ThreadCountX = 64,

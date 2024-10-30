@@ -27,7 +27,6 @@ class BasicComputeExample : Example
 			new ShaderCross.ComputePipelineCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				NumReadWriteStorageTextures = 1,
 				ThreadCountX = 8,
 				ThreadCountY = 8,
@@ -43,7 +42,6 @@ class BasicComputeExample : Example
 			new ShaderCross.ComputePipelineCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				NumReadWriteStorageBuffers = 1,
 				ThreadCountX = 8,
 				ThreadCountY = 1,
@@ -59,19 +57,17 @@ class BasicComputeExample : Example
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Vertex
 			}
 		);
 
 		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("TexturedQuad.frag"),
+			TestUtils.GetHLSLPath("TexturedQuad.frag"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
 				Format = ShaderCross.ShaderFormat.HLSL,
-				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Fragment,
 				NumSamplers = 1
 			}

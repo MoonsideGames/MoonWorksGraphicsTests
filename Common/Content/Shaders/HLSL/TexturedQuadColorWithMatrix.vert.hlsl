@@ -12,9 +12,9 @@ struct Input
 
 struct Output
 {
-    float4 Position : SV_Position;
     float2 TexCoord : TEXCOORD0;
     float4 Color : TEXCOORD1;
+    float4 Position : SV_Position;
 };
 
 Output main(Input input)

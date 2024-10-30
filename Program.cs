@@ -30,8 +30,8 @@ class Program : Game
 		new StoreLoadExample(),
 		new Texture3DCopyExample(),
 		new Texture3DExample(),
-		new TexturedAnimatedQuadExample(),
 		new TexturedQuadExample(),
+		new TexturedAnimatedQuadExample(),
 		new TextureMipmapsExample(),
 		new TriangleVertexBufferExample(),
 		new VertexSamplerExample(),
@@ -127,7 +127,7 @@ class Program : Game
 		var game = new Program(
 			windowCreateInfo,
 			frameLimiterSettings,
-			ShaderCross.SPIRVDestinationFormats,
+			ShaderFormat.DXBC,
 			60,
 			debugMode
 		);

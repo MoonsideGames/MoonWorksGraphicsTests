@@ -42,11 +42,12 @@ class DepthMSAAExample : Example
 		// Create the cube pipelines
 		Shader cubeVertShader = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("PositionColorWithMatrix.vert"),
+			TestUtils.GetHLSLPath("PositionColorWithMatrix.vert"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
+				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Vertex,
 				NumUniformBuffers = 1
 			}
@@ -54,11 +55,12 @@ class DepthMSAAExample : Example
 
 		Shader cubeFragShader = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("SolidColor.frag"),
+			TestUtils.GetHLSLPath("SolidColor.frag"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
+				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Fragment
 			}
 		);

@@ -106,11 +106,12 @@ namespace MoonWorksGraphicsTests
 
 			Shader cubeVertShader = ShaderCross.Create(
 				GraphicsDevice,
-				TestUtils.GetShaderPath("PositionColorWithMatrix.vert"),
+				TestUtils.GetHLSLPath("PositionColorWithMatrix.vert"),
 				"main",
 				new ShaderCross.ShaderCreateInfo
 				{
-					Format = ShaderCross.ShaderFormat.SPIRV,
+					Format = ShaderCross.ShaderFormat.HLSL,
+					HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 					Stage = ShaderStage.Vertex,
 					NumUniformBuffers = 1
 				}
@@ -118,22 +119,24 @@ namespace MoonWorksGraphicsTests
 
 			Shader cubeFragShader = ShaderCross.Create(
 				GraphicsDevice,
-				TestUtils.GetShaderPath("SolidColor.frag"),
+				TestUtils.GetHLSLPath("SolidColor.frag"),
 				"main",
 				new ShaderCross.ShaderCreateInfo
 				{
-					Format = ShaderCross.ShaderFormat.SPIRV,
+					Format = ShaderCross.ShaderFormat.HLSL,
+					HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 					Stage = ShaderStage.Fragment
 				}
 			);
 
 			Shader skyboxVertShader = ShaderCross.Create(
 				GraphicsDevice,
-				TestUtils.GetShaderPath("Skybox.vert"),
+				TestUtils.GetHLSLPath("Skybox.vert"),
 				"main",
 				new ShaderCross.ShaderCreateInfo
 				{
-					Format = ShaderCross.ShaderFormat.SPIRV,
+					Format = ShaderCross.ShaderFormat.HLSL,
+					HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 					Stage = ShaderStage.Vertex,
 					NumUniformBuffers = 1
 				}
@@ -141,11 +144,12 @@ namespace MoonWorksGraphicsTests
 
 			Shader skyboxFragShader = ShaderCross.Create(
 				GraphicsDevice,
-				TestUtils.GetShaderPath("Skybox.frag"),
+				TestUtils.GetHLSLPath("Skybox.frag"),
 				"main",
 				new ShaderCross.ShaderCreateInfo
 				{
-					Format = ShaderCross.ShaderFormat.SPIRV,
+					Format = ShaderCross.ShaderFormat.HLSL,
+					HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 					Stage = ShaderStage.Fragment,
 					NumSamplers = 1
 				}
@@ -153,22 +157,24 @@ namespace MoonWorksGraphicsTests
 
 			Shader blitVertShader = ShaderCross.Create(
 				GraphicsDevice,
-				TestUtils.GetShaderPath("TexturedQuad.vert"),
+				TestUtils.GetHLSLPath("TexturedQuad.vert"),
 				"main",
 				new ShaderCross.ShaderCreateInfo
 				{
-					Format = ShaderCross.ShaderFormat.SPIRV,
+					Format = ShaderCross.ShaderFormat.HLSL,
+					HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 					Stage = ShaderStage.Vertex
 				}
 			);
 
 			Shader blitFragShader = ShaderCross.Create(
 				GraphicsDevice,
-				TestUtils.GetShaderPath("TexturedDepthQuad.frag"),
+				TestUtils.GetHLSLPath("TexturedDepthQuad.frag"),
 				"main",
 				new ShaderCross.ShaderCreateInfo
 				{
-					Format = ShaderCross.ShaderFormat.SPIRV,
+					Format = ShaderCross.ShaderFormat.HLSL,
+					HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 					Stage = ShaderStage.Fragment,
 					NumSamplers = 1,
 					NumUniformBuffers = 1

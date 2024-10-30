@@ -47,11 +47,12 @@ class CPUSpriteBatchExample : Example
 
         Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("TexturedQuadColorWithMatrix.vert"),
+			TestUtils.GetHLSLPath("TexturedQuadColorWithMatrix.vert"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
+				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Vertex,
 				NumUniformBuffers = 1
 			}
@@ -59,11 +60,12 @@ class CPUSpriteBatchExample : Example
 
 		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("TexturedQuadColor.frag"),
+			TestUtils.GetHLSLPath("TexturedQuadColor.frag"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
+				HLSLShaderModel = ShaderCross.HLSLShaderModel.Six,
 				Stage = ShaderStage.Fragment,
 				NumSamplers = 1
 			}

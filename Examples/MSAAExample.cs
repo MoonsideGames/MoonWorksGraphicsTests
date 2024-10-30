@@ -28,22 +28,22 @@ class MSAAExample : Example
 		// Create the MSAA pipelines
 		Shader triangleVertShader = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("RawTriangle.vert"),
+			TestUtils.GetHLSLPath("RawTriangle.vert"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
 				Stage = ShaderStage.Vertex
 			}
 		);
 
 		Shader triangleFragShader = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("SolidColor.frag"),
+			TestUtils.GetHLSLPath("SolidColor.frag"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
 				Stage = ShaderStage.Fragment
 			}
 		);

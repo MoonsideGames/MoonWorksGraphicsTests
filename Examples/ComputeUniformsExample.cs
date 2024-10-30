@@ -23,11 +23,11 @@ class ComputeUniformsExample : Example
 		// Create the compute pipeline that writes texture data
 		GradientPipeline = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("GradientTexture.comp"),
+			TestUtils.GetHLSLPath("GradientTexture.comp"),
 			"main",
 			new ShaderCross.ComputePipelineCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
 				NumReadWriteStorageTextures = 1,
 				NumUniformBuffers = 1,
 				ThreadCountX = 8,

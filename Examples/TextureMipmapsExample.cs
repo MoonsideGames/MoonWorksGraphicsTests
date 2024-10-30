@@ -28,11 +28,11 @@ class TextureMipmapsExample : Example
 		// Load the shaders
 		Shader vertShaderModule = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("TexturedQuadWithMatrix.vert"),
+			TestUtils.GetHLSLPath("TexturedQuadWithMatrix.vert"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
 				Stage = ShaderStage.Vertex,
 				NumUniformBuffers = 1
 			}
@@ -40,11 +40,11 @@ class TextureMipmapsExample : Example
 
 		Shader fragShaderModule = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("TexturedQuad.frag"),
+			TestUtils.GetHLSLPath("TexturedQuad.frag"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
 				Stage = ShaderStage.Fragment,
 				NumSamplers = 1
 			}

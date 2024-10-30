@@ -22,11 +22,11 @@ class BasicComputeExample : Example
         // Create the compute pipeline that writes texture data
         ComputePipeline fillTextureComputePipeline = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("FillTexture.comp"),
+			TestUtils.GetHLSLPath("FillTexture.comp"),
 			"main",
 			new ShaderCross.ComputePipelineCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
 				NumReadWriteStorageTextures = 1,
 				ThreadCountX = 8,
 				ThreadCountY = 8,
@@ -37,11 +37,11 @@ class BasicComputeExample : Example
         // Create the compute pipeline that calculates squares of numbers
         ComputePipeline calculateSquaresComputePipeline = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("CalculateSquares.comp"),
+			TestUtils.GetHLSLPath("CalculateSquares.comp"),
 			"main",
 			new ShaderCross.ComputePipelineCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
 				NumReadWriteStorageBuffers = 1,
 				ThreadCountX = 8,
 				ThreadCountY = 1,
@@ -52,22 +52,22 @@ class BasicComputeExample : Example
 		// Create the graphics pipeline
 		Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("TexturedQuad.vert"),
+			TestUtils.GetHLSLPath("TexturedQuad.vert"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
 				Stage = ShaderStage.Vertex
 			}
 		);
 
 		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("TexturedQuad.frag"),
+			TestUtils.GetHLSLPath("TexturedQuad.frag"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
 				Stage = ShaderStage.Fragment,
 				NumSamplers = 1
 			}

@@ -30,8 +30,8 @@ class Program : Game
 		new StoreLoadExample(),
 		new Texture3DCopyExample(),
 		new Texture3DExample(),
-		new TexturedAnimatedQuadExample(),
 		new TexturedQuadExample(),
+		new TexturedAnimatedQuadExample(),
 		new TextureMipmapsExample(),
 		new TriangleVertexBufferExample(),
 		new VertexSamplerExample(),
@@ -124,10 +124,15 @@ class Program : Game
 			144
 		);
 
+		if (!ShaderCross.Initialize())
+		{
+			return;
+		}
+
 		var game = new Program(
 			windowCreateInfo,
 			frameLimiterSettings,
-			ShaderCross.SPIRVDestinationFormats,
+			ShaderCross.HLSLDestinationFormats,
 			60,
 			debugMode
 		);

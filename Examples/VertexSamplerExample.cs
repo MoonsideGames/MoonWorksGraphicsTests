@@ -24,11 +24,11 @@ class VertexSamplerExample : Example
 		// Load the shaders
 		Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("PositionSampler.vert"),
+			TestUtils.GetHLSLPath("PositionSampler.vert"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
 				Stage = ShaderStage.Vertex,
 				NumSamplers = 1
 			}
@@ -36,11 +36,11 @@ class VertexSamplerExample : Example
 
 		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("SolidColor.frag"),
+			TestUtils.GetHLSLPath("SolidColor.frag"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
 				Stage = ShaderStage.Fragment
 			}
 		);

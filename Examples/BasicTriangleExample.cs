@@ -28,22 +28,22 @@ class BasicTriangleExample : Example
 
 		Shader vertShaderModule = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("RawTriangle.vert"),
+			TestUtils.GetHLSLPath("RawTriangle.vert"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
 				Stage = ShaderStage.Vertex
 			}
 		);
 
 		Shader fragShaderModule = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("SolidColor.frag"),
+			TestUtils.GetHLSLPath("SolidColor.frag"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
 				Stage = ShaderStage.Fragment
 			}
 		);

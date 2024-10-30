@@ -37,11 +37,11 @@ class TexturedAnimatedQuadExample : Example
 		// Load the shaders
 		Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("TexturedQuadWithMatrix.vert"),
+			TestUtils.GetHLSLPath("TexturedQuadWithMatrix.vert"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
 				Stage = ShaderStage.Vertex,
 				NumUniformBuffers = 1
 			}
@@ -49,11 +49,11 @@ class TexturedAnimatedQuadExample : Example
 
 		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
-			TestUtils.GetShaderPath("TexturedQuadWithMultiplyColor.frag"),
+			TestUtils.GetHLSLPath("TexturedQuadWithMultiplyColor.frag"),
 			"main",
 			new ShaderCross.ShaderCreateInfo
 			{
-				Format = ShaderCross.ShaderFormat.SPIRV,
+				Format = ShaderCross.ShaderFormat.HLSL,
 				Stage = ShaderStage.Fragment,
 				NumSamplers = 1,
 				NumUniformBuffers = 1

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using MoonWorks.Graphics;
-using MoonWorks.Math.Float;
+using System.Numerics;
 
 namespace MoonWorksGraphicsTests;
 

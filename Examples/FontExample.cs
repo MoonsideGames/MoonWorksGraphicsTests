@@ -3,7 +3,7 @@ using MoonWorks;
 using MoonWorks.Graphics;
 using MoonWorks.Graphics.Font;
 using MoonWorks.Input;
-using MoonWorks.Math.Float;
+using System.Numerics;
 
 namespace MoonWorksGraphicsTests;
 
@@ -81,7 +81,7 @@ class FontExample : Example
 			);
 
 			Matrix4x4 model =
-				Matrix4x4.CreateRotationZ(rotation) *
+				Matrix4x4.CreateRotationX(rotation) *
 				Matrix4x4.CreateTranslation(320, 240, 0);
 
 			TextBatch.Start(SofiaSans);

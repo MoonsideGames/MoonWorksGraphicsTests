@@ -1,6 +1,5 @@
 ﻿using MoonWorks.Graphics;
-using MoonWorks.Math.Float;
-using MoonWorks.Math;
+using System.Numerics;
 using MoonWorks;
 using MoonWorks.Input;
 
@@ -164,7 +163,7 @@ class RenderTextureCubeExample : Example
 	public override void Draw(double alpha)
 	{
 		Matrix4x4 proj = Matrix4x4.CreatePerspectiveFieldOfView(
-			MathHelper.ToRadians(75f),
+			float.DegreesToRadians(75f),
 			(float) Window.Width / Window.Height,
 			0.01f,
 			100f
@@ -172,7 +171,7 @@ class RenderTextureCubeExample : Example
 		Matrix4x4 view = Matrix4x4.CreateLookAt(
 			camPos,
 			Vector3.Zero,
-			Vector3.Up
+			Vector3.UnitY
 		);
 		TransformVertexUniform vertUniforms = new TransformVertexUniform(view * proj);
 

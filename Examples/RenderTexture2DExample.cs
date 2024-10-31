@@ -1,5 +1,4 @@
-﻿using System;
-using MoonWorks;
+﻿using MoonWorks;
 using MoonWorks.Graphics;
 using MoonWorks.Input;
 

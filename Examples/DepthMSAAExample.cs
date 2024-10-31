@@ -1,6 +1,5 @@
 ﻿using MoonWorks;
-using MoonWorks.Math.Float;
-using MoonWorks.Math;
+using System.Numerics;
 using MoonWorks.Graphics;
 using MoonWorks.Input;
 
@@ -237,12 +236,12 @@ class DepthMSAAExample : Example
 		{
 			// Set up cube model-view-projection matrix
 			Matrix4x4 proj = Matrix4x4.CreatePerspectiveFieldOfView(
-				MathHelper.ToRadians(75f),
+				float.DegreesToRadians(75f),
 				(float) Window.Width / Window.Height,
 				0.01f,
 				100f
 			);
-			Matrix4x4 view = Matrix4x4.CreateLookAt(camPos, Vector3.Zero, Vector3.Up);
+			Matrix4x4 view = Matrix4x4.CreateLookAt(camPos, Vector3.Zero, Vector3.UnitY);
 			Matrix4x4 model = Matrix4x4.CreateFromQuaternion(
 				Quaternion.Slerp(
 					previousCubeRotation,

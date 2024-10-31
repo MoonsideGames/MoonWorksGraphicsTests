@@ -2,10 +2,9 @@
 using MoonWorks.Graphics;
 using MoonWorks.Graphics.Font;
 using MoonWorks.Input;
-using MoonWorks.Math;
-using MoonWorks.Math.Float;
 using System;
 using System.IO;
+using System.Numerics;
 using System.Threading.Tasks;
 using Buffer = MoonWorks.Graphics.Buffer;
 
@@ -481,7 +480,7 @@ namespace MoonWorksGraphicsTests
 		public override void Draw(double alpha)
 		{
 			Matrix4x4 proj = Matrix4x4.CreatePerspectiveFieldOfView(
-				MathHelper.ToRadians(75f),
+				float.DegreesToRadians(75f),
 				(float) Window.Width / Window.Height,
 				DepthUniforms.ZNear,
 				DepthUniforms.ZFar
@@ -489,7 +488,7 @@ namespace MoonWorksGraphicsTests
 			Matrix4x4 view = Matrix4x4.CreateLookAt(
 				camPos,
 				Vector3.Zero,
-				Vector3.Up
+				Vector3.UnitY
 			);
 			TransformVertexUniform skyboxUniforms = new TransformVertexUniform(view * proj);
 

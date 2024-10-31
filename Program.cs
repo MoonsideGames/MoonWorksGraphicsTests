@@ -39,7 +39,8 @@ class Program : Game
 		new WindowResizingExample(),
 		new CPUSpriteBatchExample(),
 		new ComputeSpriteBatchExample(),
-		new CubeExample()
+		new CubeExample(),
+		new HotReloadShaderExample()
 	];
 
 	int ExampleIndex = 0;

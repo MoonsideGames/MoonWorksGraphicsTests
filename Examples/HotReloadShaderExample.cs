@@ -76,6 +76,7 @@ class HotReloadShaderExample : Example
     public override void Destroy()
     {
         Pipeline.Dispose();
+        VertexShader.Dispose();
         FragmentShader.Dispose();
     }
 

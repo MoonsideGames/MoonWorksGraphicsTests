@@ -11,6 +11,7 @@ record struct Uniforms(float Time, Vector2 Resolution);
 class HotReloadShaderExample : Example
 {
     GraphicsPipeline Pipeline;
+    Shader VertexShader;
     Shader FragmentShader;
     float Time;
 
@@ -21,6 +22,17 @@ class HotReloadShaderExample : Example
         Inputs = inputs;
 
         Window.SetTitle("HotReloadShader");
+
+        VertexShader = ShaderCross.Create(
+            GraphicsDevice,
+            TestUtils.GetHLSLPath("Fullscreen.vert"),
+            "main",
+            new ShaderCross.ShaderCreateInfo
+            {
+                Format = ShaderCross.ShaderFormat.HLSL,
+                Stage = ShaderStage.Vertex
+            }
+        );
 
         LoadPipeline();
 
@@ -97,13 +109,13 @@ class HotReloadShaderExample : Example
                     [
                         new ColorTargetDescription
                         {
-                            Format = TextureFormat.R8G8B8A8Unorm,
+                            Format = Window.SwapchainFormat,
                             BlendState = ColorTargetBlendState.NoBlend
                         }
                     ]
                 },
                 DepthStencilState = DepthStencilState.Disable,
-                VertexShader = GraphicsDevice.FullscreenVertexShader,
+                VertexShader = VertexShader,
                 FragmentShader = fragmentShader,
                 VertexInputState = VertexInputState.Empty,
                 RasterizerState = RasterizerState.CCW_CullNone,

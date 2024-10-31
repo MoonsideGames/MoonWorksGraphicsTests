@@ -26,7 +26,7 @@ float eqTri(in float2 p, in float r)
     return -length(p)*sign(p.y);
 }
 
-float4 main(float2 ScreenCoord : TEXCOORD0, float4 Position : SV_Position) : SV_Target0
+float4 main(float4 Position : SV_Position) : SV_Target0
 {
     float2 uv = (Position.xy * 2.0 - resolution) / resolution.y;
     float2 uv0 = uv;

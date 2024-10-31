@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Numerics;
 using MoonWorks;
 using MoonWorks.Graphics;
@@ -14,6 +15,9 @@ class HotReloadShaderExample : Example
     Shader VertexShader;
     Shader FragmentShader;
     float Time;
+
+    FileSystemWatcher Watcher;
+    bool NeedReload;
 
     public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
     {
@@ -36,18 +40,26 @@ class HotReloadShaderExample : Example
 
         LoadPipeline();
 
-        Logger.LogInfo("Edit HotReload.frag.hlsl in the Content directory and press Down to reload the shader!");
+        Logger.LogInfo("Edit HotReload.frag.hlsl in the Content directory to reload the shader!");
+
+        Watcher = new FileSystemWatcher(Path.Combine(SDL3.SDL.SDL_GetBasePath(), "Content", "Shaders", "HLSL"));
+        Watcher.Filter = "HotReload.frag.hlsl";
+        Watcher.NotifyFilter = NotifyFilters.LastWrite;
+        Watcher.EnableRaisingEvents = true;
+        Watcher.Changed += OnChanged;
     }
 
     public override void Update(TimeSpan delta)
     {
         Time += (float) delta.TotalSeconds;
 
-        if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Bottom))
+        if (NeedReload)
         {
-            Logger.LogInfo("Reloading pipeline...");
+            Logger.LogInfo("File change detected, reloading pipeline...");
             LoadPipeline();
             Logger.LogInfo("Done!");
+
+            NeedReload = false;
         }
     }
 
@@ -136,5 +148,15 @@ class HotReloadShaderExample : Example
 
         FragmentShader = fragmentShader;
         Pipeline = pipeline;
+    }
+
+    private void OnChanged(object sender, FileSystemEventArgs e)
+    {
+        if (e.ChangeType != WatcherChangeTypes.Changed)
+        {
+            return;
+        }
+
+        NeedReload = true;
     }
 }

@@ -2,8 +2,8 @@
 
 cbuffer UniformBlock : register(b0, space3)
 {
-    float time;
     float2 resolution;
+    float time;
 };
 
 float3 palette( float t ) {

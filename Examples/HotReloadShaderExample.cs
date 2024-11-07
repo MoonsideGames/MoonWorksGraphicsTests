@@ -7,7 +7,7 @@ using MoonWorks.Input;
 
 namespace MoonWorksGraphicsTests;
 
-record struct Uniforms(float Time, Vector2 Resolution);
+record struct Uniforms(Vector2 Resolution, float Time);
 
 class HotReloadShaderExample : Example
 {
@@ -75,8 +75,8 @@ class HotReloadShaderExample : Example
             renderPass.BindGraphicsPipeline(Pipeline);
             cmdbuf.PushFragmentUniformData(
                 new Uniforms(
-                    Time,
-                    new Vector2(swapchainTexture.Width, swapchainTexture.Height)
+                    new Vector2(swapchainTexture.Width, swapchainTexture.Height),
+                    Time
                 )
             );
             renderPass.DrawPrimitives(3, 1, 0, 0);

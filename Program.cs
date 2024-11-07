@@ -48,13 +48,12 @@ class Program : Game
     public Program(
 		WindowCreateInfo windowCreateInfo,
 		FrameLimiterSettings frameLimiterSettings,
-		ShaderFormat availableShaderFormats,
 		int targetTimestep = 60,
 		bool debugMode = false
 	) : base(
 		windowCreateInfo,
 		frameLimiterSettings,
-		availableShaderFormats,
+		ShaderFormat.SPIRV | ShaderFormat.DXIL | ShaderFormat.MSL | ShaderFormat.DXBC,
 		targetTimestep,
 		debugMode
 	) {
@@ -125,15 +124,9 @@ class Program : Game
 			144
 		);
 
-		if (!ShaderCross.Initialize())
-		{
-			return;
-		}
-
 		var game = new Program(
 			windowCreateInfo,
 			frameLimiterSettings,
-			ShaderCross.HLSLDestinationFormats,
 			60,
 			debugMode
 		);

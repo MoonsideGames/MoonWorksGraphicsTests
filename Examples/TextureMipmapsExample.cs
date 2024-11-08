@@ -30,10 +30,10 @@ class TextureMipmapsExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("TexturedQuadWithMatrix.vert"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Vertex,
+			new ShaderCross.ShaderResourceInfo
 			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Vertex,
 				NumUniformBuffers = 1
 			}
 		);
@@ -42,10 +42,10 @@ class TextureMipmapsExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("TexturedQuad.frag"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Fragment,
+			new ShaderCross.ShaderResourceInfo
 			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Fragment,
 				NumSamplers = 1
 			}
 		);

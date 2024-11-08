@@ -49,10 +49,10 @@ class CPUSpriteBatchExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("TexturedQuadColorWithMatrix.vert"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Vertex,
+			new ShaderCross.ShaderResourceInfo
 			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Vertex,
 				NumUniformBuffers = 1
 			}
 		);
@@ -61,10 +61,10 @@ class CPUSpriteBatchExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("TexturedQuadColor.frag"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Fragment,
+			new ShaderCross.ShaderResourceInfo
 			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Fragment,
 				NumSamplers = 1
 			}
 		);

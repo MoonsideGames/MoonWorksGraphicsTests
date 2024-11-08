@@ -43,10 +43,10 @@ class DepthMSAAExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("PositionColorWithMatrix.vert"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Vertex,
+			new ShaderCross.ShaderResourceInfo
 			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Vertex,
 				NumUniformBuffers = 1
 			}
 		);
@@ -55,11 +55,8 @@ class DepthMSAAExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("SolidColor.frag"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
-			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Fragment
-			}
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Fragment
 		);
 
 		GraphicsPipelineCreateInfo pipelineCreateInfo = new GraphicsPipelineCreateInfo

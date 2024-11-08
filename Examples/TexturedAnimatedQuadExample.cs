@@ -39,10 +39,10 @@ class TexturedAnimatedQuadExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("TexturedQuadWithMatrix.vert"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Vertex,
+			new ShaderCross.ShaderResourceInfo
 			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Vertex,
 				NumUniformBuffers = 1
 			}
 		);
@@ -51,10 +51,10 @@ class TexturedAnimatedQuadExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("TexturedQuadWithMultiplyColor.frag"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Fragment,
+			new ShaderCross.ShaderResourceInfo
 			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Fragment,
 				NumSamplers = 1,
 				NumUniformBuffers = 1
 			}

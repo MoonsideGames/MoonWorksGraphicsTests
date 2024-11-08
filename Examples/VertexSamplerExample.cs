@@ -25,10 +25,10 @@ class VertexSamplerExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("PositionSampler.vert"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Vertex,
+			new ShaderCross.ShaderResourceInfo
 			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Vertex,
 				NumSamplers = 1
 			}
 		);
@@ -37,11 +37,8 @@ class VertexSamplerExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("SolidColor.frag"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
-			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Fragment
-			}
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Fragment
 		);
 
 		// Create the graphics pipeline

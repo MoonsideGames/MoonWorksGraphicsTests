@@ -20,22 +20,16 @@ class StoreLoadExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("RawTriangle.vert"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
-			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Vertex
-			}
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Vertex
 		);
 
 		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("SolidColor.frag"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
-			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Fragment
-			}
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Fragment
 		);
 
 		GraphicsPipelineCreateInfo pipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(

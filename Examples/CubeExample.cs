@@ -107,10 +107,10 @@ namespace MoonWorksGraphicsTests
 				GraphicsDevice,
 				TestUtils.GetHLSLPath("PositionColorWithMatrix.vert"),
 				"main",
-				new ShaderCross.ShaderCreateInfo
+				ShaderCross.ShaderFormat.HLSL,
+				ShaderStage.Vertex,
+				new ShaderCross.ShaderResourceInfo
 				{
-					Format = ShaderCross.ShaderFormat.HLSL,
-					Stage = ShaderStage.Vertex,
 					NumUniformBuffers = 1
 				}
 			);
@@ -119,21 +119,18 @@ namespace MoonWorksGraphicsTests
 				GraphicsDevice,
 				TestUtils.GetHLSLPath("SolidColor.frag"),
 				"main",
-				new ShaderCross.ShaderCreateInfo
-				{
-					Format = ShaderCross.ShaderFormat.HLSL,
-					Stage = ShaderStage.Fragment
-				}
+				ShaderCross.ShaderFormat.HLSL,
+				ShaderStage.Fragment
 			);
 
 			Shader skyboxVertShader = ShaderCross.Create(
 				GraphicsDevice,
 				TestUtils.GetHLSLPath("Skybox.vert"),
 				"main",
-				new ShaderCross.ShaderCreateInfo
+				ShaderCross.ShaderFormat.HLSL,
+				ShaderStage.Vertex,
+				new ShaderCross.ShaderResourceInfo
 				{
-					Format = ShaderCross.ShaderFormat.HLSL,
-					Stage = ShaderStage.Vertex,
 					NumUniformBuffers = 1
 				}
 			);
@@ -142,10 +139,10 @@ namespace MoonWorksGraphicsTests
 				GraphicsDevice,
 				TestUtils.GetHLSLPath("Skybox.frag"),
 				"main",
-				new ShaderCross.ShaderCreateInfo
+				ShaderCross.ShaderFormat.HLSL,
+				ShaderStage.Fragment,
+				new ShaderCross.ShaderResourceInfo
 				{
-					Format = ShaderCross.ShaderFormat.HLSL,
-					Stage = ShaderStage.Fragment,
 					NumSamplers = 1
 				}
 			);
@@ -154,21 +151,18 @@ namespace MoonWorksGraphicsTests
 				GraphicsDevice,
 				TestUtils.GetHLSLPath("TexturedQuad.vert"),
 				"main",
-				new ShaderCross.ShaderCreateInfo
-				{
-					Format = ShaderCross.ShaderFormat.HLSL,
-					Stage = ShaderStage.Vertex
-				}
+				ShaderCross.ShaderFormat.HLSL,
+				ShaderStage.Vertex
 			);
 
 			Shader blitFragShader = ShaderCross.Create(
 				GraphicsDevice,
 				TestUtils.GetHLSLPath("TexturedDepthQuad.frag"),
 				"main",
-				new ShaderCross.ShaderCreateInfo
+				ShaderCross.ShaderFormat.HLSL,
+				ShaderStage.Fragment,
+				new ShaderCross.ShaderResourceInfo
 				{
-					Format = ShaderCross.ShaderFormat.HLSL,
-					Stage = ShaderStage.Fragment,
 					NumSamplers = 1,
 					NumUniformBuffers = 1
 				}

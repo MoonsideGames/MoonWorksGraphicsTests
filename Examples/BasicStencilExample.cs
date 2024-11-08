@@ -24,21 +24,16 @@ namespace MoonWorksGraphicsTests
 				GraphicsDevice,
 				TestUtils.GetHLSLPath("PositionColor.vert"),
 				"main",
-				new ShaderCross.ShaderCreateInfo
-				{
-					Format = ShaderCross.ShaderFormat.HLSL,
-					Stage = ShaderStage.Vertex
-				}
+				ShaderCross.ShaderFormat.HLSL,
+				ShaderStage.Vertex
 			);
+
 			Shader fragShaderModule = ShaderCross.Create(
 				GraphicsDevice,
 				TestUtils.GetHLSLPath("SolidColor.frag"),
 				"main",
-				new ShaderCross.ShaderCreateInfo
-				{
-					Format = ShaderCross.ShaderFormat.HLSL,
-					Stage = ShaderStage.Fragment,
-				}
+				ShaderCross.ShaderFormat.HLSL,
+				ShaderStage.Fragment
 			);
 
 			// Create the graphics pipelines

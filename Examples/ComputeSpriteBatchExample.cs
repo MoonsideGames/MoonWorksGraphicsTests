@@ -58,10 +58,10 @@ class ComputeSpriteBatchExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("TexturedQuadColorWithMatrix.vert"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Vertex,
+			new ShaderCross.ShaderResourceInfo
 			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Vertex,
 				NumUniformBuffers = 1
 			}
 		);
@@ -70,10 +70,10 @@ class ComputeSpriteBatchExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("TexturedQuadColor.frag"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Fragment,
+			new ShaderCross.ShaderResourceInfo
 			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Fragment,
 				NumSamplers = 1
 			}
 		);
@@ -91,10 +91,10 @@ class ComputeSpriteBatchExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("SpriteBatch.comp"),
 			"main",
-			new ShaderCross.ComputePipelineCreateInfo
+			ShaderCross.ShaderFormat.HLSL,
+			new ShaderCross.ComputeResourceInfo
 			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				NumReadonlyStorageBuffers = 1,
+				NumReadOnlyStorageBuffers = 1,
 				NumReadWriteStorageBuffers = 1,
 				ThreadCountX = 64,
 				ThreadCountY = 1,

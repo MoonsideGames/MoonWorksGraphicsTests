@@ -38,21 +38,18 @@ class CompressedTexturesExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("TexturedQuad.vert"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
-			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Vertex,
-			}
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Vertex
 		);
 
 		Shader fragShaderModule = ShaderCross.Create(
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("TexturedQuad.frag"),
 			"main",
-			new ShaderCross.ShaderCreateInfo
+			ShaderCross.ShaderFormat.HLSL,
+			ShaderStage.Fragment,
+			new ShaderCross.ShaderResourceInfo
 			{
-				Format = ShaderCross.ShaderFormat.HLSL,
-				Stage = ShaderStage.Fragment,
 				NumSamplers = 1
 			}
 		);

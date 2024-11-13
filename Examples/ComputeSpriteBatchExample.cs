@@ -59,11 +59,7 @@ class ComputeSpriteBatchExample : Example
 			TestUtils.GetHLSLPath("TexturedQuadColorWithMatrix.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Vertex,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumUniformBuffers = 1
-			}
+			ShaderStage.Vertex
 		);
 
 		Shader fragShader = ShaderCross.Create(
@@ -71,11 +67,7 @@ class ComputeSpriteBatchExample : Example
 			TestUtils.GetHLSLPath("TexturedQuadColor.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Fragment,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumSamplers = 1
-			}
+			ShaderStage.Fragment
 		);
 
 		GraphicsPipelineCreateInfo renderPipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
@@ -91,15 +83,7 @@ class ComputeSpriteBatchExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("SpriteBatch.comp"),
 			"main",
-			ShaderCross.ShaderFormat.HLSL,
-			new ShaderCross.ComputeResourceInfo
-			{
-				NumReadOnlyStorageBuffers = 1,
-				NumReadWriteStorageBuffers = 1,
-				ThreadCountX = 64,
-				ThreadCountY = 1,
-				ThreadCountZ = 1
-			}
+			ShaderCross.ShaderFormat.HLSL
 		);
 
 		Sampler = Sampler.Create(GraphicsDevice, SamplerCreateInfo.PointClamp);
@@ -209,7 +193,7 @@ class ComputeSpriteBatchExample : Example
 			);
 
 			computePass.BindComputePipeline(ComputePipeline);
-			computePass.BindStorageBuffer(SpriteComputeBuffer);
+			computePass.BindStorageBuffers(SpriteComputeBuffer);
 			computePass.Dispatch(MAX_SPRITE_COUNT / 64, 1, 1);
 
 			cmdbuf.EndComputePass(computePass);
@@ -222,9 +206,9 @@ class ComputeSpriteBatchExample : Example
 			cmdbuf.PushVertexUniformData(cameraMatrix);
 
 			renderPass.BindGraphicsPipeline(RenderPipeline);
-			renderPass.BindVertexBuffer(SpriteVertexBuffer);
+			renderPass.BindVertexBuffers(SpriteVertexBuffer);
 			renderPass.BindIndexBuffer(SpriteIndexBuffer, IndexElementSize.ThirtyTwo);
-			renderPass.BindFragmentSampler(new TextureSamplerBinding(SpriteTexture, Sampler));
+			renderPass.BindFragmentSamplers(new TextureSamplerBinding(SpriteTexture, Sampler));
 			renderPass.DrawIndexedPrimitives(MAX_SPRITE_COUNT * 6, 1, 0, 0, 0);
 
 			cmdbuf.EndRenderPass(renderPass);

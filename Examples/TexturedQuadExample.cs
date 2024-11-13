@@ -72,11 +72,7 @@ class TexturedQuadExample : Example
 			TestUtils.GetHLSLPath("TexturedQuad.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Fragment,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumSamplers = 1
-			}
+			ShaderStage.Fragment
 		);
 
 		// Create the graphics pipeline
@@ -175,9 +171,9 @@ class TexturedQuadExample : Example
 				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 			renderPass.BindGraphicsPipeline(pipeline);
-			renderPass.BindVertexBuffer(vertexBuffer);
+			renderPass.BindVertexBuffers(vertexBuffer);
 			renderPass.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
-			renderPass.BindFragmentSampler(new TextureSamplerBinding(textures[currentTextureIndex], samplers[currentSamplerIndex]));
+			renderPass.BindFragmentSamplers(new TextureSamplerBinding(textures[currentTextureIndex], samplers[currentSamplerIndex]));
 			renderPass.DrawIndexedPrimitives(6, 1, 0, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 		}

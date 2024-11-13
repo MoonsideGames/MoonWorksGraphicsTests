@@ -40,11 +40,7 @@ class TexturedAnimatedQuadExample : Example
 			TestUtils.GetHLSLPath("TexturedQuadWithMatrix.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Vertex,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumUniformBuffers = 1
-			}
+			ShaderStage.Vertex
 		);
 
 		Shader fragShader = ShaderCross.Create(
@@ -52,12 +48,7 @@ class TexturedAnimatedQuadExample : Example
 			TestUtils.GetHLSLPath("TexturedQuadWithMultiplyColor.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Fragment,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumSamplers = 1,
-				NumUniformBuffers = 1
-			}
+			ShaderStage.Fragment
 		);
 
 		// Create the graphics pipeline
@@ -118,9 +109,9 @@ class TexturedAnimatedQuadExample : Example
 				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 			renderPass.BindGraphicsPipeline(Pipeline);
-			renderPass.BindVertexBuffer(VertexBuffer);
+			renderPass.BindVertexBuffers(VertexBuffer);
 			renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.Sixteen);
-			renderPass.BindFragmentSampler(new TextureSamplerBinding(Texture, Sampler));
+			renderPass.BindFragmentSamplers(new TextureSamplerBinding(Texture, Sampler));
 
 			// Top-left
 			vertUniforms = new TransformVertexUniform(Matrix4x4.CreateRotationZ(t) * Matrix4x4.CreateTranslation(new Vector3(-0.5f, -0.5f, 0)));

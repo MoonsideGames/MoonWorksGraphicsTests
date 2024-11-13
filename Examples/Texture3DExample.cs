@@ -41,12 +41,7 @@ class Texture3DExample : Example
 			TestUtils.GetHLSLPath("TexturedQuad3D.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Fragment,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumSamplers = 1,
-				NumUniformBuffers = 1
-			}
+			ShaderStage.Fragment
 		);
 
 		// Create the graphics pipeline
@@ -154,9 +149,9 @@ class Texture3DExample : Example
 				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 			renderPass.BindGraphicsPipeline(Pipeline);
-			renderPass.BindVertexBuffer(VertexBuffer);
+			renderPass.BindVertexBuffers(VertexBuffer);
 			renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.Sixteen);
-			renderPass.BindFragmentSampler(new TextureSamplerBinding(Texture, Sampler));
+			renderPass.BindFragmentSamplers(new TextureSamplerBinding(Texture, Sampler));
 			cmdbuf.PushFragmentUniformData(fragUniform);
 			renderPass.DrawIndexedPrimitives(6, 1, 0, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);

@@ -96,11 +96,7 @@ class HotReloadShaderExample : Example
             TestUtils.GetHLSLPath("HotReload.frag"),
             "main",
             ShaderCross.ShaderFormat.HLSL,
-            ShaderStage.Fragment,
-            new ShaderCross.ShaderResourceInfo
-            {
-                NumUniformBuffers = 1
-            }
+            ShaderStage.Fragment
         );
 
         if (fragmentShader == null)

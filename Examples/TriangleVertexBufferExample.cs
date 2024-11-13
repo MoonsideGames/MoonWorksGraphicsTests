@@ -70,7 +70,7 @@ class TriangleVertexBufferExample : Example
 				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 			renderPass.BindGraphicsPipeline(Pipeline);
-			renderPass.BindVertexBuffer(VertexBuffer);
+			renderPass.BindVertexBuffers(VertexBuffer);
 			renderPass.DrawPrimitives(3, 1, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 		}

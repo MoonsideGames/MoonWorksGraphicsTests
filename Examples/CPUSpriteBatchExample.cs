@@ -50,11 +50,7 @@ class CPUSpriteBatchExample : Example
 			TestUtils.GetHLSLPath("TexturedQuadColorWithMatrix.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Vertex,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumUniformBuffers = 1
-			}
+			ShaderStage.Vertex
 		);
 
 		Shader fragShader = ShaderCross.Create(
@@ -62,11 +58,7 @@ class CPUSpriteBatchExample : Example
 			TestUtils.GetHLSLPath("TexturedQuadColor.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Fragment,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumSamplers = 1
-			}
+			ShaderStage.Fragment
 		);
 
 		GraphicsPipelineCreateInfo renderPipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
@@ -218,9 +210,9 @@ class CPUSpriteBatchExample : Example
 			);
 
 			renderPass.BindGraphicsPipeline(RenderPipeline);
-			renderPass.BindVertexBuffer(SpriteVertexBuffer);
+			renderPass.BindVertexBuffers(SpriteVertexBuffer);
 			renderPass.BindIndexBuffer(SpriteIndexBuffer, IndexElementSize.ThirtyTwo);
-			renderPass.BindFragmentSampler(new TextureSamplerBinding(SpriteTexture, Sampler));
+			renderPass.BindFragmentSamplers(new TextureSamplerBinding(SpriteTexture, Sampler));
 			cmdbuf.PushVertexUniformData(cameraMatrix);
 			renderPass.DrawIndexedPrimitives(SPRITE_COUNT * 6, 1, 0, 0, 0);
 

@@ -24,14 +24,7 @@ class BasicComputeExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("FillTexture.comp"),
 			"main",
-			ShaderCross.ShaderFormat.HLSL,
-			new ShaderCross.ComputeResourceInfo
-			{
-				NumReadWriteStorageTextures = 1,
-				ThreadCountX = 8,
-				ThreadCountY = 8,
-				ThreadCountZ = 1
-			}
+			ShaderCross.ShaderFormat.HLSL
 		);
 
         // Create the compute pipeline that calculates squares of numbers
@@ -39,14 +32,7 @@ class BasicComputeExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("CalculateSquares.comp"),
 			"main",
-			ShaderCross.ShaderFormat.HLSL,
-			new ShaderCross.ComputeResourceInfo
-			{
-				NumReadWriteStorageBuffers = 1,
-				ThreadCountX = 8,
-				ThreadCountY = 1,
-				ThreadCountZ = 1
-			}
+			ShaderCross.ShaderFormat.HLSL
 		);
 
 		// Create the graphics pipeline
@@ -63,11 +49,7 @@ class BasicComputeExample : Example
 			TestUtils.GetHLSLPath("TexturedQuad.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Fragment,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumSamplers = 1
-			}
+			ShaderStage.Fragment
 		);
 
 		GraphicsPipelineCreateInfo drawPipelineCreateInfo = TestUtils.GetStandardGraphicsPipelineCreateInfo(
@@ -167,8 +149,8 @@ class BasicComputeExample : Example
 				ClearColor = Color.CornflowerBlue
 			});
 			renderPass.BindGraphicsPipeline(DrawPipeline);
-			renderPass.BindFragmentSampler(new TextureSamplerBinding(Texture, Sampler));
-			renderPass.BindVertexBuffer(VertexBuffer);
+			renderPass.BindFragmentSamplers(new TextureSamplerBinding(Texture, Sampler));
+			renderPass.BindVertexBuffers(VertexBuffer);
 			renderPass.DrawPrimitives(6, 1, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 		}

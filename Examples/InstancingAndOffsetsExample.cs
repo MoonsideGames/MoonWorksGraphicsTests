@@ -110,7 +110,7 @@ class InstancingAndOffsetsExample : Example
 				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 			renderPass.BindGraphicsPipeline(Pipeline);
-			renderPass.BindVertexBuffer(VertexBuffer);
+			renderPass.BindVertexBuffers(VertexBuffer);
 			renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.Sixteen);
 			renderPass.DrawIndexedPrimitives(3, 16, indexOffset, (int) vertexOffset, 0);
 			cmdbuf.EndRenderPass(renderPass);

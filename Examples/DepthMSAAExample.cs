@@ -44,11 +44,7 @@ class DepthMSAAExample : Example
 			TestUtils.GetHLSLPath("PositionColorWithMatrix.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Vertex,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumUniformBuffers = 1
-			}
+			ShaderStage.Vertex
 		);
 
 		Shader cubeFragShader = ShaderCross.Create(
@@ -270,20 +266,20 @@ class DepthMSAAExample : Example
 
 			// Begin the MSAA RT pass
 			var renderPass = cmdbuf.BeginRenderPass(
-				colorTargetInfo,
-				new DepthStencilTargetInfo(DepthRTs[index], 1, true)
+				new DepthStencilTargetInfo(DepthRTs[index], 1, true),
+				colorTargetInfo
 			);
 			renderPass.BindGraphicsPipeline(CubePipelines[index]);
 
 			cmdbuf.PushVertexUniformData(cubeUniforms);
 
 			// Draw the first cube
-			renderPass.BindVertexBuffer(CubeVertexBuffer1);
+			renderPass.BindVertexBuffers(CubeVertexBuffer1);
 			renderPass.BindIndexBuffer(CubeIndexBuffer, IndexElementSize.ThirtyTwo);
 			renderPass.DrawIndexedPrimitives(36, 1, 0, 0, 0);
 
 			// Draw the second cube
-			renderPass.BindVertexBuffer(CubeVertexBuffer2);
+			renderPass.BindVertexBuffers(CubeVertexBuffer2);
 			renderPass.BindIndexBuffer(CubeIndexBuffer, IndexElementSize.ThirtyTwo);
 			renderPass.DrawIndexedPrimitives(36, 1, 0, 0, 0);
 

@@ -119,11 +119,11 @@ class CullFaceExample : Example
 			renderPass.BindGraphicsPipeline(CW_CullNonePipeline);
 			if (UseClockwiseWinding)
 			{
-				renderPass.BindVertexBuffer(CW_VertexBuffer);
+				renderPass.BindVertexBuffers(CW_VertexBuffer);
 			}
 			else
 			{
-				renderPass.BindVertexBuffer(CCW_VertexBuffer);
+				renderPass.BindVertexBuffers(CCW_VertexBuffer);
 			}
 
 			renderPass.SetViewport(new Viewport(0, 0, 213, 240));

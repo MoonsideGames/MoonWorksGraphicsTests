@@ -25,15 +25,7 @@ class ComputeUniformsExample : Example
 			GraphicsDevice,
 			TestUtils.GetHLSLPath("GradientTexture.comp"),
 			"main",
-			ShaderCross.ShaderFormat.HLSL,
-			new ShaderCross.ComputeResourceInfo
-			{
-				NumReadWriteStorageTextures = 1,
-				NumUniformBuffers = 1,
-				ThreadCountX = 8,
-				ThreadCountY = 8,
-				ThreadCountZ = 1
-			}
+			ShaderCross.ShaderFormat.HLSL
 		);
 
 		RenderTexture = Texture.Create2D(

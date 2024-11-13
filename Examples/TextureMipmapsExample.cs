@@ -31,11 +31,7 @@ class TextureMipmapsExample : Example
 			TestUtils.GetHLSLPath("TexturedQuadWithMatrix.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Vertex,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumUniformBuffers = 1
-			}
+			ShaderStage.Vertex
 		);
 
 		Shader fragShaderModule = ShaderCross.Create(
@@ -43,11 +39,7 @@ class TextureMipmapsExample : Example
 			TestUtils.GetHLSLPath("TexturedQuad.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Fragment,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumSamplers = 1
-			}
+			ShaderStage.Fragment
 		);
 
 		// Create the graphics pipeline
@@ -141,9 +133,9 @@ class TextureMipmapsExample : Example
 				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 			renderPass.BindGraphicsPipeline(Pipeline);
-			renderPass.BindVertexBuffer(VertexBuffer);
+			renderPass.BindVertexBuffers(VertexBuffer);
 			renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.Sixteen);
-			renderPass.BindFragmentSampler(new TextureSamplerBinding(Texture, Sampler));
+			renderPass.BindFragmentSamplers(new TextureSamplerBinding(Texture, Sampler));
 			cmdbuf.PushVertexUniformData(vertUniforms);
 			renderPass.DrawIndexedPrimitives(6, 1, 0, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);

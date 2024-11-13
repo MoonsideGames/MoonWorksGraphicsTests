@@ -41,11 +41,7 @@ class RenderTextureCubeExample : Example
 			TestUtils.GetHLSLPath("Skybox.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Vertex,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumUniformBuffers = 1
-			}
+			ShaderStage.Vertex
 		);
 
 		Shader fragShader = ShaderCross.Create(
@@ -53,11 +49,7 @@ class RenderTextureCubeExample : Example
 			TestUtils.GetHLSLPath("Skybox.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Fragment,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumSamplers = 1
-			}
+			ShaderStage.Fragment
 		);
 
 		// Create the graphics pipeline
@@ -183,9 +175,9 @@ class RenderTextureCubeExample : Example
 				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 			renderPass.BindGraphicsPipeline(pipeline);
-			renderPass.BindVertexBuffer(vertexBuffer);
+			renderPass.BindVertexBuffers(vertexBuffer);
 			renderPass.BindIndexBuffer(indexBuffer, IndexElementSize.Sixteen);
-			renderPass.BindFragmentSampler(new TextureSamplerBinding(cubemap, sampler));
+			renderPass.BindFragmentSamplers(new TextureSamplerBinding(cubemap, sampler));
 			cmdbuf.PushVertexUniformData(vertUniforms);
 			renderPass.DrawIndexedPrimitives(36, 1, 0, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);

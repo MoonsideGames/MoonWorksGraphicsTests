@@ -108,11 +108,7 @@ namespace MoonWorksGraphicsTests
 				TestUtils.GetHLSLPath("PositionColorWithMatrix.vert"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
-				ShaderStage.Vertex,
-				new ShaderCross.ShaderResourceInfo
-				{
-					NumUniformBuffers = 1
-				}
+				ShaderStage.Vertex
 			);
 
 			Shader cubeFragShader = ShaderCross.Create(
@@ -128,11 +124,7 @@ namespace MoonWorksGraphicsTests
 				TestUtils.GetHLSLPath("Skybox.vert"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
-				ShaderStage.Vertex,
-				new ShaderCross.ShaderResourceInfo
-				{
-					NumUniformBuffers = 1
-				}
+				ShaderStage.Vertex
 			);
 
 			Shader skyboxFragShader = ShaderCross.Create(
@@ -140,11 +132,7 @@ namespace MoonWorksGraphicsTests
 				TestUtils.GetHLSLPath("Skybox.frag"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
-				ShaderStage.Fragment,
-				new ShaderCross.ShaderResourceInfo
-				{
-					NumSamplers = 1
-				}
+				ShaderStage.Fragment
 			);
 
 			Shader blitVertShader = ShaderCross.Create(
@@ -160,12 +148,7 @@ namespace MoonWorksGraphicsTests
 				TestUtils.GetHLSLPath("TexturedDepthQuad.frag"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
-				ShaderStage.Fragment,
-				new ShaderCross.ShaderResourceInfo
-				{
-					NumSamplers = 1,
-					NumUniformBuffers = 1
-				}
+				ShaderStage.Fragment
 			);
 
 			DepthTexture = Texture.Create2D(
@@ -549,23 +532,23 @@ namespace MoonWorksGraphicsTests
                     else
                     {
                         renderPass = cmdbuf.BeginRenderPass(
-                            new ColorTargetInfo(RenderTexture, LoadOp.DontCare, true),
-                            new DepthStencilTargetInfo(DepthTexture, 1f, true)
+							new DepthStencilTargetInfo(DepthTexture, 1f, true),
+                            new ColorTargetInfo(RenderTexture, LoadOp.DontCare, true)
                         );
                     }
 
                     // Draw cube
                     renderPass.BindGraphicsPipeline(depthOnlyEnabled ? CubePipelineDepthOnly : CubePipeline);
-					renderPass.BindVertexBuffer(CubeVertexBuffer);
+					renderPass.BindVertexBuffers(CubeVertexBuffer);
 					renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.ThirtyTwo);
 					cmdbuf.PushVertexUniformData(cubeUniforms);
 					renderPass.DrawIndexedPrimitives(36, 1, 0, 0, 0);
 
 					// Draw skybox
 					renderPass.BindGraphicsPipeline(depthOnlyEnabled ? SkyboxPipelineDepthOnly : SkyboxPipeline);
-					renderPass.BindVertexBuffer(skyboxVertexBuffer);
+					renderPass.BindVertexBuffers(skyboxVertexBuffer);
 					renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.ThirtyTwo);
-					renderPass.BindFragmentSampler(new TextureSamplerBinding(SkyboxTexture, SkyboxSampler));
+					renderPass.BindFragmentSamplers(new TextureSamplerBinding(SkyboxTexture, SkyboxSampler));
 					cmdbuf.PushVertexUniformData(skyboxUniforms);
 					renderPass.DrawIndexedPrimitives(36, 1, 0, 0, 0);
 
@@ -579,8 +562,8 @@ namespace MoonWorksGraphicsTests
 						);
 
 						renderPass.BindGraphicsPipeline(BlitPipeline);
-						renderPass.BindFragmentSampler(new TextureSamplerBinding(DepthTexture, DepthSampler));
-						renderPass.BindVertexBuffer(BlitVertexBuffer);
+						renderPass.BindFragmentSamplers(new TextureSamplerBinding(DepthTexture, DepthSampler));
+						renderPass.BindVertexBuffers(BlitVertexBuffer);
 						cmdbuf.PushFragmentUniformData(DepthUniforms);
 						renderPass.DrawPrimitives(6, 1, 0, 0);
 

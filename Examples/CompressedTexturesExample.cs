@@ -47,11 +47,7 @@ class CompressedTexturesExample : Example
 			TestUtils.GetHLSLPath("TexturedQuad.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Fragment,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumSamplers = 1
-			}
+			ShaderStage.Fragment
 		);
 
 		// Create the graphics pipeline
@@ -138,9 +134,9 @@ class CompressedTexturesExample : Example
 				new ColorTargetInfo(swapchainTexture, LoadOp.DontCare)
 			);
 			renderPass.BindGraphicsPipeline(Pipeline);
-			renderPass.BindVertexBuffer(VertexBuffer);
+			renderPass.BindVertexBuffers(VertexBuffer);
 			renderPass.BindIndexBuffer(IndexBuffer, IndexElementSize.Sixteen);
-			renderPass.BindFragmentSampler(new TextureSamplerBinding(Textures[CurrentTextureIndex], Sampler));
+			renderPass.BindFragmentSamplers(new TextureSamplerBinding(Textures[CurrentTextureIndex], Sampler));
 			renderPass.DrawIndexedPrimitives(6, 1, 0, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 		}

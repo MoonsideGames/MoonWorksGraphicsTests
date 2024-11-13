@@ -95,7 +95,7 @@ class DrawIndirectExample : Example
 				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 			renderPass.BindGraphicsPipeline(GraphicsPipeline);
-			renderPass.BindVertexBuffer(VertexBuffer);
+			renderPass.BindVertexBuffers(VertexBuffer);
 			renderPass.DrawPrimitivesIndirect(DrawBuffer, 0, 2);
 			cmdbuf.EndRenderPass(renderPass);
 		}

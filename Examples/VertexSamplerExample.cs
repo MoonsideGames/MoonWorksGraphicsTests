@@ -26,11 +26,7 @@ class VertexSamplerExample : Example
 			TestUtils.GetHLSLPath("PositionSampler.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
-			ShaderStage.Vertex,
-			new ShaderCross.ShaderResourceInfo
-			{
-				NumSamplers = 1
-			}
+			ShaderStage.Vertex
 		);
 
 		Shader fragShader = ShaderCross.Create(
@@ -89,8 +85,8 @@ class VertexSamplerExample : Example
 				new ColorTargetInfo(swapchainTexture, Color.Black)
 			);
 			renderPass.BindGraphicsPipeline(Pipeline);
-			renderPass.BindVertexBuffer(VertexBuffer);
-			renderPass.BindVertexSampler(new TextureSamplerBinding(Texture, Sampler));
+			renderPass.BindVertexBuffers(VertexBuffer);
+			renderPass.BindVertexSamplers(new TextureSamplerBinding(Texture, Sampler));
 			renderPass.DrawPrimitives(3, 1, 0, 0);
 			cmdbuf.EndRenderPass(renderPass);
 		}

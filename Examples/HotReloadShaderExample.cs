@@ -102,6 +102,7 @@ class HotReloadShaderExample : Example
         if (fragmentShader == null)
         {
             Logger.LogError("Failed to compile fragment shader!");
+            Logger.LogError(SDL3.SDL.SDL_GetError());
             return;
         }
 
@@ -133,6 +134,7 @@ class HotReloadShaderExample : Example
         if (pipeline == null)
         {
             Logger.LogError("Failed to compile pipeline!");
+            Logger.LogError(SDL3.SDL.SDL_GetError());
             return;
         }
 

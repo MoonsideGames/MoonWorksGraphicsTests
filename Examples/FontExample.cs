@@ -99,7 +99,7 @@ class FontExample : Example
 			);
 
 			renderPass.BindGraphicsPipeline(FontPipeline);
-			TextBatch.Render(cmdbuf, renderPass, model * proj);
+			TextBatch.Render(renderPass, model * proj);
 			cmdbuf.EndRenderPass(renderPass);
 		}
 

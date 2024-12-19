@@ -47,14 +47,12 @@ class Program : Game
 
     public Program(
 		WindowCreateInfo windowCreateInfo,
-		FrameLimiterSettings frameLimiterSettings,
-		int targetTimestep = 60,
+		FramePacingSettings framePacingSettings,
 		bool debugMode = false
 	) : base(
 		windowCreateInfo,
-		frameLimiterSettings,
+		framePacingSettings,
 		ShaderFormat.SPIRV | ShaderFormat.DXIL | ShaderFormat.MSL | ShaderFormat.DXBC,
-		targetTimestep,
 		debugMode
 	) {
 		Logger.LogInfo("Welcome to the MoonWorks Graphics Tests program! Press Q and E to cycle through examples!");
@@ -119,15 +117,11 @@ class Program : Game
 			ScreenMode.Windowed
 		);
 
-		var frameLimiterSettings = new FrameLimiterSettings(
-			FrameLimiterMode.Capped,
-			144
-		);
+		var framePacingSettings = FramePacingSettings.CreateCapped(60, 120);
 
 		var game = new Program(
 			windowCreateInfo,
-			frameLimiterSettings,
-			60,
+			framePacingSettings,
 			debugMode
 		);
 

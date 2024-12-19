@@ -513,7 +513,7 @@ namespace MoonWorksGraphicsTests
 						new ColorTargetInfo(swapchainTexture, clearColor)
 					);
 					renderPass.BindGraphicsPipeline(FontPipeline);
-					TextBatch.Render(cmdbuf, renderPass, fontModel * fontProj);
+					TextBatch.Render(renderPass, fontModel * fontProj);
 					cmdbuf.EndRenderPass(renderPass);
 				}
 				else

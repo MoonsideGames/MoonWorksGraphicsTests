@@ -48,6 +48,7 @@ class DrawIndirectExample : Example
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
 
 		VertexBuffer = resourceUploader.CreateBuffer(
+			"Vertex Buffer",
 			[
 				new PositionColorVertex(new Vector3(-0.5f,  1, 0), Color.Blue),
 				new PositionColorVertex(new Vector3(  -1f, -1, 0), Color.Green),
@@ -59,9 +60,9 @@ class DrawIndirectExample : Example
 			],
 			BufferUsageFlags.Vertex
 		);
-		VertexBuffer.Name = "VertexBuffer";
 
 		DrawBuffer = resourceUploader.CreateBuffer(
+			"Draw Buffer",
 			[
 				new IndirectDrawCommand
 				{
@@ -77,7 +78,6 @@ class DrawIndirectExample : Example
 			],
 			BufferUsageFlags.Indirect
 		);
-		DrawBuffer.Name = "DrawBuffer";
 
 		resourceUploader.Upload();
 		resourceUploader.Dispose();

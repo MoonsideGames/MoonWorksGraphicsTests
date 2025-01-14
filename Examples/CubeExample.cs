@@ -153,25 +153,25 @@ namespace MoonWorksGraphicsTests
 
 			DepthTexture = Texture.Create2D(
 				GraphicsDevice,
+				"Depth Texture",
 				Window.Width,
 				Window.Height,
 				TextureFormat.D16Unorm,
 				TextureUsageFlags.DepthStencilTarget | TextureUsageFlags.Sampler
 			);
-			DepthTexture.Name = "Depth Texture";
 
-			DepthSampler = Sampler.Create(GraphicsDevice, new SamplerCreateInfo());
+			DepthSampler = Sampler.Create(GraphicsDevice, "Depth Sampler", new SamplerCreateInfo());
 			DepthUniforms = new DepthUniforms(0.01f, 100f);
 
 			SkyboxTexture = Texture.CreateCube(
 				GraphicsDevice,
+				"Skybox",
 				2048,
 				TextureFormat.R8G8B8A8Unorm,
 				TextureUsageFlags.Sampler
 			);
-			SkyboxTexture.Name = "Skybox";
 
-			SkyboxSampler = Sampler.Create(GraphicsDevice, new SamplerCreateInfo());
+			SkyboxSampler = Sampler.Create(GraphicsDevice, "Skybox Sampler", new SamplerCreateInfo());
 
 			ScreenshotTransferBuffer = TransferBuffer.Create<Color>(
 				GraphicsDevice,
@@ -180,12 +180,12 @@ namespace MoonWorksGraphicsTests
 			);
 			RenderTexture = Texture.Create2D(
 				GraphicsDevice,
+				"Render Texture",
 				Window.Width,
 				Window.Height,
 				Window.SwapchainFormat,
 				TextureUsageFlags.ColorTarget | TextureUsageFlags.Sampler
 			);
-			RenderTexture.Name = "Render Texture";
 
 			LoadingTask = Task.Run(() => UploadGPUAssets());
 
@@ -216,7 +216,8 @@ namespace MoonWorksGraphicsTests
 				RasterizerState = RasterizerState.CW_CullBack,
 				MultisampleState = MultisampleState.None,
 				VertexShader = cubeVertShader,
-				FragmentShader = cubeFragShader
+				FragmentShader = cubeFragShader,
+				Name = "Cube Pipeline"
 			};
 			CubePipeline = GraphicsPipeline.Create(GraphicsDevice, cubePipelineCreateInfo);
 
@@ -225,6 +226,7 @@ namespace MoonWorksGraphicsTests
 				HasDepthStencilTarget = true,
 				DepthStencilFormat = TextureFormat.D16Unorm
 			};
+			cubePipelineCreateInfo.Name = "Depth Only Cube Pipeline";
 			CubePipelineDepthOnly = GraphicsPipeline.Create(GraphicsDevice, cubePipelineCreateInfo);
 
 			// Create the skybox pipelines
@@ -254,7 +256,8 @@ namespace MoonWorksGraphicsTests
 				RasterizerState = RasterizerState.CW_CullNone,
 				MultisampleState = MultisampleState.None,
 				VertexShader = skyboxVertShader,
-				FragmentShader = skyboxFragShader
+				FragmentShader = skyboxFragShader,
+				Name = "Skybox Pipeline"
 			};
 			SkyboxPipeline = GraphicsPipeline.Create(GraphicsDevice, skyboxPipelineCreateInfo);
 
@@ -263,6 +266,7 @@ namespace MoonWorksGraphicsTests
 				HasDepthStencilTarget = true,
 				DepthStencilFormat = TextureFormat.D16Unorm
 			};
+			skyboxPipelineCreateInfo.Name = "Skybox Pipeline Depth Only";
 			SkyboxPipelineDepthOnly = GraphicsPipeline.Create(GraphicsDevice, skyboxPipelineCreateInfo);
 
 			// Create the blit pipeline
@@ -391,15 +395,10 @@ namespace MoonWorksGraphicsTests
 
 			var resourceUploader = new ResourceUploader(GraphicsDevice, 1024 * 1024);
 
-			CubeVertexBuffer = resourceUploader.CreateBuffer(cubeVertexData, BufferUsageFlags.Vertex);
-			skyboxVertexBuffer = resourceUploader.CreateBuffer(skyboxVertexData, BufferUsageFlags.Vertex);
-			IndexBuffer = resourceUploader.CreateBuffer(indexData, BufferUsageFlags.Index);
-			BlitVertexBuffer = resourceUploader.CreateBuffer(blitVertexData, BufferUsageFlags.Vertex);
-
-			CubeVertexBuffer.Name = "Cube Vertices";
-			skyboxVertexBuffer.Name = "Skybox Vertices";
-			IndexBuffer.Name = "Cube Indices";
-			BlitVertexBuffer.Name = "Blit Vertices";
+			CubeVertexBuffer = resourceUploader.CreateBuffer("Cube Vertex Buffer", cubeVertexData, BufferUsageFlags.Vertex);
+			skyboxVertexBuffer = resourceUploader.CreateBuffer("Skybox Vertex Buffer", skyboxVertexData, BufferUsageFlags.Vertex);
+			IndexBuffer = resourceUploader.CreateBuffer("Cube Index Buffer", indexData, BufferUsageFlags.Index);
+			BlitVertexBuffer = resourceUploader.CreateBuffer("Blit Vertex Buffer", blitVertexData, BufferUsageFlags.Vertex);
 
 			resourceUploader.Upload();
 			resourceUploader.Dispose();

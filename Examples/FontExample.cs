@@ -84,10 +84,12 @@ class FontExample : Example
 				Matrix4x4.CreateRotationX(rotation) *
 				Matrix4x4.CreateTranslation(320, 240, 0);
 
-			TextBatch.Start(SofiaSans);
+			TextBatch.Start();
 			TextBatch.Add(
+				SofiaSans,
 				"THIS IS SOME TEXT.",
 				64,
+				model,
 				Color.White,
 				HorizontalAlignment.Center,
 				VerticalAlignment.Middle
@@ -99,7 +101,7 @@ class FontExample : Example
 			);
 
 			renderPass.BindGraphicsPipeline(FontPipeline);
-			TextBatch.Render(renderPass, model * proj);
+			TextBatch.Render(renderPass, proj);
 			cmdbuf.EndRenderPass(renderPass);
 		}
 

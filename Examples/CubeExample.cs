@@ -494,10 +494,12 @@ namespace MoonWorksGraphicsTests
 					Matrix4x4 fontModel =
 						Matrix4x4.CreateTranslation(635, 480, 0);
 
-					TextBatch.Start(SofiaSans);
+					TextBatch.Start();
 					TextBatch.Add(
+						SofiaSans,
 						"LOADING...",
 						48,
+						fontModel,
 						Color.Black,
 						HorizontalAlignment.Right,
 						VerticalAlignment.Bottom
@@ -512,7 +514,7 @@ namespace MoonWorksGraphicsTests
 						new ColorTargetInfo(swapchainTexture, clearColor)
 					);
 					renderPass.BindGraphicsPipeline(FontPipeline);
-					TextBatch.Render(renderPass, fontModel * fontProj);
+					TextBatch.Render(renderPass, fontProj);
 					cmdbuf.EndRenderPass(renderPass);
 				}
 				else

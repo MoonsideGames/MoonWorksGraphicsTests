@@ -66,8 +66,7 @@ namespace MoonWorksGraphicsTests
 
         public override void Destroy()
         {
-			GraphicsDevice.UnclaimWindow(SecondaryWindow);
-			SecondaryWindow.Dispose();
+
         }
     }
 }

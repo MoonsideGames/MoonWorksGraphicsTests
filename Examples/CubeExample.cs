@@ -2,6 +2,7 @@
 using MoonWorks.Graphics;
 using MoonWorks.Graphics.Font;
 using MoonWorks.Input;
+using MoonWorks.Storage;
 using System;
 using System.IO;
 using System.Numerics;
@@ -78,8 +79,9 @@ namespace MoonWorksGraphicsTests
 				};
 
 				cubemapUploader.SetTextureDataFromCompressed(
-					textureRegion,
-					imagePaths[i]
+					RootTitleStorage,
+					imagePaths[i],
+					textureRegion
 				);
 
 				cubemapUploader.UploadAndWait();
@@ -88,12 +90,8 @@ namespace MoonWorksGraphicsTests
 			cubemapUploader.Dispose();
 		}
 
-        public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+        public override void Init()
         {
-			Window = window;
-			GraphicsDevice = graphicsDevice;
-			Inputs = inputs;
-
 			Window.SetTitle("Cube");
 
 			finishedLoading = false;
@@ -238,7 +236,7 @@ namespace MoonWorksGraphicsTests
 					ColorTargetDescriptions = [
 						new ColorTargetDescription
 						{
-							Format = window.SwapchainFormat,
+							Format = Window.SwapchainFormat,
 							BlendState = ColorTargetBlendState.Opaque
 						}
 					],
@@ -280,7 +278,7 @@ namespace MoonWorksGraphicsTests
 
 			BlitPipeline = GraphicsPipeline.Create(GraphicsDevice, blitPipelineCreateInfo);
 
-			SofiaSans = Font.Load(GraphicsDevice, TestUtils.GetFontPath("SofiaSans.ttf"));
+			SofiaSans = Font.Load(GraphicsDevice, RootTitleStorage, TestUtils.GetFontPath("SofiaSans.ttf"));
 			TextBatch = new TextBatch(GraphicsDevice);
 
 			var fontPipelineCreateInfo = new GraphicsPipelineCreateInfo
@@ -311,7 +309,7 @@ namespace MoonWorksGraphicsTests
 		{
 			Logger.LogInfo("Loading...");
 
-            Span<PositionColorVertex> cubeVertexData = [
+            ReadOnlySpan<PositionColorVertex> cubeVertexData = [
 				new PositionColorVertex(new Vector3(-1, -1, -1), new Color(1f, 0f, 0f)),
 				new PositionColorVertex(new Vector3(1, -1, -1), new Color(1f, 0f, 0f)),
 				new PositionColorVertex(new Vector3(1, 1, -1), new Color(1f, 0f, 0f)),
@@ -343,7 +341,7 @@ namespace MoonWorksGraphicsTests
 				new PositionColorVertex(new Vector3(1, 1, -1), new Color(0f, 0.5f, 0f))
 			];
 
-            Span<PositionVertex> skyboxVertexData = [
+            ReadOnlySpan<PositionVertex> skyboxVertexData = [
 				new PositionVertex(new Vector3(-10, -10, -10)),
 				new PositionVertex(new Vector3(10, -10, -10)),
 				new PositionVertex(new Vector3(10, 10, -10)),
@@ -375,7 +373,7 @@ namespace MoonWorksGraphicsTests
 				new PositionVertex(new Vector3(10, 10, -10))
 			];
 
-            Span<uint> indexData = [
+            ReadOnlySpan<uint> indexData = [
 				0, 1, 2,    0, 2, 3,
 				6, 5, 4,    7, 6, 4,
 				8, 9, 10,   8, 10, 11,
@@ -384,7 +382,7 @@ namespace MoonWorksGraphicsTests
 				22, 21, 20, 23, 22, 20
 			];
 
-            Span<PositionTextureVertex> blitVertexData = [
+            ReadOnlySpan<PositionTextureVertex> blitVertexData = [
 				new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 1)),
 				new PositionTextureVertex(new Vector3(1, -1, 0), new Vector2(1, 1)),
 				new PositionTextureVertex(new Vector3(1, 1, 0), new Vector2(1, 0)),

@@ -1,9 +1,9 @@
 ﻿using System;
 using MoonWorks;
 using MoonWorks.Graphics;
-using MoonWorks.Input;
 using System.Numerics;
 using Buffer = MoonWorks.Graphics.Buffer;
+using System.Runtime.InteropServices;
 
 namespace MoonWorksGraphicsTests;
 
@@ -38,12 +38,8 @@ class TexturedQuadExample : Example
 
 	private System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override unsafe void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-		Inputs = inputs;
-
 		Window.SetTitle("TexturedQuad");
 
 		Logger.LogInfo("Press Left and Right to cycle between sampler states");
@@ -52,11 +48,14 @@ class TexturedQuadExample : Example
 		Logger.LogInfo("Press Down to cycle between image load formats");
 		Logger.LogInfo("Setting image format to: " + imageLoadFormatNames[0]);
 
-		var pngBytes = System.IO.File.ReadAllBytes(TestUtils.GetTexturePath("ravioli.png"));
-		var qoiBytes = System.IO.File.ReadAllBytes(TestUtils.GetTexturePath("ravioli.qoi"));
+		var pngBytes = RootTitleStorage.ReadFile(TestUtils.GetTexturePath("ravioli.png"), out var pngSize);
+		var pngSpan = new ReadOnlySpan<byte>(pngBytes, (int)pngSize);
 
-		Logger.LogInfo(pngBytes.Length.ToString());
-		Logger.LogInfo(qoiBytes.Length.ToString());
+		var qoiBytes = RootTitleStorage.ReadFile(TestUtils.GetTexturePath("ravioli.qoi"), out var qoiSize);
+		var qoiSpan = new ReadOnlySpan<byte>(qoiBytes, (int)qoiSize);
+
+		Logger.LogInfo(pngSpan.Length.ToString());
+		Logger.LogInfo(qoiSpan.Length.ToString());
 
 		// Load the shaders
 		Shader vertShader = ShaderCross.Create(
@@ -93,14 +92,14 @@ class TexturedQuadExample : Example
 		samplers[4] = Sampler.Create(GraphicsDevice, SamplerCreateInfo.AnisotropicClamp);
 		samplers[5] = Sampler.Create(GraphicsDevice, SamplerCreateInfo.AnisotropicWrap);
 
-        Span<PositionTextureVertex> vertexData = [
+        ReadOnlySpan<PositionTextureVertex> vertexData = [
 			new PositionTextureVertex(new Vector3(-1,  1, 0), new Vector2(0, 0)),
 			new PositionTextureVertex(new Vector3( 1,  1, 0), new Vector2(4, 0)),
 			new PositionTextureVertex(new Vector3( 1, -1, 0), new Vector2(4, 4)),
 			new PositionTextureVertex(new Vector3(-1, -1, 0), new Vector2(0, 4)),
 		];
 
-        Span<ushort> indexData = [
+        ReadOnlySpan<ushort> indexData = [
 			0, 1, 2,
 			0, 2, 3,
 		];
@@ -112,13 +111,16 @@ class TexturedQuadExample : Example
 		vertexBuffer = resourceUploader.CreateBuffer(vertexData, BufferUsageFlags.Vertex);
 		indexBuffer = resourceUploader.CreateBuffer(indexData, BufferUsageFlags.Index);
 
-		textures[0] = resourceUploader.CreateTexture2DFromCompressed(TestUtils.GetTexturePath("ravioli.png"), TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler);
-		textures[1] = resourceUploader.CreateTexture2DFromCompressed(pngBytes, TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler);
-		textures[2] = resourceUploader.CreateTexture2DFromCompressed(TestUtils.GetTexturePath("ravioli.qoi"), TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler);
-		textures[3] = resourceUploader.CreateTexture2DFromCompressed(qoiBytes, TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler);
+		textures[0] = resourceUploader.CreateTexture2DFromCompressed(RootTitleStorage, TestUtils.GetTexturePath("ravioli.png"), TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler);
+		textures[1] = resourceUploader.CreateTexture2DFromCompressed(pngSpan, TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler);
+		textures[2] = resourceUploader.CreateTexture2DFromCompressed(RootTitleStorage, TestUtils.GetTexturePath("ravioli.qoi"), TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler);
+		textures[3] = resourceUploader.CreateTexture2DFromCompressed(qoiSpan, TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler);
 
 		resourceUploader.Upload();
 		resourceUploader.Dispose();
+
+		NativeMemory.Free(pngBytes);
+		NativeMemory.Free(qoiBytes);
 	}
 
 	public override void Update(System.TimeSpan delta)

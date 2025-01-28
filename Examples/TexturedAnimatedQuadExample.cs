@@ -27,11 +27,8 @@ class TexturedAnimatedQuadExample : Example
 		}
 	}
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-
 		Window.SetTitle("TexturedAnimatedQuad");
 
 		// Load the shaders
@@ -85,7 +82,12 @@ class TexturedAnimatedQuadExample : Example
 			BufferUsageFlags.Index
 		);
 
-		Texture = resourceUploader.CreateTexture2DFromCompressed(TestUtils.GetTexturePath("ravioli.png"), TextureFormat.R8G8B8A8Unorm, TextureUsageFlags.Sampler);
+		Texture = resourceUploader.CreateTexture2DFromCompressed(
+			RootTitleStorage,
+			TestUtils.GetTexturePath("ravioli.png"),
+			TextureFormat.R8G8B8A8Unorm,
+			TextureUsageFlags.Sampler
+		);
 
 		resourceUploader.Upload();
 		resourceUploader.Dispose();

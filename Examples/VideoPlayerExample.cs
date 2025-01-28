@@ -10,15 +10,12 @@ class VideoPlayerExample : Example
 	private VideoAV1 Video;
 	private VideoPlayer VideoPlayer;
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-
 		Window.SetTitle("VideoPlayer");
 
 		// Load the video
-		Video = new VideoAV1(GraphicsDevice, TestUtils.GetVideoPath("hello.obu"), 25);
+		Video = VideoAV1.Create(GraphicsDevice, RootTitleStorage, TestUtils.GetVideoPath("hello.obu"), 25);
 
 		// Play the video
 		VideoPlayer = new VideoPlayer(GraphicsDevice);

@@ -1,6 +1,5 @@
 ﻿using MoonWorks;
 using MoonWorks.Graphics;
-using MoonWorks.Input;
 using System.Numerics;
 
 namespace MoonWorksGraphicsTests;
@@ -15,12 +14,8 @@ class TextureMipmapsExample : Example
 
 	private float scale = 0.5f;
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-		Inputs = inputs;
-
 		Window.SetTitle("TextureMipmaps");
 
 		Logger.LogInfo("Press Left and Right to shrink/expand the scale of the quad");
@@ -99,8 +94,9 @@ class TextureMipmapsExample : Example
 			};
 
 			resourceUploader.SetTextureDataFromCompressed(
-				region,
-				TestUtils.GetTexturePath($"mip{i}.png")
+				RootTitleStorage,
+				TestUtils.GetTexturePath($"mip{i}.png"),
+				region
 			);
 		}
 

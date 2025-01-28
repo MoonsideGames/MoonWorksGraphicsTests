@@ -44,17 +44,17 @@ public static class TestUtils
 
 	public static string GetTexturePath(string textureName)
 	{
-		return SDL3.SDL.SDL_GetBasePath() + "Content/Textures/" + textureName;
+		return "Content/Textures/" + textureName;
 	}
 
 	public static string GetVideoPath(string videoName)
 	{
-		return SDL3.SDL.SDL_GetBasePath() + "Content/Videos/" + videoName;
+		return "Content/Videos/" + videoName;
 	}
 
 	public static string GetFontPath(string fontName)
 	{
-		return SDL3.SDL.SDL_GetBasePath() + "Content/Fonts/" + fontName;
+		return "Content/Fonts/" + fontName;
 	}
 
 	public enum ButtonType

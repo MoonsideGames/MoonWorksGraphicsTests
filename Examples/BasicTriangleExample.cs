@@ -16,12 +16,8 @@ class BasicTriangleExample : Example
 	private bool UseSmallViewport;
 	private bool UseScissorRect;
 
-	public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+	public override void Init()
 	{
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-		Inputs = inputs;
-
 		Window.SetTitle("BasicTriangle");
 
 		Logger.LogInfo("Press Left to toggle wireframe mode\nPress Down to toggle small viewport\nPress Right to toggle scissor rect");

@@ -1,7 +1,6 @@
 using System;
 using MoonWorks;
 using MoonWorks.Graphics;
-using MoonWorks.Input;
 
 namespace MoonWorksGraphicsTests;
 
@@ -9,11 +8,8 @@ class StoreLoadExample : Example
 {
 	private GraphicsPipeline FillPipeline;
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
-    {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-
+    public override void Init()
+	{
 		Window.SetTitle("StoreLoad");
 
 		Shader vertShader = ShaderCross.Create(

@@ -9,11 +9,8 @@ namespace MoonWorksGraphicsTests
 	{
 		private Window SecondaryWindow;
 
-        public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+        public override void Init()
 		{
-			Window = window;
-			GraphicsDevice = graphicsDevice;
-
 			Window.SetTitle("ClearScreen");
 			var (windowX, windowY) = Window.Position;
 			Window.SetPosition(windowX - 360, windowY);
@@ -66,7 +63,8 @@ namespace MoonWorksGraphicsTests
 
         public override void Destroy()
         {
-
+			GraphicsDevice.UnclaimWindow(SecondaryWindow);
+			SecondaryWindow.Dispose();
         }
     }
 }

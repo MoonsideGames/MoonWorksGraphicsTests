@@ -12,11 +12,8 @@ namespace MoonWorksGraphicsTests
 		private Buffer VertexBuffer;
 		private Texture DepthStencilTexture;
 
-		public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+		public override void Init()
 		{
-			Window = window;
-			GraphicsDevice = graphicsDevice;
-
 			Window.SetTitle("BasicStencil");
 
 			// Load the shaders

@@ -11,11 +11,8 @@ class DrawIndirectExample : Example
 	private Buffer VertexBuffer;
 	private Buffer DrawBuffer;
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-
 		Window.SetTitle("DrawIndirect");
 
 		// Load the shaders

@@ -1,6 +1,5 @@
 ﻿using MoonWorks;
 using MoonWorks.Graphics;
-using MoonWorks.Input;
 using System.Numerics;
 
 namespace MoonWorksGraphicsTests;
@@ -17,12 +16,8 @@ class Texture3DExample : Example
 
 	readonly record struct FragUniform(float Depth);
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-		Inputs = inputs;
-
 		Window.SetTitle("Texture3D");
 
 		Logger.LogInfo("Press Left and Right to cycle between depth slices");
@@ -100,8 +95,9 @@ class Texture3DExample : Example
 			};
 
 			resourceUploader.SetTextureDataFromCompressed(
-				region,
-				TestUtils.GetTexturePath($"tex3d_{i}.png")
+				RootTitleStorage,
+				TestUtils.GetTexturePath($"tex3d_{i}.png"),
+				region
 			);
 		}
 

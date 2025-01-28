@@ -12,11 +12,8 @@ class BasicComputeExample : Example
 	private Sampler Sampler;
 	private Buffer VertexBuffer;
 
-	public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+	public override void Init()
 	{
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-
 		Window.SetTitle("BasicCompute");
 
         // Create the compute pipeline that writes texture data

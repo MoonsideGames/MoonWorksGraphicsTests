@@ -1,16 +1,12 @@
 ﻿using MoonWorks;
 using MoonWorks.Graphics;
-using MoonWorks.Input;
 
 namespace MoonWorksGraphicsTests;
 
 class ClearScreenExample : Example
 {
-	public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+	public override void Init()
 	{
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-
 		Window.SetTitle("ClearScreen");
 	}
 

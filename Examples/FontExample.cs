@@ -15,15 +15,11 @@ class FontExample : Example
 
 	float rotation;
 
-	public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+	public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-		Inputs = inputs;
-
 		Window.SetTitle("Font");
 
-		SofiaSans = Font.Load(GraphicsDevice, TestUtils.GetFontPath("SofiaSans.ttf"));
+		SofiaSans = Font.Load(GraphicsDevice, RootTitleStorage, TestUtils.GetFontPath("SofiaSans.ttf"));
 		TextBatch = new TextBatch(GraphicsDevice);
 
 		var fontPipelineCreateInfo = new GraphicsPipelineCreateInfo

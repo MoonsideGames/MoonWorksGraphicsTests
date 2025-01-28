@@ -25,12 +25,8 @@ class RenderTextureCubeExample : Example
 		Color.Purple,
 	};
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-		Inputs = inputs;
-
 		Window.SetTitle("RenderTextureCube");
 
 		Logger.LogInfo("Press Down to view the other side of the cubemap");

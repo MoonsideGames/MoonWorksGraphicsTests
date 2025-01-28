@@ -47,11 +47,8 @@ class ComputeSpriteBatchExample : Example
 		public Vector4 Color;
 	}
 
-	public override unsafe void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+	public override unsafe void Init()
 	{
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-
 		Window.SetTitle("ComputeSpriteBatch");
 
 		Shader vertShader = ShaderCross.Create(
@@ -92,6 +89,7 @@ class ComputeSpriteBatchExample : Example
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
 
 		SpriteTexture = resourceUploader.CreateTexture2DFromCompressed(
+			RootTitleStorage,
 			TestUtils.GetTexturePath("ravioli.png"),
 			TextureFormat.R8G8B8A8Unorm,
 			TextureUsageFlags.Sampler

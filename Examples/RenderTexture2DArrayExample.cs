@@ -17,11 +17,8 @@ class RenderTexture2DArrayExample : Example
 		Color.Blue,
 	];
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-
 		Window.SetTitle("RenderTexture2DArray");
 
 		RenderTarget = Texture.Create2DArray(

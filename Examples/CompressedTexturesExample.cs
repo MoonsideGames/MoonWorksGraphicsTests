@@ -22,12 +22,8 @@ class CompressedTexturesExample : Example
 
 	private int CurrentTextureIndex;
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-		Inputs = inputs;
-
 		Window.SetTitle("CompressedTextures");
 
 		Logger.LogInfo("Press Left and Right to cycle between textures");
@@ -89,7 +85,7 @@ class CompressedTexturesExample : Example
 
 		for (int i = 0; i < TextureNames.Length; i += 1)
 		{
-			Textures[i] = resourceUploader.CreateTextureFromDDS(TestUtils.GetTexturePath(TextureNames[i] + ".dds"));
+			Textures[i] = resourceUploader.CreateTextureFromDDS(RootTitleStorage, TestUtils.GetTexturePath(TextureNames[i] + ".dds"));
 		}
 
 		resourceUploader.Upload();

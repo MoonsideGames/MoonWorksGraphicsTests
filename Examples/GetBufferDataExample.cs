@@ -8,11 +8,8 @@ namespace MoonWorksGraphicsTests;
 
 class GetBufferDataExample : Example
 {
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-
 		Window.SetTitle("GetBufferData");
 
 		var vertices = new System.Span<PositionVertex>(
@@ -37,7 +34,7 @@ class GetBufferDataExample : Example
 		int vertexSize = Marshal.SizeOf<PositionVertex>();
 
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
-		var vertexBuffer = resourceUploader.CreateBuffer(vertices, BufferUsageFlags.Vertex);
+		var vertexBuffer = resourceUploader.CreateBuffer<PositionVertex>(vertices, BufferUsageFlags.Vertex);
 		resourceUploader.Upload();
 		resourceUploader.Dispose();
 

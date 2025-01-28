@@ -1,6 +1,5 @@
 ﻿using MoonWorks;
 using MoonWorks.Graphics;
-using MoonWorks.Input;
 
 namespace MoonWorksGraphicsTests;
 
@@ -12,12 +11,8 @@ class MSAAExample : Example
 
 	private SampleCount currentSampleCount;
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-		Inputs = inputs;
-
 		Window.SetTitle("MSAA");
 
 		currentSampleCount = SampleCount.Four;

@@ -21,12 +21,8 @@ class DepthMSAAExample : Example
 	private Vector3 camPos;
 	private SampleCount currentSampleCount;
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-		Inputs = inputs;
-
 		Window.SetTitle("DepthMSAA");
 
 		cubeTimer = 0;
@@ -157,7 +153,7 @@ class DepthMSAAExample : Example
 			new PositionColorVertex(new Vector3(1, 1, -1), new Color(0f, 0.5f, 0f))
 		]);
 
-		CubeVertexBuffer1 = resourceUploader.CreateBuffer(
+		CubeVertexBuffer1 = resourceUploader.CreateBuffer<PositionColorVertex>(
 			cubeVertexData,
 			BufferUsageFlags.Vertex
 		);
@@ -168,7 +164,7 @@ class DepthMSAAExample : Example
 			cubeVertexData[i].Position.Z += 3;
 		}
 
-		CubeVertexBuffer2 = resourceUploader.CreateBuffer(
+		CubeVertexBuffer2 = resourceUploader.CreateBuffer<PositionColorVertex>(
 			cubeVertexData,
 			BufferUsageFlags.Vertex
 		);

@@ -38,11 +38,8 @@ class CPUSpriteBatchExample : Example
 
 	Random Random = new Random();
 
-    public override unsafe void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override unsafe void Init()
     {
-        Window = window;
-        GraphicsDevice = graphicsDevice;
-
         Window.SetTitle("CPUSpriteBatch");
 
         Shader vertShader = ShaderCross.Create(
@@ -76,6 +73,7 @@ class CPUSpriteBatchExample : Example
 		var resourceUploader = new ResourceUploader(GraphicsDevice);
 
 		SpriteTexture = resourceUploader.CreateTexture2DFromCompressed(
+			RootTitleStorage,
 			TestUtils.GetTexturePath("ravioli.png"),
 			TextureFormat.R8G8B8A8Unorm,
 			TextureUsageFlags.Sampler

@@ -43,12 +43,8 @@ class RenderTextureMipmapsExample : Example
 		}
 	}
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-		Inputs = inputs;
-
 		Window.SetTitle("RenderTextureMipmaps");
 
 		Logger.LogInfo("Press Left and Right to shrink/expand the scale of the quad");

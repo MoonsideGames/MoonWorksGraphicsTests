@@ -19,12 +19,8 @@ class HotReloadShaderExample : Example
     FileSystemWatcher Watcher;
     bool NeedReload;
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-        Window = window;
-        GraphicsDevice = graphicsDevice;
-        Inputs = inputs;
-
         Window.SetTitle("HotReloadShader");
 
         VertexShader = ShaderCross.Create(

@@ -13,11 +13,8 @@ class VertexSamplerExample : Example
 	private Texture Texture;
 	private Sampler Sampler;
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-
 		Window.SetTitle("VertexSampler");
 
 		// Load the shaders

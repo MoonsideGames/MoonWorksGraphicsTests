@@ -32,11 +32,8 @@ class Texture3DCopyExample : Example
 		}
 	}
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-
 		Window.SetTitle("Texture3DCopy");
 
 		// Load the shaders

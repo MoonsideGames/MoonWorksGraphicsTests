@@ -12,11 +12,8 @@ class ComputeUniformsExample : Example
 	record struct GradientTextureComputeUniforms(float Time);
 	private GradientTextureComputeUniforms Uniforms;
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-
 		Window.SetTitle("ComputeUniforms");
 		Uniforms.Time = 0;
 

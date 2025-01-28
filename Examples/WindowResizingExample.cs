@@ -21,12 +21,8 @@ class WindowResizingExample : Example
 		new Res(3840, 2160),
 	];
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-		Inputs = inputs;
-
 		Window.SetTitle("WindowResizing");
 
 		Logger.LogInfo("Press left and right to resize the window!");

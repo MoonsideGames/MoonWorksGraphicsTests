@@ -1,6 +1,5 @@
 ﻿using MoonWorks;
 using MoonWorks.Graphics;
-using MoonWorks.Input;
 using System.Numerics;
 
 namespace MoonWorksGraphicsTests;
@@ -14,12 +13,8 @@ class InstancingAndOffsetsExample : Example
 	private bool useVertexOffset;
 	private bool useIndexOffset;
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-		Inputs = inputs;
-
 		Window.SetTitle("InstancingAndOffsets");
 
 		Logger.LogInfo("Press Left to toggle vertex offset\nPress Right to toggle index offset");

@@ -10,11 +10,8 @@ class TriangleVertexBufferExample : Example
 	private GraphicsPipeline Pipeline;
 	private Buffer VertexBuffer;
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
 	{
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-
 		Window.SetTitle("TriangleVertexBuffer");
 
 		// Load the shaders

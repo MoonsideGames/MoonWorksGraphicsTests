@@ -1,6 +1,5 @@
 using MoonWorks;
 using MoonWorks.Graphics;
-using MoonWorks.Input;
 using System.Numerics;
 
 namespace MoonWorksGraphicsTests;
@@ -18,12 +17,8 @@ class CullFaceExample : Example
 
 	private bool UseClockwiseWinding;
 
-    public override void Init(Window window, GraphicsDevice graphicsDevice, Inputs inputs)
+    public override void Init()
     {
-		Window = window;
-		GraphicsDevice = graphicsDevice;
-		Inputs = inputs;
-
 		Window.SetTitle("CullFace");
 
 		Logger.LogInfo("Press Down to toggle the winding order of the triangles (default is counter-clockwise)");

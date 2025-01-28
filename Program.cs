@@ -57,7 +57,7 @@ class Program : Game
 	) {
 		Logger.LogInfo("Welcome to the MoonWorks Graphics Tests program! Press Q and E to cycle through examples!");
 		ShaderCross.Initialize();
-		Examples[ExampleIndex].Init(MainWindow, GraphicsDevice, Inputs);
+		Examples[ExampleIndex].Start(this);
     }
 
     protected override void Update(TimeSpan delta)
@@ -74,7 +74,7 @@ class Program : Game
 
 			MainWindow.SetSize(640, 480);
 			MainWindow.SetPositionCentered();
-			Examples[ExampleIndex].Init(MainWindow, GraphicsDevice, Inputs);
+			Examples[ExampleIndex].Start(this);
 		}
 		else if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Next))
 		{
@@ -84,7 +84,7 @@ class Program : Game
 
 			MainWindow.SetSize(640, 480);
 			MainWindow.SetPositionCentered();
-			Examples[ExampleIndex].Init(MainWindow, GraphicsDevice, Inputs);
+			Examples[ExampleIndex].Start(this);
 		}
 		else
 		{

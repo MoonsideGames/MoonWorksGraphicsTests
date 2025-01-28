@@ -32,6 +32,7 @@ class CompressedTexturesExample : Example
 		// Load the shaders
 		Shader vertShaderModule = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("TexturedQuad.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
@@ -40,6 +41,7 @@ class CompressedTexturesExample : Example
 
 		Shader fragShaderModule = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("TexturedQuad.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,

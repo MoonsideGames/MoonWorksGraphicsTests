@@ -34,12 +34,12 @@ public static class TestUtils
 
 	public static string GetShaderPath(string shaderName)
 	{
-		return SDL3.SDL.SDL_GetBasePath() + "Content/Shaders/Compiled/" + shaderName + ".spv";
+		return "Content/Shaders/Compiled/" + shaderName + ".spv";
 	}
 
 	public static string GetHLSLPath(string shaderName)
 	{
-		return SDL3.SDL.SDL_GetBasePath() + "Content/Shaders/HLSL/" + shaderName + ".hlsl";
+		return "Content/Shaders/HLSL/" + shaderName + ".hlsl";
 	}
 
 	public static string GetTexturePath(string textureName)

@@ -44,6 +44,7 @@ class CPUSpriteBatchExample : Example
 
         Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("TexturedQuadColorWithMatrix.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
@@ -52,6 +53,7 @@ class CPUSpriteBatchExample : Example
 
 		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("TexturedQuadColor.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,

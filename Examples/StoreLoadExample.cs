@@ -14,6 +14,7 @@ class StoreLoadExample : Example
 
 		Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("RawTriangle.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
@@ -22,6 +23,7 @@ class StoreLoadExample : Example
 
 		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("SolidColor.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,

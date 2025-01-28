@@ -24,6 +24,7 @@ class BasicTriangleExample : Example
 
 		Shader vertShaderModule = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("RawTriangle.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
@@ -32,6 +33,7 @@ class BasicTriangleExample : Example
 
 		Shader fragShaderModule = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("SolidColor.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,

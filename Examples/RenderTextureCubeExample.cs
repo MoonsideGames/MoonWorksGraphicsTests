@@ -34,6 +34,7 @@ class RenderTextureCubeExample : Example
 		// Load the shaders
 		Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("Skybox.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
@@ -42,6 +43,7 @@ class RenderTextureCubeExample : Example
 
 		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("Skybox.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,

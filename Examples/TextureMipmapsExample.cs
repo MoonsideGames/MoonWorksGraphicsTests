@@ -23,6 +23,7 @@ class TextureMipmapsExample : Example
 		// Load the shaders
 		Shader vertShaderModule = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("TexturedQuadWithMatrix.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
@@ -31,6 +32,7 @@ class TextureMipmapsExample : Example
 
 		Shader fragShaderModule = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("TexturedQuad.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,

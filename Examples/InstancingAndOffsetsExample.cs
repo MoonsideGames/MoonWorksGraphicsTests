@@ -22,6 +22,7 @@ class InstancingAndOffsetsExample : Example
 		// Load the shaders
 		Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("PositionColorInstanced.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
@@ -30,6 +31,7 @@ class InstancingAndOffsetsExample : Example
 
 		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("SolidColor.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,

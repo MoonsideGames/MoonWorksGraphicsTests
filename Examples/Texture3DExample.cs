@@ -25,6 +25,7 @@ class Texture3DExample : Example
 		// Load the shaders
 		Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("TexturedQuad.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
@@ -33,6 +34,7 @@ class Texture3DExample : Example
 
 		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("TexturedQuad3D.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,

@@ -103,6 +103,7 @@ namespace MoonWorksGraphicsTests
 
 			Shader cubeVertShader = ShaderCross.Create(
 				GraphicsDevice,
+				RootTitleStorage,
 				TestUtils.GetHLSLPath("PositionColorWithMatrix.vert"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
@@ -111,6 +112,7 @@ namespace MoonWorksGraphicsTests
 
 			Shader cubeFragShader = ShaderCross.Create(
 				GraphicsDevice,
+				RootTitleStorage,
 				TestUtils.GetHLSLPath("SolidColor.frag"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
@@ -119,6 +121,7 @@ namespace MoonWorksGraphicsTests
 
 			Shader skyboxVertShader = ShaderCross.Create(
 				GraphicsDevice,
+				RootTitleStorage,
 				TestUtils.GetHLSLPath("Skybox.vert"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
@@ -127,6 +130,7 @@ namespace MoonWorksGraphicsTests
 
 			Shader skyboxFragShader = ShaderCross.Create(
 				GraphicsDevice,
+				RootTitleStorage,
 				TestUtils.GetHLSLPath("Skybox.frag"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
@@ -135,6 +139,7 @@ namespace MoonWorksGraphicsTests
 
 			Shader blitVertShader = ShaderCross.Create(
 				GraphicsDevice,
+				RootTitleStorage,
 				TestUtils.GetHLSLPath("TexturedQuad.vert"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
@@ -143,6 +148,7 @@ namespace MoonWorksGraphicsTests
 
 			Shader blitFragShader = ShaderCross.Create(
 				GraphicsDevice,
+				RootTitleStorage,
 				TestUtils.GetHLSLPath("TexturedDepthQuad.frag"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,

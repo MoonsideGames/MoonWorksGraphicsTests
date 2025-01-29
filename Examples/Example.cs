@@ -12,6 +12,7 @@ public abstract class Example
 	public GraphicsDevice GraphicsDevice;
 	public Inputs Inputs;
 	public TitleStorage RootTitleStorage;
+	public UserStorage UserStorage;
 
 	public void Assign(Game game)
 	{
@@ -19,6 +20,7 @@ public abstract class Example
 		GraphicsDevice = game.GraphicsDevice;
 		Inputs = game.Inputs;
 		RootTitleStorage = game.RootTitleStorage;
+		UserStorage = game.UserStorage;
 	}
 
 	public void Start(Game game)

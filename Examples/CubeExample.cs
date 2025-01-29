@@ -42,7 +42,7 @@ namespace MoonWorksGraphicsTests
 		private TextBatch TextBatch;
 
 		private bool takeScreenshot;
-		private bool screenshotInProgress;
+		private ResultToken screenshotSaveToken;
 		private bool swapchainDownloaded; // don't want to take screenshot if the swapchain was invalid
 
 		private bool finishedLoading;
@@ -451,9 +451,25 @@ namespace MoonWorksGraphicsTests
 				Logger.LogInfo("Depth-Only Mode enabled: " + depthOnlyEnabled);
 			}
 
-			if (!screenshotInProgress && TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Right))
+			if (screenshotSaveToken != null)
 			{
-				takeScreenshot = true;
+				if (screenshotSaveToken.Result == Result.Success)
+				{
+					Logger.LogInfo("Screenshot saved to user storage!");
+					UserStorage.ReleaseToken(screenshotSaveToken);
+				}
+				else if (screenshotSaveToken.Result == Result.Failure)
+				{
+					Logger.LogInfo("Screenshot saved to user storage!");
+					UserStorage.ReleaseToken(screenshotSaveToken);
+				}
+			}
+			else
+			{
+				if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Right))
+				{
+					takeScreenshot = true;
+				}
 			}
 		}
 
@@ -481,7 +497,7 @@ namespace MoonWorksGraphicsTests
 			);
 			TransformVertexUniform cubeUniforms = new TransformVertexUniform(model * view * proj);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
+			var cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 			Texture swapchainTexture = cmdbuf.AcquireSwapchainTexture(Window);
 			if (swapchainTexture != null)
 			{
@@ -607,13 +623,12 @@ namespace MoonWorksGraphicsTests
 
 		private unsafe void TakeScreenshot()
 		{
-			screenshotInProgress = true;
-
 			GraphicsDevice.WaitForFence(ScreenshotFence);
 
 			var screenshotSpan = ScreenshotTransferBuffer.Map<Color>(false);
-			ImageUtils.SavePNG(
-				Path.Combine(System.AppContext.BaseDirectory, "screenshot.png"),
+			screenshotSaveToken = ImageUtils.SavePNG(
+				UserStorage,
+				Path.Combine("screenshot.png"),
 				screenshotSpan,
 				RenderTexture.Width,
 				RenderTexture.Height,
@@ -623,8 +638,6 @@ namespace MoonWorksGraphicsTests
 
 			GraphicsDevice.ReleaseFence(ScreenshotFence);
 			ScreenshotFence = null;
-
-			screenshotInProgress = false;
 		}
 
         public override void Destroy()

@@ -1,6 +1,5 @@
 ﻿using MoonWorks;
 using MoonWorks.Graphics;
-using MoonWorks.Input;
 
 namespace MoonWorksGraphicsTests
 {
@@ -29,6 +28,7 @@ namespace MoonWorksGraphicsTests
 
 			// Load the texture bytes so we can compare them.
 			var pixels = ImageUtils.GetPixelDataFromFile(
+				RootTitleStorage,
 				TestUtils.GetTexturePath("ravioli.png"),
 				out var width,
 				out var height,

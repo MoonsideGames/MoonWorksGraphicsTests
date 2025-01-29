@@ -43,6 +43,7 @@ namespace MoonWorksGraphicsTests
 
 		private bool takeScreenshot;
 		private ResultToken screenshotSaveToken;
+		private IntPtr screenshotPNGBuffer;
 		private bool swapchainDownloaded; // don't want to take screenshot if the swapchain was invalid
 
 		private bool finishedLoading;
@@ -453,15 +454,22 @@ namespace MoonWorksGraphicsTests
 
 			if (screenshotSaveToken != null)
 			{
-				if (screenshotSaveToken.Result == Result.Success)
+				if (screenshotSaveToken.Result != Result.Pending)
 				{
-					Logger.LogInfo("Screenshot saved to user storage!");
+					ImageUtils.FreePNGBuffer(screenshotPNGBuffer);
+					screenshotPNGBuffer = IntPtr.Zero;
+
+					if (screenshotSaveToken.Result == Result.Success)
+					{
+						Logger.LogInfo("Screenshot saved to user storage!");
+					}
+					else
+					{
+						Logger.LogInfo("Screenshot failed to save!");
+					}
+
 					UserStorage.ReleaseToken(screenshotSaveToken);
-				}
-				else if (screenshotSaveToken.Result == Result.Failure)
-				{
-					Logger.LogInfo("Screenshot saved to user storage!");
-					UserStorage.ReleaseToken(screenshotSaveToken);
+					screenshotSaveToken = null;
 				}
 			}
 			else
@@ -624,19 +632,29 @@ namespace MoonWorksGraphicsTests
 		private unsafe void TakeScreenshot()
 		{
 			GraphicsDevice.WaitForFence(ScreenshotFence);
+			GraphicsDevice.ReleaseFence(ScreenshotFence);
 
 			var screenshotSpan = ScreenshotTransferBuffer.Map<Color>(false);
-			screenshotSaveToken = ImageUtils.SavePNG(
+			screenshotPNGBuffer = ImageUtils.EncodePNGBuffer(
 				UserStorage,
-				Path.Combine("screenshot.png"),
 				screenshotSpan,
 				RenderTexture.Width,
 				RenderTexture.Height,
-				RenderTexture.Format == TextureFormat.B8G8R8A8Unorm
+				RenderTexture.Format == TextureFormat.B8G8R8A8Unorm,
+				out var size
 			);
 			ScreenshotTransferBuffer.Unmap();
 
-			GraphicsDevice.ReleaseFence(ScreenshotFence);
+			if (screenshotPNGBuffer == IntPtr.Zero)
+			{
+				Logger.LogError("PNG encoding failed!");
+				return;
+			}
+
+			var commandBuffer = UserStorage.AcquireCommandBuffer();
+			screenshotSaveToken = commandBuffer.WriteFile("screenshot.png", screenshotPNGBuffer, (ulong) size);
+			UserStorage.Submit(commandBuffer);
+
 			ScreenshotFence = null;
 		}
 

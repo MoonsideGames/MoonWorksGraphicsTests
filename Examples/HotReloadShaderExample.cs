@@ -25,6 +25,7 @@ class HotReloadShaderExample : Example
 
         VertexShader = ShaderCross.Create(
             GraphicsDevice,
+            RootTitleStorage,
             TestUtils.GetHLSLPath("Fullscreen.vert"),
             "main",
             ShaderCross.ShaderFormat.HLSL,
@@ -89,6 +90,7 @@ class HotReloadShaderExample : Example
     {
         var fragmentShader = ShaderCross.Create(
             GraphicsDevice,
+            RootTitleStorage,
             TestUtils.GetHLSLPath("HotReload.frag"),
             "main",
             ShaderCross.ShaderFormat.HLSL,

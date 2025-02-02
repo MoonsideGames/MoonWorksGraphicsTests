@@ -42,7 +42,8 @@ namespace MoonWorksGraphicsTests
 		private TextBatch TextBatch;
 
 		private bool takeScreenshot;
-		private bool screenshotInProgress;
+		private ResultToken screenshotSaveToken;
+		private IntPtr screenshotPNGBuffer;
 		private bool swapchainDownloaded; // don't want to take screenshot if the swapchain was invalid
 
 		private bool finishedLoading;
@@ -103,6 +104,7 @@ namespace MoonWorksGraphicsTests
 
 			Shader cubeVertShader = ShaderCross.Create(
 				GraphicsDevice,
+				RootTitleStorage,
 				TestUtils.GetHLSLPath("PositionColorWithMatrix.vert"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
@@ -111,6 +113,7 @@ namespace MoonWorksGraphicsTests
 
 			Shader cubeFragShader = ShaderCross.Create(
 				GraphicsDevice,
+				RootTitleStorage,
 				TestUtils.GetHLSLPath("SolidColor.frag"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
@@ -119,6 +122,7 @@ namespace MoonWorksGraphicsTests
 
 			Shader skyboxVertShader = ShaderCross.Create(
 				GraphicsDevice,
+				RootTitleStorage,
 				TestUtils.GetHLSLPath("Skybox.vert"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
@@ -127,6 +131,7 @@ namespace MoonWorksGraphicsTests
 
 			Shader skyboxFragShader = ShaderCross.Create(
 				GraphicsDevice,
+				RootTitleStorage,
 				TestUtils.GetHLSLPath("Skybox.frag"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
@@ -135,6 +140,7 @@ namespace MoonWorksGraphicsTests
 
 			Shader blitVertShader = ShaderCross.Create(
 				GraphicsDevice,
+				RootTitleStorage,
 				TestUtils.GetHLSLPath("TexturedQuad.vert"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
@@ -143,6 +149,7 @@ namespace MoonWorksGraphicsTests
 
 			Shader blitFragShader = ShaderCross.Create(
 				GraphicsDevice,
+				RootTitleStorage,
 				TestUtils.GetHLSLPath("TexturedDepthQuad.frag"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
@@ -445,9 +452,32 @@ namespace MoonWorksGraphicsTests
 				Logger.LogInfo("Depth-Only Mode enabled: " + depthOnlyEnabled);
 			}
 
-			if (!screenshotInProgress && TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Right))
+			if (screenshotSaveToken != null)
 			{
-				takeScreenshot = true;
+				if (screenshotSaveToken.Result != Result.Pending)
+				{
+					ImageUtils.FreePNGBuffer(screenshotPNGBuffer);
+					screenshotPNGBuffer = IntPtr.Zero;
+
+					if (screenshotSaveToken.Result == Result.Success)
+					{
+						Logger.LogInfo("Screenshot saved to user storage!");
+					}
+					else
+					{
+						Logger.LogInfo("Screenshot failed to save!");
+					}
+
+					UserStorage.ReleaseToken(screenshotSaveToken);
+					screenshotSaveToken = null;
+				}
+			}
+			else
+			{
+				if (TestUtils.CheckButtonPressed(Inputs, TestUtils.ButtonType.Right))
+				{
+					takeScreenshot = true;
+				}
 			}
 		}
 
@@ -475,7 +505,7 @@ namespace MoonWorksGraphicsTests
 			);
 			TransformVertexUniform cubeUniforms = new TransformVertexUniform(model * view * proj);
 
-			CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
+			var cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 			Texture swapchainTexture = cmdbuf.AcquireSwapchainTexture(Window);
 			if (swapchainTexture != null)
 			{
@@ -601,24 +631,31 @@ namespace MoonWorksGraphicsTests
 
 		private unsafe void TakeScreenshot()
 		{
-			screenshotInProgress = true;
-
 			GraphicsDevice.WaitForFence(ScreenshotFence);
+			GraphicsDevice.ReleaseFence(ScreenshotFence);
 
 			var screenshotSpan = ScreenshotTransferBuffer.Map<Color>(false);
-			ImageUtils.SavePNG(
-				Path.Combine(System.AppContext.BaseDirectory, "screenshot.png"),
+			screenshotPNGBuffer = ImageUtils.EncodePNGBuffer(
+				UserStorage,
 				screenshotSpan,
 				RenderTexture.Width,
 				RenderTexture.Height,
-				RenderTexture.Format == TextureFormat.B8G8R8A8Unorm
+				RenderTexture.Format == TextureFormat.B8G8R8A8Unorm,
+				out var size
 			);
 			ScreenshotTransferBuffer.Unmap();
 
-			GraphicsDevice.ReleaseFence(ScreenshotFence);
-			ScreenshotFence = null;
+			if (screenshotPNGBuffer == IntPtr.Zero)
+			{
+				Logger.LogError("PNG encoding failed!");
+				return;
+			}
 
-			screenshotInProgress = false;
+			var commandBuffer = UserStorage.AcquireCommandBuffer();
+			screenshotSaveToken = commandBuffer.WriteFile("screenshot.png", screenshotPNGBuffer, (ulong) size);
+			UserStorage.Submit(commandBuffer);
+
+			ScreenshotFence = null;
 		}
 
         public override void Destroy()

@@ -48,11 +48,20 @@ class TexturedQuadExample : Example
 		Logger.LogInfo("Press Down to cycle between image load formats");
 		Logger.LogInfo("Setting image format to: " + imageLoadFormatNames[0]);
 
-		var pngBytes = RootTitleStorage.ReadFile(TestUtils.GetTexturePath("ravioli.png"), out var pngSize);
-		var pngSpan = new ReadOnlySpan<byte>(pngBytes, (int)pngSize);
+		var pngPath = TestUtils.GetTexturePath("ravioli.png");
+		var qoiPath = TestUtils.GetTexturePath("ravioli.qoi");
 
-		var qoiBytes = RootTitleStorage.ReadFile(TestUtils.GetTexturePath("ravioli.qoi"), out var qoiSize);
-		var qoiSpan = new ReadOnlySpan<byte>(qoiBytes, (int)qoiSize);
+		RootTitleStorage.GetFileSize(pngPath, out var pngSize);
+		RootTitleStorage.GetFileSize(qoiPath, out var qoiSize);
+
+		var pngBytes = NativeMemory.Alloc((nuint) pngSize);
+		var pngSpan = new Span<byte>(pngBytes, (int) pngSize);
+
+		var qoiBytes = NativeMemory.Alloc((nuint) qoiSize);
+		var qoiSpan = new Span<byte>(qoiBytes, (int) qoiSize);
+
+		RootTitleStorage.ReadFile(pngPath, pngSpan);
+		RootTitleStorage.ReadFile(qoiPath, qoiSpan);
 
 		Logger.LogInfo(pngSpan.Length.ToString());
 		Logger.LogInfo(qoiSpan.Length.ToString());
@@ -60,6 +69,7 @@ class TexturedQuadExample : Example
 		// Load the shaders
 		Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("TexturedQuad.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
@@ -68,6 +78,7 @@ class TexturedQuadExample : Example
 
 		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("TexturedQuad.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
@@ -165,7 +176,7 @@ class TexturedQuadExample : Example
 
 	public override void Draw(double alpha)
 	{
-		CommandBuffer cmdbuf = GraphicsDevice.AcquireCommandBuffer();
+		var cmdbuf = GraphicsDevice.AcquireCommandBuffer();
 		Texture swapchainTexture = cmdbuf.AcquireSwapchainTexture(Window);
 		if (swapchainTexture != null)
 		{

@@ -19,6 +19,7 @@ class BasicComputeExample : Example
         // Create the compute pipeline that writes texture data
         ComputePipeline fillTextureComputePipeline = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("FillTexture.comp"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL
@@ -27,6 +28,7 @@ class BasicComputeExample : Example
         // Create the compute pipeline that calculates squares of numbers
         ComputePipeline calculateSquaresComputePipeline = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("CalculateSquares.comp"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL
@@ -35,6 +37,7 @@ class BasicComputeExample : Example
 		// Create the graphics pipeline
 		Shader vertShader = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("TexturedQuad.vert"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,
@@ -43,6 +46,7 @@ class BasicComputeExample : Example
 
 		Shader fragShader = ShaderCross.Create(
 			GraphicsDevice,
+			RootTitleStorage,
 			TestUtils.GetHLSLPath("TexturedQuad.frag"),
 			"main",
 			ShaderCross.ShaderFormat.HLSL,

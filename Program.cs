@@ -46,10 +46,12 @@ class Program : Game
 	int ExampleIndex = 0;
 
     public Program(
+		AppInfo appInfo,
 		WindowCreateInfo windowCreateInfo,
 		FramePacingSettings framePacingSettings,
 		bool debugMode = false
 	) : base(
+		appInfo,
 		windowCreateInfo,
 		framePacingSettings,
 		ShaderFormat.SPIRV | ShaderFormat.DXIL | ShaderFormat.MSL | ShaderFormat.DXBC,
@@ -120,6 +122,7 @@ class Program : Game
 		var framePacingSettings = FramePacingSettings.CreateCapped(60, 120);
 
 		var game = new Program(
+			new AppInfo("MoonsideGames", "MoonWorksGraphicsTests"),
 			windowCreateInfo,
 			framePacingSettings,
 			debugMode

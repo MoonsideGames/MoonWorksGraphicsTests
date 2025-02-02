@@ -19,6 +19,7 @@ namespace MoonWorksGraphicsTests
 			// Load the shaders
 			Shader vertShaderModule = ShaderCross.Create(
 				GraphicsDevice,
+				RootTitleStorage,
 				TestUtils.GetHLSLPath("PositionColor.vert"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,
@@ -27,6 +28,7 @@ namespace MoonWorksGraphicsTests
 
 			Shader fragShaderModule = ShaderCross.Create(
 				GraphicsDevice,
+				RootTitleStorage,
 				TestUtils.GetHLSLPath("SolidColor.frag"),
 				"main",
 				ShaderCross.ShaderFormat.HLSL,

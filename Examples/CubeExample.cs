@@ -636,7 +636,6 @@ namespace MoonWorksGraphicsTests
 
 			var screenshotSpan = ScreenshotTransferBuffer.Map<Color>(false);
 			screenshotPNGBuffer = ImageUtils.EncodePNGBuffer(
-				UserStorage,
 				screenshotSpan,
 				RenderTexture.Width,
 				RenderTexture.Height,

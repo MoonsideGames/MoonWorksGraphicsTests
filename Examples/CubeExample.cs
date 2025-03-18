@@ -456,7 +456,7 @@ namespace MoonWorksGraphicsTests
 			{
 				if (screenshotSaveToken.Result != Result.Pending)
 				{
-					ImageUtils.FreePNGBuffer(screenshotPNGBuffer);
+					ImageUtils.FreeBufferData(screenshotPNGBuffer);
 					screenshotPNGBuffer = IntPtr.Zero;
 
 					if (screenshotSaveToken.Result == Result.Success)

@@ -88,10 +88,8 @@ class Program : Game
 			MainWindow.SetPositionCentered();
 			Examples[ExampleIndex].Start(this);
 		}
-		else
-		{
-        	Examples[ExampleIndex].Update(delta);
-		}
+
+		Examples[ExampleIndex].Update(delta);
     }
 
     protected override void Draw(double alpha)

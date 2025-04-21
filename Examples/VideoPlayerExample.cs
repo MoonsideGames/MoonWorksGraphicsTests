@@ -1,32 +1,27 @@
 ﻿using MoonWorks;
 using MoonWorks.Graphics;
 using MoonWorks.Video;
-using MoonWorks.Input;
 
 namespace MoonWorksGraphicsTests;
 
 class VideoPlayerExample : Example
 {
 	private VideoAV1 Video;
-	private VideoPlayer VideoPlayer;
 
     public override void Init()
     {
 		Window.SetTitle("VideoPlayer");
 
-		// Load the video
-		Video = VideoAV1.Create(GraphicsDevice, RootTitleStorage, TestUtils.GetVideoPath("hello.obu"), 25);
+		Video ??= VideoAV1.Create(GraphicsDevice, VideoDevice, RootTitleStorage, TestUtils.GetVideoPath("hello.obu"), 25);
 
-		// Play the video
-		VideoPlayer = new VideoPlayer(GraphicsDevice);
-		VideoPlayer.Load(Video);
-		VideoPlayer.Loop = true;
-		VideoPlayer.Play();
+		// Load the video
+		Video.Load(true);
+		Video.Play();
 	}
 
 	public override void Update(System.TimeSpan delta)
 	{
-		VideoPlayer.Render();
+		Video.Update(delta);
 	}
 
 	public override void Draw(double alpha)
@@ -35,16 +30,13 @@ class VideoPlayerExample : Example
 		Texture swapchainTexture = cmdbuf.AcquireSwapchainTexture(Window);
 		if (swapchainTexture != null)
 		{
-			cmdbuf.Blit(VideoPlayer.RenderTexture, swapchainTexture, Filter.Linear);
+			cmdbuf.Blit(Video.RenderTexture, swapchainTexture, Filter.Linear);
 		}
 		GraphicsDevice.Submit(cmdbuf);
 	}
 
     public override void Destroy()
     {
-       	VideoPlayer.Stop();
-		VideoPlayer.Unload();
-		VideoPlayer.Dispose();
-		Video.Dispose();
+		Video.Unload();
     }
 }

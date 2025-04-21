@@ -3,6 +3,7 @@ using MoonWorks;
 using MoonWorks.Graphics;
 using MoonWorks.Input;
 using MoonWorks.Storage;
+using MoonWorks.Video;
 
 namespace MoonWorksGraphicsTests;
 
@@ -13,6 +14,7 @@ public abstract class Example
 	public Inputs Inputs;
 	public TitleStorage RootTitleStorage;
 	public UserStorage UserStorage;
+	public VideoDevice VideoDevice;
 
 	public void Assign(Game game)
 	{
@@ -21,6 +23,7 @@ public abstract class Example
 		Inputs = game.Inputs;
 		RootTitleStorage = game.RootTitleStorage;
 		UserStorage = game.UserStorage;
+		VideoDevice = game.VideoDevice;
 	}
 
 	public void Start(Game game)

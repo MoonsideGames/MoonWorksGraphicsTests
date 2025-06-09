@@ -16,12 +16,12 @@ class PullSpriteBatchExample : Example
     TransferBuffer SpriteDataTransferBuffer; 
     Buffer SpriteDataBuffer;
 
-	const int MAX_SPRITE_COUNT = 8192;
+    const int MAX_SPRITE_COUNT = 8192;
 
     Random Random = new Random();
 
     [StructLayout(LayoutKind.Explicit, Size = 64)]
-    struct SpriteInstace
+    struct SpriteInstance
     {
         [FieldOffset(0)]
         public Vector3 Position;
@@ -53,7 +53,7 @@ class PullSpriteBatchExample : Example
 
     public override unsafe void Init()
     {
-		Window.SetTitle("PullSpriteBatch");
+        Window.SetTitle("PullSpriteBatch");
 
         Shader vertShader = ShaderCross.Create(
             GraphicsDevice,
@@ -110,13 +110,13 @@ class PullSpriteBatchExample : Example
         resourceUploader.Upload();
         resourceUploader.Dispose();
 
-        SpriteDataTransferBuffer = TransferBuffer.Create<SpriteInstace>(
+        SpriteDataTransferBuffer = TransferBuffer.Create<SpriteInstance>(
             GraphicsDevice,
             TransferBufferUsage.Upload,
             MAX_SPRITE_COUNT
         );
 
-        SpriteDataBuffer = Buffer.Create<SpriteInstace>(
+        SpriteDataBuffer = Buffer.Create<SpriteInstance>(
             GraphicsDevice,
             BufferUsageFlags.GraphicsStorageRead,
             MAX_SPRITE_COUNT
@@ -148,7 +148,7 @@ class PullSpriteBatchExample : Example
         if (swapchainTexture != null)
         {
             // Build sprite data transfer
-            var data = SpriteDataTransferBuffer.Map<SpriteInstace>(true);
+            var data = SpriteDataTransferBuffer.Map<SpriteInstance>(true);
             for (var i = 0; i < MAX_SPRITE_COUNT; i += 1)
             {
                 int ravioli = Random.Next(4);

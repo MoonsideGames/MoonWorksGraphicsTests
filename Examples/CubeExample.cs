@@ -138,6 +138,15 @@ namespace MoonWorksGraphicsTests
 				ShaderStage.Fragment
 			);
 
+			Shader emptyFragShader = ShaderCross.Create(
+				GraphicsDevice,
+				RootTitleStorage,
+				TestUtils.GetHLSLPath("Empty.frag"),
+				"main",
+				ShaderCross.ShaderFormat.HLSL,
+				ShaderStage.Fragment
+			);
+
 			Shader blitVertShader = ShaderCross.Create(
 				GraphicsDevice,
 				RootTitleStorage,
@@ -232,6 +241,7 @@ namespace MoonWorksGraphicsTests
 				DepthStencilFormat = TextureFormat.D16Unorm
 			};
 			cubePipelineCreateInfo.Name = "Depth Only Cube Pipeline";
+			cubePipelineCreateInfo.FragmentShader = emptyFragShader;
 			CubePipelineDepthOnly = GraphicsPipeline.Create(GraphicsDevice, cubePipelineCreateInfo);
 
 			// Create the skybox pipelines
@@ -272,6 +282,7 @@ namespace MoonWorksGraphicsTests
 				DepthStencilFormat = TextureFormat.D16Unorm
 			};
 			skyboxPipelineCreateInfo.Name = "Skybox Pipeline Depth Only";
+			skyboxPipelineCreateInfo.FragmentShader = emptyFragShader;
 			SkyboxPipelineDepthOnly = GraphicsPipeline.Create(GraphicsDevice, skyboxPipelineCreateInfo);
 
 			// Create the blit pipeline
